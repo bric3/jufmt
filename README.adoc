@@ -10,8 +10,7 @@ The goal is to support at least the following:
 
 .Fonts
 |===
-
-| Font | Character Set |
+| Font | Character Set
 
 | Normal  | "\ !#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{}~
 | Sans bold  | "\ !#$%&'()*+,-./𝟬𝟭𝟮𝟯𝟰𝟱𝟲𝟳𝟴𝟵:;<=>?@𝗔𝗕𝗖𝗗𝗘𝗙𝗚𝗛𝗜𝗝𝗞𝗟𝗠𝗡𝗢𝗣𝗤𝗥𝗦𝗧𝗨𝗩𝗪𝗫𝗬𝗭[]^_`𝗮𝗯𝗰𝗱𝗲𝗳𝗴𝗵𝗶𝗷𝗸𝗹𝗺𝗻𝗼𝗽𝗾𝗿𝘀𝘁𝘂𝘃𝘄𝘅𝘆𝘇{}~
@@ -42,15 +41,28 @@ The goal is to support at least the following:
 
 .Styles
 |===
-| Font                | Example            
+| Font | Example
 
 | Underline           | U͟n͟d͟e͟r͟l͟i͟n͟e͟            
 | Strikethrough       | 𝖲̶𝗍̶𝗋̶𝗂̶𝗄̶𝖾̶𝗍̶𝗁̶𝗋̶𝗈̶𝗎̶𝗀̶𝗁̶         
 | Short Strikethrough | S̵h̵o̵r̵t̵ ̵S̵t̵r̵i̵k̵e̵t̵h̵r̵o̵u̵g̵h̵
 |===
 
-This feature is inspired by this nice https://github.com/DenverCoder1/unicode-formatter[js project] (https://git.io/unicode-formatter[demo]).
+This feature is inspired by this nice https://github.com/DenverCoder1/unicode-formatter[js project]
+(https://git.io/unicode-formatter[demo]).
 
 .TODO
 - [ ] unicode
+- [ ] braille
+- [ ] morse
 - [ ] figlet
+- [ ] wrapping chars, e.g. : 【b】【r】【i】【c】【3】, 〖b〗〖r〗〖i〗〖c〗〖3〗, ⧼b⧽⧼r⧽⧼i⧽⧼c⧽⧼3⧽, etc.
+- [ ] insert chars, e.g. : b྿r྿i྿c྿3, ፠b፠r፠i፠c፠3, b࿐r࿐i࿐c࿐3, etc.
+- [ ] zalgo: b̼̖̹͉̽̾r͎͔͉͙̽ͭ̈́͛͊i̮̿c̥̦̥̅̈́͐ͮ̚3͎͇ͨ
+- [ ] matrix: b̢̓͂͑ͣ͆̄ͥͦ͞ŕ͗́̌̂̐ͧ͐iͤ̈͏̨͘c̶̍̄́̃̓͋ͫ͌͋3̢͐̈͗ͣ͟
+- [ ] shadow: b̷r̷i̷c̷3̷
+- [ ] sweating: b̾r̾i̾c̾3̾ ̾
+- [ ] smeared ink: b҉r҉i҉c҉3҉
+- [ ] normalize (NFD, NFKD, NFC, NFKC : https://dencode.com/en/string/unicode-normalization, eg : `string s1 = "𝓗𝓸𝔀 𝓽𝓸 𝓻𝓮𝓶𝓸𝓿𝓮 𝓽𝓱𝓲𝓼 𝓯𝓸𝓷𝓽 𝓯𝓻𝓸𝓶 𝓪 𝓼𝓽𝓻𝓲𝓷𝓰"
+string s2 = s1.Normalize(NormalizationForm.FormKD)`)
+

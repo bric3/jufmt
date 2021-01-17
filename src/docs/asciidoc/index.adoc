@@ -1,7 +1,13 @@
-= Your Project
-author@example.org
+= Java Unicode Formatter
 
-Write a short introduction about your project
+
+== Unicode ranges (blocks)
+
+:block: https://www.fileformat.info/info/unicode/block
+
+* {block}/superscripts_and_subscripts/index.htm[Superscripts and Subscripts]
+* {block}/letterlike_symbols/index.htm[Letterlike symbols]
+
 
 == Build
 
