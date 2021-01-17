@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
 
-public enum FancyCharSets {
+public enum FancyCharsets {
 
 
     normal("\"\\ !#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~"),
@@ -52,7 +52,7 @@ public enum FancyCharSets {
     public String chars;
     private final Map<Integer, Integer> indexToCodepoint;
 
-    FancyCharSets(String chars) {
+    FancyCharsets(String chars) {
         this.chars = chars;
         this.indexToCodepoint = chars.codePoints()
                                      .boxed()
