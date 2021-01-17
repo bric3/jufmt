@@ -15,16 +15,22 @@ public class JufmtCommand implements Runnable {
     @Option(names = {"-l", "--list-styles"}, description = "List available styles")
     boolean listStyles;
 
-    @Option(names = {"-s", "--style"}, description = "Letter style, valid styles: ${COMPLETION-CANDIDATES}", paramLabel = "STYLE")
+    @Option(names = {"-s", "--style"},
+            description = "Letter style, valid styles: ${COMPLETION-CANDIDATES}",
+            paramLabel = "STYLE")
     FancyCharSets style;
 
-    @Option(names = {"-r", "--reversed"}, description = "Reverse string")
+    @Option(names = {"-r", "--reversed"},
+            description = "Reverse string")
     boolean reversed;
 
-    @Option(names = {"-d", "--describe"}, description = "Describe chararacters, or more precisely codepoints")
+    @Option(names = {"-d", "--describe"},
+            description = "Describe chararacters, or more precisely codepoints")
     boolean describeStyle;
 
-    @Parameters(description = "The string to process", paramLabel = "STR", arity = "0..1")
+    @Parameters(description = "The string to process",
+                paramLabel = "STR",
+                arity = "0..1")
     String stringToProcess;
 
     @Spec
@@ -55,11 +61,14 @@ public class JufmtCommand implements Runnable {
 
         if (describeStyle) {
             if (stringToProcess != null && !stringToProcess.isBlank()) {
-                stringToProcess.codePoints().forEach(JufmtCommand::charDetails);
+                stringToProcess.codePoints()
+                               .forEach(JufmtCommand::charDetails);
                 return;
             }
             if (style != null) {
-                style.chars.codePoints().onClose(() -> System.out.println("--------")).forEach(JufmtCommand::charDetails);
+                style.chars.codePoints()
+                           .onClose(() -> System.out.println("--------"))
+                           .forEach(JufmtCommand::charDetails);
                 return;
             }
         }
@@ -68,16 +77,18 @@ public class JufmtCommand implements Runnable {
             throw new ParameterException(spec.commandLine(), "Expects a non blank STR.");
         }
 
-        var result = stringToProcess.codePoints()
-                            .map(FancyCharSets.mirrored::matchingChar)
-                            .collect(StringBuilder::new,
-                                     StringBuilder::appendCodePoint,
-                                     StringBuilder::append);
+        var result = style == null ?
+                     new StringBuilder(stringToProcess) :
+                     stringToProcess.codePoints()
+                                    .map(style::translateChar)
+                                    .collect(StringBuilder::new,
+                                             StringBuilder::appendCodePoint,
+                                             StringBuilder::append);
 
         if (reversed) {
             result.reverse();
         }
 
-        System.out.println(result);
+        System.out.printf("%s%n", result);
     }
 }

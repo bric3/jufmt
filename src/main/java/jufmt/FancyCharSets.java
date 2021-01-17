@@ -43,28 +43,42 @@ public enum FancyCharSets {
                                   .boxed()
                                   .collect(toMap(
                                           Function.identity(),
-                                          new Function<>() {
-                                              int movingOffset = 0;
-
-                                              @Override
-                                              public Integer apply(Integer c) {
-                                                  int currentOffset = movingOffset;
-                                                  movingOffset += Character.charCount(c);
-                                                  return currentOffset;
-                                              }
-                                          }
+                                          ToCodepointIndex.instance()
                                   ));
+
+
     }
 
     public String chars;
+    private final Map<Integer, Integer> indexToCodepoint;
 
     FancyCharSets(String chars) {
         this.chars = chars;
+        this.indexToCodepoint = chars.codePoints()
+                                     .boxed()
+                                     .collect(toMap(ToCodepointIndex.instance(),
+                                                    Function.identity()));
     }
 
-    public int matchingChar(int codepoint) {
+    public int translateChar(int codepoint) {
         var codepointAt = codepointIndex.get(codepoint);
 
-        return this.chars.codePointAt(codepointAt);
+        return indexToCodepoint.get(codepointAt);
+    }
+
+    private static class ToCodepointIndex implements Function<Integer, Integer> {
+        int movingOffset = 0;
+
+        public static ToCodepointIndex instance() {
+            return new ToCodepointIndex();
+        }
+
+        @Override
+        public Integer apply(Integer c) {
+//            int currentOffset = movingOffset;
+//            movingOffset += Character.charCount(c);
+//            return currentOffset;
+            return movingOffset++;
+        }
     }
 }
