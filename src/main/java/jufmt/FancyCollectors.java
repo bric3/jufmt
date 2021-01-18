@@ -15,7 +15,7 @@ public class FancyCollectors {
                             StringBuilder::append);
     }
 
-    public static Collector<Integer, StringBuilder, StringBuilder> wrapCodepoints(int length, int... codepoints) {
+    public static Collector<Integer, StringBuilder, StringBuilder> surroundCodepoints(int length, int... codepoints) {
         return Collector.of(() -> new StringBuilder(length),
                             (sb, codePoint) -> {
                                 IntStream.of(codepoints).forEach(sb::appendCodePoint);
