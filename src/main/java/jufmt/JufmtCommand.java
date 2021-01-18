@@ -8,8 +8,6 @@ import picocli.CommandLine.Model.CommandSpec;
 import java.lang.Character.UnicodeBlock;
 import java.lang.Character.UnicodeScript;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.stream.Collector;
 
 @Command(name = "jufmt",
          description = "Format input latin string with fancy unicode chars",
@@ -106,6 +104,13 @@ public class JufmtCommand implements Runnable {
                            .collect(style.collector(result.length()));
         }
 
-        System.out.printf("%s%n", result);
+//        var decoration = FancyDecoration.ethiopicSectionMark;
+//        if (decoration != null) {
+//            result = result.codePoints()
+//                           .boxed()
+//                           .collect(decoration.collector(result.length()));
+//        }
+
+        spec.commandLine().getOut().printf("%s%n", result);
     }
 }

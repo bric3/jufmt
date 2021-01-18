@@ -26,6 +26,8 @@ dependencies {
     compileOnly("org.graalvm.nativeimage:svm")
     implementation("info.picocli:picocli:4.6.1")
     runtimeOnly("ch.qos.logback:logback-classic")
+    testImplementation("org.assertj:assertj-core:3.18.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.0")
 }
 
 
