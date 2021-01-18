@@ -4,7 +4,6 @@ plugins {
     id("io.micronaut.application") version "1.2.0"
 }
 
-version = "0.1"
 group = "jufmt"
 
 apply from: "gradle/asciidoc.gradle"
@@ -14,11 +13,9 @@ repositories {
 }
 
 micronaut {
+    version("2.2.3")
+    runtime("none")
     testRuntime("junit5")
-    processing {
-        incremental(true)
-        annotations("jufmt.*")
-    }
 }
 
 dependencies {
