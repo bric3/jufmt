@@ -56,8 +56,8 @@ This feature is inspired by this nice https://github.com/DenverCoder1/unicode-fo
 - [ ] braille
 - [ ] morse
 - [ ] figlet
-- [ ] wrapping chars, e.g. : 【b】【r】【i】【c】【3】, 〖b〗〖r〗〖i〗〖c〗〖3〗, ⧼b⧽⧼r⧽⧼i⧽⧼c⧽⧼3⧽, etc.
-- [ ] insert chars, e.g. : b྿r྿i྿c྿3, ፠b፠r፠i፠c፠3, b࿐r࿐i࿐c࿐3, etc.
+- [x] wrapping chars, e.g. : 【b】【r】【i】【c】【3】, 〖b〗〖r〗〖i〗〖c〗〖3〗, ⧼b⧽⧼r⧽⧼i⧽⧼c⧽⧼3⧽, etc.
+- [x] insert chars, e.g. : b྿r྿i྿c྿3, ፠b፠r፠i፠c፠3, b࿐r࿐i࿐c࿐3, etc.
 - [ ] zalgo: b̼̖̹͉̽̾r͎͔͉͙̽ͭ̈́͛͊i̮̿c̥̦̥̅̈́͐ͮ̚3͎͇ͨ
 - [ ] matrix: b̢̓͂͑ͣ͆̄ͥͦ͞ŕ͗́̌̂̐ͧ͐iͤ̈͏̨͘c̶̍̄́̃̓͋ͫ͌͋3̢͐̈͗ͣ͟
 - [x] shadow: b̷r̷i̷c̷3̷

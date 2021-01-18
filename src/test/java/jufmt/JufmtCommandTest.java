@@ -48,6 +48,22 @@ public class JufmtCommandTest {
         System.out.printf("%s: %s", charset.name(), stringWriter.toString());
     }
 
+    @ParameterizedTest
+    @EnumSource(FancyOrnaments.class)
+    public void check_ornament(FancyOrnaments ornaments) {
+        var cmd = new CommandLine(new JufmtCommand());
+        var stringWriter = new StringWriter();
+        cmd.setOut(new PrintWriter(stringWriter));
+
+        cmd.execute("-o", ornaments.name(), "bric3");
+
+        assertThat(stringWriter.toString())
+                .describedAs(ornaments.name())
+                .isEqualToIgnoringNewLines(ornaments.example);
+
+        System.out.printf("%s: %s", ornaments.name(), stringWriter.toString());
+    }
+
     @Test
     public void check_reversed() {
         var cmd = new CommandLine(new JufmtCommand());

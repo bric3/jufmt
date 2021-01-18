@@ -22,9 +22,14 @@ public class JufmtCommand implements Runnable {
     FancyCharsets charset;
 
     @Option(names = {"-s", "--style"},
-            description = "Charset, valid charsets: ${COMPLETION-CANDIDATES}",
+            description = "Styles, valid charsets: ${COMPLETION-CANDIDATES}",
             paramLabel = "STYLE")
     FancyStyle style;
+
+    @Option(names = {"-o", "--ornament"},
+            description = "Ornaments, valid charsets: ${COMPLETION-CANDIDATES}",
+            paramLabel = "ORNAMENT")
+    FancyOrnaments ornament;
 
     @Option(names = {"-r", "--reversed"},
             description = "Reverse string")
@@ -104,12 +109,11 @@ public class JufmtCommand implements Runnable {
                            .collect(style.collector(result.length()));
         }
 
-//        var decoration = FancyDecoration.ethiopicSectionMark;
-//        if (decoration != null) {
-//            result = result.codePoints()
-//                           .boxed()
-//                           .collect(decoration.collector(result.length()));
-//        }
+        if (ornament != null) {
+            result = result.codePoints()
+                           .boxed()
+                           .collect(ornament.collector(result.length()));
+        }
 
         spec.commandLine().getOut().printf("%s%n", result);
     }

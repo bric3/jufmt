@@ -1,7 +1,5 @@
 package jufmt;
 
-import java.util.Arrays;
-import java.util.function.BiConsumer;
 import java.util.stream.Collector;
 import java.util.stream.IntStream;
 
@@ -36,5 +34,15 @@ public class FancyCollectors {
                             },
                             StringBuilder::append,
                             sb -> sb.delete(0, IntStream.of(codepoints).map(Character::charCount).sum()));
+    }
+
+    public static Collector<Integer, StringBuilder, StringBuilder> wrapCodepoints(int length, int leftCodepoint, int rightCodepoint) {
+        return Collector.of(() -> new StringBuilder(length),
+                            (sb, codePoint) -> {
+                                sb.appendCodePoint(leftCodepoint)
+                                  .appendCodePoint(codePoint)
+                                  .appendCodePoint(rightCodepoint);
+                            },
+                            StringBuilder::append);
     }
 }
