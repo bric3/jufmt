@@ -8,8 +8,8 @@ import picocli.CommandLine.Model.CommandSpec;
 import java.lang.Character.UnicodeBlock;
 import java.lang.Character.UnicodeScript;
 import java.util.Arrays;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import java.util.Comparator;
+import java.util.stream.Collector;
 
 @Command(name = "jufmt",
          description = "Format input latin string with fancy unicode chars",
@@ -90,24 +90,20 @@ public class JufmtCommand implements Runnable {
         var result = charset == null ?
                      new StringBuilder(stringToProcess) :
                      stringToProcess.codePoints()
-                                    .flatMap(c -> {
-                                        if (style != null) {
-                                            return IntStream.of(charset.translateChar(c), style.value);
-                                        }
-
-                                        return IntStream.of(charset.translateChar(c));
-                                    })
-                                    .collect(StringBuilder::new,
+                                    .map(charset::translateChar)
+                                    .boxed()
+                                    .collect(() -> new StringBuilder(stringToProcess.length()),
                                              StringBuilder::appendCodePoint,
                                              StringBuilder::append);
 
-        System.out.printf("%s%n", new StringBuilder("test")
-                .appendCodePoint(
-                        FancyStyle.strikethrough.value
-                ));
-
         if (reversed) {
             result.reverse();
+        }
+
+        if (style != null) {
+            result = result.codePoints()
+                           .boxed()
+                           .collect(style.collector(result.length()));
         }
 
         System.out.printf("%s%n", result);
