@@ -15,7 +15,8 @@ public enum FancyStyle {
     hotFumes("COMBINING VERTICAL TILDE", "b̾r̾i̾c̾3̾"),
     doubleArrow("COMBINING LEFT RIGHT ARROW BELOW", "b͍r͍i͍c͍3͍"),
     electric("COMBINING ZIGZAG ABOVE", "b͛r͛i͛c͛3͛"),
-    snow("COMBINING HOMOTHETIC ABOVE", "b͋r͋i͋c͋3͋")
+    snow("COMBINING HOMOTHETIC ABOVE", "b͋r͋i͋c͋3͋"),
+    smeared("COMBINING CYRILLIC MILLIONS SIGN", "b҉r҉i҉c҉3҉"),
     ;
 
 
