@@ -7,14 +7,24 @@ import picocli.CommandLine.Model.CommandSpec;
 
 import java.lang.Character.UnicodeBlock;
 import java.lang.Character.UnicodeScript;
+import java.text.Normalizer;
+import java.text.Normalizer.Form;
 import java.util.Arrays;
 
 @Command(name = "jufmt",
          description = "Format input latin string with fancy unicode chars",
          mixinStandardHelpOptions = true)
 public class JufmtCommand implements Runnable {
-    @Option(names = {"-l", "--list-charsets"}, description = "List available fancy charsets")
-    boolean listCharsets;
+    @Option(names = {"-n", "--normalize"},
+            description = "Normalize inout string using the given strategy, " +
+                          "possible forms: ${COMPLETION-CANDIDATES}",
+            paramLabel = "FORM")
+    Form normalizationForm;
+
+    @Option(names = {"--strip-diacritic-marks"},
+            description = "Strips the combining diacritical marks from the " +
+                          "string after normalization, only works with NFD or NFKD")
+    boolean stripDiacriticalMarks;
 
     @Option(names = {"-c", "--charset"},
             description = "Charset, valid charsets: ${COMPLETION-CANDIDATES}",
@@ -66,8 +76,33 @@ public class JufmtCommand implements Runnable {
     }
 
     public void run() {
-        if (listCharsets) {
-            Arrays.stream(FancyCharsets.values()).forEach(System.out::println);
+        if (normalizationForm != null) {
+            // https://unicode.org/reports/tr15/#Norm_Forms
+            // https://towardsdatascience.com/difference-between-nfd-nfc-nfkd-and-nfkc-explained-with-python-code-e2631f96ae6c
+            // - Normalization Form D (NFD) : Canonical Decomposition
+            // - Normalization Form C (NFC) : Canonical Decomposition, followed by Canonical Composition
+            // - Normalization Form KD (NFKD) : Compatibility Decomposition
+            // - Normalization Form KC (NFKC) : Compatibility Decomposition, followed by Canonical Composition
+            //
+            // In compatibility mode (K), the length can change,
+            //    because a character can be decomposed for "compability",
+            //    e.g. '…' -> '...'
+            // In decomposition mode (D), the length can change,
+            //    because a character can be decomposed by main char and combining mark,
+            //    e.g. 'ポ'(U+30DD) -> 'ホ'(U+30DB) + '  ゚'(U+309A)
+            // If followed by composition (C), then separated chars are composed back together
+            var normalized = Normalizer.normalize(stringToProcess, normalizationForm);
+            if (stripDiacriticalMarks) {
+                normalized = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}", "");
+            }
+
+            spec.commandLine().getOut().printf(
+                    "input length: %d, output length %d, %s%n",
+                    stringToProcess.codePointCount(0, stringToProcess.length() - 1),
+                    normalized.codePointCount(0, normalized.length() - 1),
+                    normalized
+            );
+
             return;
         }
 
