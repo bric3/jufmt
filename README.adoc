@@ -5,8 +5,45 @@ Simple Java and GraalVM toy to play with unicode formatting.
 There are many website that perform fancy Unicode text transformation.
 For fun I wanted to try to implement these features in Java.
 
+[source, shell]
+----
+$ java -jar build/libs/jufmt-all.jar -h
+Usage: jufmt [-dhrV] [--strip-diacritic-marks] [-c=CHARSET] [-n=FORM]
+             [-o=ORNAMENT] [-s=STYLE] [STR]
+Format input latin string with fancy unicode chars
+      [STR]                 The string to process
+  -c, --charset=CHARSET     Charset, valid charsets: normal, sans, sansBold,
+                              sansItalic, sansBoldItalic, monospace, fullwidth,
+                              fraktur, boldFraktur, serifBold, serifItalic,
+                              serifBoldItalic, doubleStruck, script,
+                              boldScript, circled, circledNegative, squared,
+                              squaredNegative, parenthesized, smallCaps,
+                              subscript, superscript, inverted, mirrored,
+                              rounded, greek, japanese, fauxEthiopian
+  -d, --describe            Describe characters, or more precisely codepoints
+  -h, --help                Show this help message and exit.
+  -n, --normalize=FORM      Normalize inout string using the given strategy,
+                              possible forms: NFD, NFC, NFKD, NFKC
+  -o, --ornament=ORNAMENT   Ornaments, valid charsets: curvedAngleBracket,
+                              blackLenticularBracket, whiteLenticularBracket,
+                              tortoiseBracket, whiteTortoiseBracket,
+                              angleBracket, doubleAngleBracket, cornerBracket,
+                              whiteCornerBracket, wave,
+                              tibetanKuRuKhaBzhiMigCan, ethiopicSectionMark
+  -r, --reversed            Reverse string
+  -s, --style=STYLE         Styles, valid charsets: strikethrough, macron,
+                              macronBelow, lowline, doubleLowline, overline,
+                              doubleOverline, shadow, upwardArrowBelow,
+                              hotFumes, doubleArrow, electric, snow, smeared
+      --strip-diacritic-marks
+                            Strips the combining diacritical marks from the
+                              string after normalization, only works with NFD
+                              or NFKD
+  -V, --version             Print version information and exit.
+----
 
-The goal is to support at least the following:
+
+The tool supports the following charset:
 
 .Fonts
 |===
@@ -36,8 +73,13 @@ The goal is to support at least the following:
 | Superscript  | "\ !#$%&'()*⁺,⁻./⁰¹²³⁴⁵⁶⁷⁸⁹:;<⁼>?@ᴬᴮᶜᴰᴱᶠᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾᵠᴿˢᵀᵁⱽᵂˣʸᶻ[]^_`ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖᵠʳˢᵗᵘᵛʷˣʸᶻ{}~
 | Inverted  | „\ ¡#$%⅋,)(*+‘-˙/0ƖՇƐᔭϛ9Ɫ86:;<=>¿@∀ꓭↃꓷƎℲ⅁HIſꓘ⅂WNOԀῸꓤS⊥∩ꓥMX⅄Z][^‾`ɐqɔpǝɟƃɥıɾʞןɯuodbɹsʇnʌʍxʎz}{~
 | Mirrored  | "/ !#$%&')(*+,-.\0߁ςƐ߂टმ٢8୧:;<=>⸮@AꓭↃꓷƎꟻӘHIႱꓘ⅃MИOꟼϘЯꙄTUVWXYZ][^_`ɒdↄbɘʇϱʜiįʞlmᴎoqpᴙꙅɈυvwxγz}{~
+| Rounded  | "\ !#$%&'()*+,-./0123456789:;<=>?@ᗩᗷᑕᗪEᖴGᕼIᒍKᒪᗰᑎOᑭᑫᖇᔕTᑌᐯᗯ᙭Yᘔ[]^_`ᗩᗷᑕᗪEᖴGᕼIᒍKᒪᗰᑎOᑭᑫᖇᔕTᑌᐯᗯ᙭Yᘔ{|}~
+| Greek  | "\ !#$%&'()*+,-./0123456789:;<=>?@ΛBᑕDΣFGΉIJKᒪMПӨPQЯƧƬЦVЩXYZ[]^_`ΛBᑕDΣFGΉIJKᒪMПӨPQЯƧƬЦVЩXYZ{|}~
+| Japanese  | "\ !#$%&'()*+,-./0123456789:;<=>?@卂乃匚ᗪ乇千Ꮆ卄丨ﾌҜㄥ爪几ㄖ卩Ɋ尺丂ㄒㄩᐯ山乂ㄚ乙[]^_`卂乃匚ᗪ乇千Ꮆ卄丨ﾌҜㄥ爪几ㄖ卩Ɋ尺丂ㄒㄩᐯ山乂ㄚ乙{|}~
+| Faux Ethiopian  | "\ !#$%&'()*+,-./0123456789:;<=>?@ልጌርዕቿቻኗዘጎጋጕረጠክዐየዒዪነፕሁሀሠሸሃጊ[]^_`ልጌርዕቿቻኗዘጎጋጕረጠክዐየዒዪነፕሁሀሠሸሃጊ{|}~
 
 |===
+
 
 .Styles
 |===
@@ -47,9 +89,6 @@ The goal is to support at least the following:
 | Strikethrough       | 𝖲̶𝗍̶𝗋̶𝗂̶𝗄̶𝖾̶𝗍̶𝗁̶𝗋̶𝗈̶𝗎̶𝗀̶𝗁̶
 | Short Strikethrough | S̵h̵o̵r̵t̵ ̵S̵t̵r̵i̵k̵e̵t̵h̵r̵o̵u̵g̵h̵
 |===
-
-This feature is inspired by this nice https://github.com/DenverCoder1/unicode-formatter[js project]
-(https://git.io/unicode-formatter[demo]).
 
 .TODO
 - [x] unicode
@@ -63,6 +102,8 @@ This feature is inspired by this nice https://github.com/DenverCoder1/unicode-fo
 - [x] shadow: b̷r̷i̷c̷3̷
 - [x] sweating: b̾r̾i̾c̾3̾ ̾
 - [x] smeared ink: b҉r҉i҉c҉3҉
-- [ ] normalize (NFD, NFKD, NFC, NFKC : https://dencode.com/en/string/unicode-normalization, eg : `string s1 = "𝓗𝓸𝔀 𝓽𝓸 𝓻𝓮𝓶𝓸𝓿𝓮 𝓽𝓱𝓲𝓼 𝓯𝓸𝓷𝓽 𝓯𝓻𝓸𝓶 𝓪 𝓼𝓽𝓻𝓲𝓷𝓰"
-string s2 = s1.Normalize(NormalizationForm.FormKD)`)
+- [x] normalize (NFD, NFKD, NFC, NFKC)
+
+This feature is inspired by this nice https://github.com/DenverCoder1/unicode-formatter[js project]
+(https://git.io/unicode-formatter[demo]).
 

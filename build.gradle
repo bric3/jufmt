@@ -16,6 +16,14 @@ micronaut {
     version("2.2.3")
     runtime("none")
     testRuntime("junit5")
+    processing {
+        incremental(true)
+        annotations("jufmt.*")
+    }
+}
+
+nativeImage {
+    imageName("jufmt")
 }
 
 dependencies {
