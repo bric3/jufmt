@@ -9,9 +9,12 @@ import java.lang.Character.UnicodeBlock;
 import java.lang.Character.UnicodeScript;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
-import java.util.Arrays;
 
 @Command(name = "jufmt",
+         header = {
+                 "@|green ░░▒█░█▒█▒█▀░█▄▒▄█░▀█▀ |@",
+                 "@|green ░▀▄█░▀▄█░█▀░█▒▀▒█░▒█▒ |@",
+         },
          description = "Format input latin string with fancy unicode chars",
          mixinStandardHelpOptions = true)
 public class JufmtCommand implements Runnable {
@@ -19,7 +22,8 @@ public class JufmtCommand implements Runnable {
             description = "Normalize inout string using the given strategy, " +
                           "possible forms: ${COMPLETION-CANDIDATES}",
             paramLabel = "FORM")
-    Form normalizationForm;
+//    Normalizer.Form normalizationForm;
+    String normalizationFormStr;
 
     @Option(names = {"--strip-diacritic-marks"},
             description = "Strips the combining diacritical marks from the " +
@@ -30,16 +34,19 @@ public class JufmtCommand implements Runnable {
             description = "Charset, valid charsets: ${COMPLETION-CANDIDATES}",
             paramLabel = "CHARSET")
     FancyCharsets charset;
+    String charsetStr;
 
     @Option(names = {"-s", "--style"},
             description = "Styles, valid charsets: ${COMPLETION-CANDIDATES}",
             paramLabel = "STYLE")
-    FancyStyle style;
+//    FancyStyle style;
+    String styleStr;
 
     @Option(names = {"-o", "--ornament"},
             description = "Ornaments, valid charsets: ${COMPLETION-CANDIDATES}",
             paramLabel = "ORNAMENT")
-    FancyOrnaments ornament;
+//    FancyOrnaments ornament;
+    String ornamentStr;
 
     @Option(names = {"-r", "--reversed"},
             description = "Reverse string")
@@ -76,6 +83,12 @@ public class JufmtCommand implements Runnable {
     }
 
     public void run() {
+        // https://github.com/remkop/picocli/issues/1310
+        Normalizer.Form normalizationForm = normalizationFormStr == null ? null : Normalizer.Form.valueOf(normalizationFormStr);
+        FancyOrnaments ornament = ornamentStr == null ? null : FancyOrnaments.valueOf(ornamentStr);
+        FancyCharsets charset = charsetStr ==null ? null :FancyCharsets.valueOf(charsetStr);
+        FancyStyle style = styleStr == null ? null : FancyStyle.valueOf(styleStr);
+
         if (normalizationForm != null) {
             // https://unicode.org/reports/tr15/#Norm_Forms
             // https://towardsdatascience.com/difference-between-nfd-nfc-nfkd-and-nfkc-explained-with-python-code-e2631f96ae6c
