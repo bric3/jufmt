@@ -37,6 +37,19 @@ public enum FancyCharsets {
     greek("BЯIᑕ3", "\"\\ !#$%&'()*+,-./0123456789:;<=>?@ΛBᑕDΣFGΉIJKᒪMПӨPQЯƧƬЦVЩXYZ[]^_`ΛBᑕDΣFGΉIJKᒪMПӨPQЯƧƬЦVЩXYZ{|}~"),
     japanese("乃尺丨匚3", "\"\\ !#$%&'()*+,-./0123456789:;<=>?@卂乃匚ᗪ乇千Ꮆ卄丨ﾌҜㄥ爪几ㄖ卩Ɋ尺丂ㄒㄩᐯ山乂ㄚ乙[]^_`卂乃匚ᗪ乇千Ꮆ卄丨ﾌҜㄥ爪几ㄖ卩Ɋ尺丂ㄒㄩᐯ山乂ㄚ乙{|}~"),
     fauxEthiopian("ጌዪጎር3", "\"\\ !#$%&'()*+,-./0123456789:;<=>?@ልጌርዕቿቻኗዘጎጋጕረጠክዐየዒዪነፕሁሀሠሸሃጊ[]^_`ልጌርዕቿቻኗዘጎጋጕረጠክዐየዒዪነፕሁሀሠሸሃጊ{|}~"),
+
+    /**
+     * Ascii Braille.
+     *
+     * https://en.wikipedia.org/wiki/Braille
+     * https://en.wikipedia.org/wiki/English_Braille
+     * https://en.wikipedia.org/wiki/Russian_Braille
+     * https://en.wikipedia.org/wiki/Braille_ASCII
+     *
+     * Note that `, {, |, and } are not used and their Braille ASCII rendition is not defined.
+     */
+    asciiBrailleGrade1("⠃⠗⠊⠉⠒", "⠐⠳ ⠮⠼⠫⠩⠯⠄⠷⠾⠡⠬⠠⠤⠨⠌⠴⠂⠆⠒⠲⠢⠖⠶⠦⠔⠱⠰⠣⠿⠜⠹⠈⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠥⠧⠺⠭⠽⠵⠪⠻⠘⠸ ⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠥⠧⠺⠭⠽⠵    ")
+    //moonType
     ;
 
     private static final Map<Integer, Integer> codepointIndex;
