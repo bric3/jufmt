@@ -10,8 +10,8 @@ import static java.util.stream.Collectors.toMap;
 public enum FancyConverters {
     none("", "") {
         @Override
-        public Stream<Integer> convert(String stringToProcess) {
-            return stringToProcess.codePoints().boxed();
+        public StringBuilder convert(String stringToProcess) {
+            return new StringBuilder(stringToProcess);
         }
     },
 
@@ -47,7 +47,7 @@ public enum FancyConverters {
 
     /**
      * Ascii Braille.
-     *
+     * <p>
      * Braille system is not unique, it is declined in various language to adapt to their unique feature:
      * <ul>
      * <li>https://en.wikipedia.org/wiki/Braille</li>
@@ -60,12 +60,18 @@ public enum FancyConverters {
      *
      * <p><em>Moon type</em> system, is another writing systems for blind people, however it doesn't seem to be much used</p>
      */
-    asciiBrailleGrade1("⠃⠗⠊⠉⠒", "⠐⠳ ⠮⠼⠫⠩⠯⠄⠷⠾⠡⠬⠠⠤⠨⠌⠴⠂⠆⠒⠲⠢⠖⠶⠦⠔⠱⠰⠣⠿⠜⠹⠈⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠥⠧⠺⠭⠽⠵⠪⠻⠘⠸ ⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠥⠧⠺⠭⠽⠵    ")
+    asciiBrailleGrade1("⠃⠗⠊⠉⠒", "⠐⠳ ⠮⠼⠫⠩⠯⠄⠷⠾⠡⠬⠠⠤⠨⠌⠴⠂⠆⠒⠲⠢⠖⠶⠦⠔⠱⠰⠣⠿⠜⠹⠈⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠥⠧⠺⠭⠽⠵⠪⠻⠘⠸ ⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠥⠧⠺⠭⠽⠵    "),
 
     // TODO
     //  - morse
     //  - hieroglyphs  𓆐𓆏𓄚𓄇𓃻𓃷𓃠     goges from \u13000 to \u1342F
 
+    morse(ITUMorseConverter.example, "") {
+        @Override
+        public StringBuilder convert(String stringToProcess) {
+            return new ITUMorseConverter().convert(stringToProcess);
+        }
+    },
     ;
 
     private static final Map<Integer, Integer> codepointIndex;
@@ -102,10 +108,11 @@ public enum FancyConverters {
         return indexToCodepoint.get(codepointAt);
     }
 
-    public Stream<Integer> convert(String stringToProcess) {
+    public StringBuilder convert(String stringToProcess) {
         return stringToProcess.codePoints()
-                       .map(this::translateChar)
-                       .boxed();
+                              .map(this::translateChar)
+                              .boxed()
+                              .collect(FancyCollectors.toStringBuilder(stringToProcess.length()));
     }
 
     private static class ToCodepointIndex implements Function<Integer, Integer> {

@@ -4,6 +4,7 @@ import java.util.stream.Collector;
 import java.util.stream.IntStream;
 
 public class FancyCollectors {
+
     public static Collector<Integer, StringBuilder, StringBuilder> afterCodepoints(int length, int... codepoints) {
         return Collector.of(() -> new StringBuilder(length),
                             (sb, codePoint) -> {
@@ -38,11 +39,15 @@ public class FancyCollectors {
 
     public static Collector<Integer, StringBuilder, StringBuilder> wrapCodepoints(int length, int leftCodepoint, int rightCodepoint) {
         return Collector.of(() -> new StringBuilder(length),
-                            (sb, codePoint) -> {
-                                sb.appendCodePoint(leftCodepoint)
-                                  .appendCodePoint(codePoint)
-                                  .appendCodePoint(rightCodepoint);
-                            },
+                            (sb, codePoint) -> sb.appendCodePoint(leftCodepoint)
+                                                 .appendCodePoint(codePoint)
+                                                 .appendCodePoint(rightCodepoint),
+                            StringBuilder::append);
+    }
+
+    public static Collector<Integer, StringBuilder, StringBuilder> toStringBuilder(int length) {
+        return Collector.of(() -> new StringBuilder(length),
+                            StringBuilder::appendCodePoint,
                             StringBuilder::append);
     }
 }

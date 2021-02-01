@@ -105,8 +105,8 @@ The tool supports the following charset:
 
 .TODO
 - [x] unicode
-- [ ] braille
-- [ ] morse
+- [x] braille
+- [x] morse
 - [ ] figlet
 - [x] wrapping chars, e.g. : 【b】【r】【i】【c】【3】, 〖b〗〖r〗〖i〗〖c〗〖3〗, ⧼b⧽⧼r⧽⧼i⧽⧼c⧽⧼3⧽, etc.
 - [x] insert chars, e.g. : b྿r྿i྿c྿3, ፠b፠r፠i፠c፠3, b࿐r࿐i࿐c࿐3, etc.

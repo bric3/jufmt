@@ -136,10 +136,7 @@ public class JufmtCommand implements Runnable {
             throw new ParameterException(spec.commandLine(), "Expects a non blank STR.");
         }
 
-        var result = converter.convert(stringToProcess)
-                              .collect(() -> new StringBuilder(stringToProcess.length()),
-                                       StringBuilder::appendCodePoint,
-                                       StringBuilder::append);
+        var result = converter.convert(stringToProcess);
 
         if (reversed) {
             // use StringBuilder reverse as it treats surrogate pairs as single character
