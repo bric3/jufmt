@@ -75,6 +75,20 @@ public enum FancyOrnaments {
         }
     },
 
+    mediumShade("▒b▒r▒i▒c▒3▒", "MEDIUM SHADE") {
+        @Override
+        public Collector<Integer, StringBuilder, StringBuilder> collector(int length) {
+            return FancyCollectors.surroundCodepoints(length, this.value);
+        }
+    },
+
+    darkShade("▓b▓r▓i▓c▓3▓", "DARK SHADE") {
+        @Override
+        public Collector<Integer, StringBuilder, StringBuilder> collector(int length) {
+            return FancyCollectors.surroundCodepoints(length, this.value);
+        }
+    },
+
     wave("࿐b࿐r࿐i࿐c࿐3࿐", "TIBETAN MARK BSKA- SHOG GI MGO RGYAN") {
         @Override
         public Collector<Integer, StringBuilder, StringBuilder> collector(int length) {
