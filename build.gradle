@@ -1,7 +1,7 @@
 plugins {
     id("org.asciidoctor.jvm.convert") version "3.3.0"
     id("com.github.johnrengelman.shadow") version "6.1.0"
-    id("io.micronaut.application") version "1.2.0"
+    id("io.micronaut.application") version "1.3.2"
 }
 
 group = "jufmt"
@@ -13,7 +13,7 @@ repositories {
 }
 
 micronaut {
-    version("2.2.3")
+    version("2.3.0")
     runtime("none")
     testRuntime("junit5")
     processing {
@@ -43,6 +43,12 @@ dependencies {
 application {
     mainClass.set("jufmt.JufmtCommand")
 }
+
+jar.enabled(false)
+distTar.enabled(false)
+distZip.enabled(false)
+shadowDistTar.enabled(false)
+shadowDistZip.enabled(false)
 
 java {
     sourceCompatibility = JavaVersion.toVersion("11")
