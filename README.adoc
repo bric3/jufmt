@@ -1,25 +1,29 @@
+// suppress inspection "SpellCheckingInspection" for whole file
 = Java Unicode Formatter (jufmt)
 
 Simple Java and GraalVM toy to play with unicode formatting.
 
-There are many website that perform fancy Unicode text transformation.
-For fun I wanted to try to implement these features in Java.
+There are many websites that perform fancy Unicode text transformation.
+For fun, I wanted to try to implement these features in Java.
 
 [source, shell]
 ----
 $ java -jar build/libs/jufmt-all.jar -h
+░░▒█░█▒█▒█▀░█▄▒▄█░▀█▀
+░▀▄█░▀▄█░█▀░█▒▀▒█░▒█▒
 Usage: jufmt [-dhrV] [--strip-diacritic-marks] [-c=CHARSET] [-n=FORM]
              [-o=ORNAMENT] [-s=STYLE] [STR]
 Format input latin string with fancy unicode chars
       [STR]                 The string to process
-  -c, --charset=CHARSET     Charset, valid charsets: normal, sans, sansBold,
-                              sansItalic, sansBoldItalic, monospace, fullwidth,
-                              fraktur, boldFraktur, serifBold, serifItalic,
-                              serifBoldItalic, doubleStruck, script,
-                              boldScript, circled, circledNegative, squared,
-                              squaredNegative, parenthesized, smallCaps,
-                              subscript, superscript, inverted, mirrored,
-                              rounded, greek, japanese, fauxEthiopian
+  -c, --converter=CHARSET   Charset, valid charsets: none, normal, sans,
+                              sansBold, sansItalic, sansBoldItalic, monospace,
+                              fullwidth, fraktur, boldFraktur, serifBold,
+                              serifItalic, serifBoldItalic, doubleStruck,
+                              script, boldScript, circled, circledNegative,
+                              squared, squaredNegative, parenthesized,
+                              smallCaps, subscript, superscript, inverted,
+                              mirrored, rounded, greek, japanese,
+                              fauxEthiopian, asciiBrailleGrade1, morse
   -d, --describe            Describe characters, or more precisely codepoints
   -h, --help                Show this help message and exit.
   -n, --normalize=FORM      Normalize inout string using the given strategy,
@@ -28,8 +32,9 @@ Format input latin string with fancy unicode chars
                               blackLenticularBracket, whiteLenticularBracket,
                               tortoiseBracket, whiteTortoiseBracket,
                               angleBracket, doubleAngleBracket, cornerBracket,
-                              whiteCornerBracket, wave,
-                              tibetanKuRuKhaBzhiMigCan, ethiopicSectionMark
+                              whiteCornerBracket, lightShade, mediumShade,
+                              darkShade, wave, tibetanKuRuKhaBzhiMigCan,
+                              ethiopicSectionMark
   -r, --reversed            Reverse string
   -s, --style=STYLE         Styles, valid charsets: strikethrough, macron,
                               macronBelow, lowline, doubleLowline, overline,
@@ -46,11 +51,11 @@ If using GraalVM, micronaut offers the `nativeImage` task :
 
 [source, shell]
 ----
-$ asdf local java graalvm-20.3.0+java11
+$ asdf local java graalvm-21.0.0+java11
 $ java --version
-openjdk 11.0.9 2020-10-20
-OpenJDK Runtime Environment GraalVM CE 20.3.0 (build 11.0.9+10-jvmci-20.3-b06)
-OpenJDK 64-Bit Server VM GraalVM CE 20.3.0 (build 11.0.9+10-jvmci-20.3-b06, mixed mode, sharing)
+openjdk 11.0.10 2021-01-19
+OpenJDK Runtime Environment GraalVM CE 21.0.0 (build 11.0.10+8-jvmci-21.0-b06)
+OpenJDK 64-Bit Server VM GraalVM CE 21.0.0 (build 11.0.10+8-jvmci-21.0-b06, mixed mode, sharing)
 $ ./gradlew nativeImage
 ...
 $ build/native-image/jufmt -h
@@ -104,19 +109,27 @@ The tool supports the following charset:
 |===
 
 .TODO
-- [x] unicode
-- [x] braille
-- [x] morse
-- [ ] figlet
-- [x] wrapping chars, e.g. : 【b】【r】【i】【c】【3】, 〖b〗〖r〗〖i〗〖c〗〖3〗, ⧼b⧽⧼r⧽⧼i⧽⧼c⧽⧼3⧽, etc.
-- [x] insert chars, e.g. : b྿r྿i྿c྿3, ፠b፠r፠i፠c፠3, b࿐r࿐i࿐c࿐3, etc.
-- [ ] zalgo: b̼̖̹͉̽̾r͎͔͉͙̽ͭ̈́͛͊i̮̿c̥̦̥̅̈́͐ͮ̚3͎͇ͨ
-- [ ] matrix: b̢̓͂͑ͣ͆̄ͥͦ͞ŕ͗́̌̂̐ͧ͐iͤ̈͏̨͘c̶̍̄́̃̓͋ͫ͌͋3̢͐̈͗ͣ͟
-- [x] shadow: b̷r̷i̷c̷3̷
-- [x] sweating: b̾r̾i̾c̾3̾ ̾
-- [x] smeared ink: b҉r҉i҉c҉3҉
-- [x] normalize (NFD, NFKD, NFC, NFKC)
+* [x] unicode _fonts_
+* [x] braille
+* [x] morse
+* [ ] figlet
+* [ ] multline drawing
+* [x] ornaments
+** [x] wrapping chars, e.g. : 【b】【r】【i】【c】【3】, 〖b〗〖r〗〖i〗〖c〗〖3〗, ⧼b⧽⧼r⧽⧼i⧽⧼c⧽⧼3⧽, etc.
+** [x] insert chars, e.g. : b྿r྿i྿c྿3, ፠b፠r፠i፠c፠3, b࿐r࿐i࿐c࿐3, etc.
+* [ ] zalgo: b̼̖̹͉̽̾r͎͔͉͙̽ͭ̈́͛͊i̮̿c̥̦̥̅̈́͐ͮ̚3͎͇ͨ
+* [ ] matrix: b̢̓͂͑ͣ͆̄ͥͦ͞ŕ͗́̌̂̐ͧ͐iͤ̈͏̨͘c̶̍̄́̃̓͋ͫ͌͋3̢͐̈͗ͣ͟
+* [x] styles
+** [x] shadow: b̷r̷i̷c̷3̷
+** [x] sweating: b̾r̾i̾c̾3̾ ̾
+** [x] smeared ink: b҉r҉i҉c҉3҉
+* [x] normalize (NFD, NFKD, NFC, NFKC)
 
 This feature is inspired by this nice https://github.com/DenverCoder1/unicode-formatter[js project]
 (https://git.io/unicode-formatter[demo]).
 
+.Other sources
+* https://en.wikipedia.org/wiki/Braille
+* https://en.wikipedia.org/wiki/Braille_ASCII
+* https://en.wikipedia.org/wiki/Morse_code
+* https://en.wikipedia.org/wiki/Unicode_control_characters (Bidi contorl char in particular)
