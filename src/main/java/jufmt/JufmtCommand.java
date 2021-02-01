@@ -8,6 +8,7 @@ import picocli.CommandLine.Model.CommandSpec;
 import java.lang.Character.UnicodeBlock;
 import java.lang.Character.UnicodeScript;
 import java.text.Normalizer;
+import java.util.EnumSet;
 
 @Command(name = "jufmt",
          header = {
@@ -28,10 +29,11 @@ public class JufmtCommand implements Runnable {
                           "string after normalization, only works with NFD or NFKD")
     boolean stripDiacriticalMarks;
 
-    @Option(names = {"-c", "--charset"},
+    @Option(names = {"-c", "--converter"},
             description = "Charset, valid charsets: ${COMPLETION-CANDIDATES}",
-            paramLabel = "CHARSET")
-    FancyCharsets charset;
+            paramLabel = "CHARSET",
+            defaultValue = "none")
+    FancyConverters converter;
 
     @Option(names = {"-s", "--style"},
             description = "Styles, valid charsets: ${COMPLETION-CANDIDATES}",
@@ -49,7 +51,7 @@ public class JufmtCommand implements Runnable {
 
     @Option(names = {"-d", "--describe"},
             description = "Describe characters, or more precisely codepoints")
-    boolean describeStyle;
+    boolean describe;
 
     @Parameters(description = "The string to process",
                 paramLabel = "STR",
@@ -87,7 +89,7 @@ public class JufmtCommand implements Runnable {
             // - Normalization Form KC (NFKC) : Compatibility Decomposition, followed by Canonical Composition
             //
             // In compatibility mode (K), the length can change,
-            //    because a character can be decomposed for "compability",
+            //    because a character can be decomposed for "compatibility",
             //    e.g. '…' -> '...'
             // In decomposition mode (D), the length can change,
             //    because a character can be decomposed by main char and combining mark,
@@ -95,30 +97,37 @@ public class JufmtCommand implements Runnable {
             // If followed by composition (C), then separated chars are composed back together
             var normalized = Normalizer.normalize(stringToProcess, normalizationForm);
             if (stripDiacriticalMarks) {
+                if (EnumSet.of(Normalizer.Form.NFC, Normalizer.Form.NFKC).contains(normalizationForm)) {
+                    throw new ParameterException(
+                            spec.commandLine(),
+                            "Diacritical mark stripping only works without canonical composition, e.g. only NFD and NFKD");
+                }
                 normalized = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}", "");
             }
 
-            spec.commandLine().getOut().printf(
-                    "input length: %d, output length %d, %s%n",
-                    stringToProcess.codePointCount(0, stringToProcess.length() - 1),
-                    normalized.codePointCount(0, normalized.length() - 1),
-                    normalized
-            );
 
+//            spec.commandLine().getOut().printf(
+//                    "input length: %d, output length %d, %s%n",
+//                    stringToProcess.codePointCount(0, stringToProcess.length() - 1),
+//                    normalized.codePointCount(0, normalized.length() - 1),
+//                    normalized
+//            );
+
+            spec.commandLine().getOut().printf("%s%n", normalized);
             return;
         }
 
-        if (describeStyle) {
+        if (describe) {
             if (stringToProcess != null && !stringToProcess.isBlank()) {
                 stringToProcess.codePoints()
                                .onClose(() -> System.out.println("--------"))
                                .forEach(JufmtCommand::charDetails);
                 return;
             }
-            if (charset != null) {
-                charset.chars.codePoints()
-                             .onClose(() -> System.out.println("--------"))
-                             .forEach(JufmtCommand::charDetails);
+            if (converter != FancyConverters.none) {
+                converter.chars.codePoints()
+                               .onClose(() -> System.out.println("--------"))
+                               .forEach(JufmtCommand::charDetails);
                 return;
             }
         }
@@ -127,16 +136,13 @@ public class JufmtCommand implements Runnable {
             throw new ParameterException(spec.commandLine(), "Expects a non blank STR.");
         }
 
-        var result = charset == null ?
-                     new StringBuilder(stringToProcess) :
-                     stringToProcess.codePoints()
-                                    .map(charset::translateChar)
-                                    .boxed()
-                                    .collect(() -> new StringBuilder(stringToProcess.length()),
-                                             StringBuilder::appendCodePoint,
-                                             StringBuilder::append);
+        var result = converter.convert(stringToProcess)
+                              .collect(() -> new StringBuilder(stringToProcess.length()),
+                                       StringBuilder::appendCodePoint,
+                                       StringBuilder::append);
 
         if (reversed) {
+            // use StringBuilder reverse as it treats surrogate pairs as single character
             result.reverse();
         }
 

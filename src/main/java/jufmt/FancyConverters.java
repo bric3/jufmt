@@ -2,11 +2,18 @@ package jufmt;
 
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
 
-public enum FancyCharsets {
-
+@SuppressWarnings("SpellCheckingInspection")
+public enum FancyConverters {
+    none("", "") {
+        @Override
+        public Stream<Integer> convert(String stringToProcess) {
+            return stringToProcess.codePoints().boxed();
+        }
+    },
 
     normal("bric3", "\"\\ !#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~"),
     sans("𝖻𝗋𝗂𝖼𝟥", "\"\\ !#$%&'()*+,-./𝟢𝟣𝟤𝟥𝟦𝟧𝟨𝟩𝟪𝟫:;<=>?@𝖠𝖡𝖢𝖣𝖤𝖥𝖦𝖧𝖨𝖩𝖪𝖫𝖬𝖭𝖮𝖯𝖰𝖱𝖲𝖳𝖴𝖵𝖶𝖷𝖸𝖹[]^_`𝖺𝖻𝖼𝖽𝖾𝖿𝗀𝗁𝗂𝗃𝗄𝗅𝗆𝗇𝗈𝗉𝗊𝗋𝗌𝗍𝗎𝗏𝗐𝗑𝗒𝗓{|}~"),
@@ -41,15 +48,24 @@ public enum FancyCharsets {
     /**
      * Ascii Braille.
      *
-     * https://en.wikipedia.org/wiki/Braille
-     * https://en.wikipedia.org/wiki/English_Braille
-     * https://en.wikipedia.org/wiki/Russian_Braille
-     * https://en.wikipedia.org/wiki/Braille_ASCII
+     * Braille system is not unique, it is declined in various language to adapt to their unique feature:
+     * <ul>
+     * <li>https://en.wikipedia.org/wiki/Braille</li>
+     * <li>https://en.wikipedia.org/wiki/English_Braille</li>
+     * <li>https://en.wikipedia.org/wiki/Russian_Braille</li>
+     * <li>https://en.wikipedia.org/wiki/Braille_ASCII</li>
+     * </ul>
      *
-     * Note that `, {, |, and } are not used and their Braille ASCII rendition is not defined.
+     * <p>Note that `, {, |, and } are not used and their Braille ASCII rendition is not defined.</p>
+     *
+     * <p><em>Moon type</em> system, is another writing systems for blind people, however it doesn't seem to be much used</p>
      */
     asciiBrailleGrade1("⠃⠗⠊⠉⠒", "⠐⠳ ⠮⠼⠫⠩⠯⠄⠷⠾⠡⠬⠠⠤⠨⠌⠴⠂⠆⠒⠲⠢⠖⠶⠦⠔⠱⠰⠣⠿⠜⠹⠈⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠥⠧⠺⠭⠽⠵⠪⠻⠘⠸ ⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠥⠧⠺⠭⠽⠵    ")
-    //moonType
+
+    // TODO
+    //  - morse
+    //  - hieroglyphs  𓆐𓆏𓄚𓄇𓃻𓃷𓃠     goges from \u13000 to \u1342F
+
     ;
 
     private static final Map<Integer, Integer> codepointIndex;
@@ -71,7 +87,7 @@ public enum FancyCharsets {
     public String chars;
     private final Map<Integer, Integer> indexToCodepoint;
 
-    FancyCharsets(String example, String chars) {
+    FancyConverters(String example, String chars) {
         this.example = example;
         this.chars = chars;
         this.indexToCodepoint = chars.codePoints()
@@ -80,10 +96,16 @@ public enum FancyCharsets {
                                                     Function.identity()));
     }
 
-    public int translateChar(int codepoint) {
+    private int translateChar(int codepoint) {
         var codepointAt = codepointIndex.get(codepoint);
 
         return indexToCodepoint.get(codepointAt);
+    }
+
+    public Stream<Integer> convert(String stringToProcess) {
+        return stringToProcess.codePoints()
+                       .map(this::translateChar)
+                       .boxed();
     }
 
     private static class ToCodepointIndex implements Function<Integer, Integer> {

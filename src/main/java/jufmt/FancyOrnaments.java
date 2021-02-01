@@ -3,6 +3,7 @@ package jufmt;
 import java.util.Arrays;
 import java.util.stream.Collector;
 
+@SuppressWarnings("SpellCheckingInspection")
 public enum FancyOrnaments {
     // wrapping chars, e.g. : 【b】【r】【i】【c】【3】, 〖b〗〖r〗〖i〗〖c〗〖3〗, ⧼b⧽⧼r⧽⧼i⧽⧼c⧽⧼3⧽, etc.
     // insert chars, e.g. : b྿r྿i྿c྿3, ፠b፠r፠i፠c፠3, b࿐r࿐i࿐c࿐3, etc.
@@ -66,6 +67,9 @@ public enum FancyOrnaments {
             return FancyCollectors.wrapCodepoints(length, this.value[0], this.value[1]);
         }
     },
+
+    // TODO ░
+    
 
     wave("࿐b࿐r࿐i࿐c࿐3࿐", "TIBETAN MARK BSKA- SHOG GI MGO RGYAN") {  // ࿐
         @Override
