@@ -68,24 +68,28 @@ public enum FancyOrnaments {
         }
     },
 
-    // TODO ░
-    
-
-    wave("࿐b࿐r࿐i࿐c࿐3࿐", "TIBETAN MARK BSKA- SHOG GI MGO RGYAN") {  // ࿐
+    lightShade("░b░r░i░c░3░", "LIGHT SHADE") {
         @Override
         public Collector<Integer, StringBuilder, StringBuilder> collector(int length) {
             return FancyCollectors.surroundCodepoints(length, this.value);
         }
     },
 
-    tibetanKuRuKhaBzhiMigCan("b྿r྿i྿c྿3", "TIBETAN KU RU KHA BZHI MIG CAN") { // ྿
+    wave("࿐b࿐r࿐i࿐c࿐3࿐", "TIBETAN MARK BSKA- SHOG GI MGO RGYAN") {
+        @Override
+        public Collector<Integer, StringBuilder, StringBuilder> collector(int length) {
+            return FancyCollectors.surroundCodepoints(length, this.value);
+        }
+    },
+
+    tibetanKuRuKhaBzhiMigCan("b྿r྿i྿c྿3", "TIBETAN KU RU KHA BZHI MIG CAN") {
         @Override
         public Collector<Integer, StringBuilder, StringBuilder> collector(int length) {
             return FancyCollectors.betweenCodepoints(length, this.value);
         }
     },
 
-    ethiopicSectionMark("b፠r፠i፠c፠3", "ETHIOPIC SECTION MARK") { // ፠
+    ethiopicSectionMark("b፠r፠i፠c፠3", "ETHIOPIC SECTION MARK") {
         @Override
         public Collector<Integer, StringBuilder, StringBuilder> collector(int length) {
             return FancyCollectors.betweenCodepoints(length, this.value);
