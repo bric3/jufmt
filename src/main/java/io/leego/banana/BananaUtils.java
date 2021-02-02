@@ -233,10 +233,12 @@ public final class BananaUtils {
         List<Integer> codes = Constants.CODES;
         int height = option.getHeight();
         Map<Integer, String[]> figletMap = new HashMap<>(codes.size());
-        String mark = data.get(num).substring(data.get(num).length() - 1);
+        String mark = data.get(num).substring(data.get(num).length() - 1); // detects end mark
         if (isEmpty(mark)) {
             mark = "@";
         }
+
+        // read character data
         for (int i = 0; i < codes.size(); i++) {
             Integer code = codes.get(i);
             if (i * height + num >= data.size()) {
@@ -250,7 +252,7 @@ public final class BananaUtils {
                     figletMap.remove(code);
                     break;
                 }
-                figlet[j] = data.get(row).replace(mark, EMPTY);
+                figlet[j] = data.get(row).replaceAll("[" + mark + "]+$", EMPTY);
             }
         }
         data.clear();
