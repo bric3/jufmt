@@ -6,8 +6,8 @@ import io.leego.banana.Font;
 import picocli.CommandLine;
 import picocli.CommandLine.*;
 import picocli.CommandLine.Model.CommandSpec;
+import picocli.CommandLine.Model.UsageMessageSpec;
 
-import java.io.PrintWriter;
 import java.lang.Character.UnicodeBlock;
 import java.lang.Character.UnicodeScript;
 import java.text.Normalizer;
@@ -67,8 +67,10 @@ public class JufmtCommand implements Runnable {
     CommandSpec spec;
 
     public static void main(String[] args) {
-        new CommandLine(JufmtCommand.class).setCaseInsensitiveEnumValuesAllowed(true)
-                                           .execute(args);
+        var cmd = new CommandLine(JufmtCommand.class).setCaseInsensitiveEnumValuesAllowed(true);
+        cmd.getHelpSectionMap().put(UsageMessageSpec.SECTION_KEY_HEADER,
+                                    help -> BananaUtils.bananaify("jufmt", randomEnum(Font.class)) + "\n\n");
+        cmd.execute(args);
     }
 
     private static void charDetails(int c) {
@@ -192,13 +194,9 @@ public class JufmtCommand implements Runnable {
          * TODO expose layout options
          */
 
-        var out = spec.commandLine()
-                      .getOut();
+        var out = spec.commandLine().getOut();
         if (random) {
-            var fonts = Font.values();
-            out
-                .println(BananaUtils.bananaify(stringToProcess,
-                                               fonts[new Random().nextInt(fonts.length)]));
+            out.println(BananaUtils.bananaify(stringToProcess, randomEnum(Font.class)));
             return;
         }
         if (renderAll) {
@@ -214,5 +212,10 @@ public class JufmtCommand implements Runnable {
 
         var rendered = BananaUtils.bananaify(stringToProcess, font);
         out.println(rendered);
+    }
+
+    public static <T extends Enum<?>> T randomEnum(Class<T> clazz) {
+        var enumConstants = clazz.getEnumConstants();
+        return enumConstants[new Random().nextInt(enumConstants.length)];
     }
 }
