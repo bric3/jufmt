@@ -3,6 +3,7 @@ package jufmt;
 
 import io.leego.banana.BananaUtils;
 import io.leego.banana.Font;
+import jufmt.Zalgo.Position;
 import picocli.CommandLine;
 import picocli.CommandLine.*;
 import picocli.CommandLine.Model.CommandSpec;
@@ -180,8 +181,7 @@ public class JufmtCommand implements Runnable {
                     description = "Render renderAll font"
             ) boolean renderAll,
             @Parameters(description = "The string to process",
-                        paramLabel = "STR",
-                        arity = "0..1"
+                        paramLabel = "STR"
             ) String stringToProcess
     ) {
         /*
@@ -214,6 +214,26 @@ public class JufmtCommand implements Runnable {
 
         var rendered = BananaUtils.bananaify(stringToProcess, font);
         out.println(rendered);
+    }
+
+    @Command(description = "Renders input with Zalgo",
+             mixinStandardHelpOptions = true)
+    void zalgo(
+            @Option(names = {"-l", "--level"},
+                    description = "Zalgo level: ${COMPLETION-CANDIDATES}",
+                    paramLabel = "FONT",
+                    defaultValue = "mini"
+            ) Zalgo.Level level,
+            @Option(names = { "-p", "--position"},
+                    description = "Zalgo positions: ${COMPLETION-CANDIDATES}",
+                    split = ",",
+                    defaultValue = "up,mid,down"
+            ) Position[] positions,
+            @Parameters(description = "The string to process",
+                        paramLabel = "STR"
+            ) String stringToProcess
+    ) {
+        spec.commandLine().getOut().println(Zalgo.zalgo(stringToProcess, level, positions));
     }
 
     public static <T extends Enum<?>> T randomEnum(Class<T> clazz) {

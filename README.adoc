@@ -185,8 +185,7 @@ The tool supports the following charset:
 * [x] ornaments
 ** [x] wrapping chars, e.g. : 【b】【r】【i】【c】【3】, 〖b〗〖r〗〖i〗〖c〗〖3〗, ⧼b⧽⧼r⧽⧼i⧽⧼c⧽⧼3⧽, etc.
 ** [x] insert chars, e.g. : b྿r྿i྿c྿3, ፠b፠r፠i፠c፠3, b࿐r࿐i࿐c࿐3, etc.
-* [ ] zalgo: b̼̖̹͉̽̾r͎͔͉͙̽ͭ̈́͛͊i̮̿c̥̦̥̅̈́͐ͮ̚3͎͇ͨ
-* [ ] matrix: b̢̓͂͑ͣ͆̄ͥͦ͞ŕ͗́̌̂̐ͧ͐iͤ̈͏̨͘c̶̍̄́̃̓͋ͫ͌͋3̢͐̈͗ͣ͟
+* [x] zalgo: b̼̖̹͉̽̾r͎͔͉͙̽ͭ̈́͛͊i̮̿c̥̦̥̅̈́͐ͮ̚3͎͇ͨ
 * [x] styles
 ** [x] shadow: b̷r̷i̷c̷3̷
 ** [x] sweating: b̾r̾i̾c̾3̾ ̾
