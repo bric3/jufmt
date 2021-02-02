@@ -233,10 +233,6 @@ public final class BananaUtils {
         List<Integer> codes = Constants.CODES;
         int height = option.getHeight();
         Map<Integer, String[]> figletMap = new HashMap<>(codes.size());
-        String mark = data.get(num).substring(data.get(num).length() - 1); // detects end mark
-        if (isEmpty(mark)) {
-            mark = "@";
-        }
 
         // read character data
         for (int i = 0; i < codes.size(); i++) {
@@ -252,7 +248,28 @@ public final class BananaUtils {
                     figletMap.remove(code);
                     break;
                 }
-                figlet[j] = data.get(row).replaceAll("[" + mark + "]+$", EMPTY);
+                var charRow = data.get(row);
+
+                // From jfiglet's FigFontReader.readCharacterData
+                // Starts from the line end
+                int charIndex = charRow.length() - 1;
+
+                // Skip over any whitespace characters at the end of the line
+                while (charIndex >= 0 && Character.isWhitespace(charRow.charAt(charIndex))) {
+                    charIndex--;
+                }
+
+                // We've found a non-whitespace character that we will interpret as an
+                // end-character.
+                char endChar = charRow.charAt(charIndex);
+
+                // Skip over any end-characters.
+                while (charIndex >= 0 && charRow.charAt(charIndex) == endChar) {
+                    charIndex--;
+                }
+
+                // We've found the right-hand edge of the actual character data for this line.
+                figlet[j] = charRow.substring(0, charIndex + 1);
             }
         }
         data.clear();
