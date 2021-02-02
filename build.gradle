@@ -2,6 +2,7 @@ plugins {
     id("org.asciidoctor.jvm.convert") version "3.3.0"
     id("com.github.johnrengelman.shadow") version "6.1.0"
     id("io.micronaut.application") version "1.3.2"
+    id("de.undercouch.download") version "4.1.1"
 }
 
 group = "jufmt"
@@ -30,7 +31,7 @@ nativeImage {
             '--native-image-info',
             '--verbose',
             '-H:IncludeResources=java/lang/uniName.dat\$' /* https://github.com/oracle/graal/issues/3133 */,
-            '-H:IncludeResources=banana/fonts/.*.flf\$'
+            '-H:IncludeResources=banana/fonts/.*.[tf]lf\$'
     )
 }
 
@@ -39,8 +40,6 @@ dependencies {
 
     annotationProcessor("info.picocli:picocli-codegen:4.6.1")
     implementation("info.picocli:picocli:4.6.1")
-
-    implementation("io.leego:banana:2.0.0")
 
     runtimeOnly("ch.qos.logback:logback-classic")
 
@@ -63,10 +62,23 @@ java {
     sourceCompatibility = JavaVersion.toVersion("11")
     targetCompatibility = JavaVersion.toVersion("11")
 }
-//
-//compileJava {
-//    options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
-//}
+
+task downloadFigletFonts(type: Download) {
+    src('https://github.com/xero/figlet-fonts/archive/master.zip')
+    dest("$buildDir/xero-figlet-fonts-master.zip")
+}
+
+task downloadAndUnzipFigletFonts(dependsOn: downloadFigletFonts, type: Copy) {
+    from(zipTree(downloadFigletFonts.dest)) {
+        include('**/*.tlf', '**/*.flf')
+        includeEmptyDirs(false)
+        eachFile { FileCopyDetails fcd ->
+            fcd.relativePath = new RelativePath(true, fcd.relativePath.segments.drop(1))
+        }
+    }
+    into("${sourceSets.main.output.resourcesDir}/banana/fonts")
+}
+compileJava.finalizedBy(downloadAndUnzipFigletFonts)
 
 tasks {
 

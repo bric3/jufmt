@@ -172,7 +172,7 @@ public class JufmtCommand implements Runnable {
             @Option(names = {"-f", "--font"},
                     description = "Specify a FIGlet font among: ${COMPLETION-CANDIDATES}",
                     paramLabel = "FONT"
-            ) Font font,
+            ) XeroFonts font,
             @Option(names = {"-r", "--random"},
                     description = "Render with a random font"
             ) boolean random,
@@ -191,16 +191,18 @@ public class JufmtCommand implements Runnable {
          * https://github.com/dtmo/jfiglet (no deps, lots of feature, recent, some fonts included (can load others))
          * https://github.com/yihleego/banana (no deps, lots of feature, recent, many fonts)
          *
+         * https://github.com/vzvz4/jfiglol
+         *
          * TODO expose layout options
          */
 
         var out = spec.commandLine().getOut();
         if (random) {
-            out.println(BananaUtils.bananaify(stringToProcess, randomEnum(Font.class)));
+            out.println(BananaUtils.bananaify(stringToProcess, randomEnum(XeroFonts.class)));
             return;
         }
         if (renderAll) {
-            Arrays.stream(Font.values())
+            Arrays.stream(XeroFonts.values())
                   .forEach(f -> {
                       out.printf("%s:%n", f);
                       out.println();

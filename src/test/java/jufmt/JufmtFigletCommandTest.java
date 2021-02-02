@@ -1,6 +1,5 @@
 package jufmt;
 
-import io.leego.banana.Font;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -40,12 +39,12 @@ public class JufmtFigletCommandTest {
                 .execute("figlet", "-r", "bric3");
 
 
-        assertThat(stringWriter.toString().lines().count()).isGreaterThanOrEqualTo(2);
+        assertThat(stringWriter.toString()).isNotBlank();
     }
 
     @ParameterizedTest
     @MethodSource("figletArguments")
-    void supports_figlet(Font font, String input, String expected) {
+    void supports_figlet(XeroFonts font, String input, String expected) {
         var stringWriter = new StringWriter();
         new CommandLine(new JufmtCommand())
                 .setOut(new PrintWriter(stringWriter))
@@ -58,7 +57,7 @@ public class JufmtFigletCommandTest {
 
     private static Stream<Arguments> figletArguments() {
         return Stream.of(
-                arguments(Font.SUB_ZERO,
+                arguments(XeroFonts.Sub_Zero,
                           "jufmt",
                           "   __     __  __     ______   __    __     ______  \n" +
                           "  /\\ \\   /\\ \\/\\ \\   /\\  ___\\ /\\ \"-./  \\   /\\__  _\\ \n" +
@@ -67,7 +66,7 @@ public class JufmtFigletCommandTest {
                           "\\/_____/   \\/_____/   \\/_/     \\/_/  \\/_/     \\/_/ \n" +
                           "                                                   \n"),
 
-                arguments(Font.LEAN,
+                arguments(XeroFonts.Lean,
                           "jufmt",
                           "                                                          \n" +
                           "        _/                _/_/                    _/      \n" +
@@ -78,7 +77,7 @@ public class JufmtFigletCommandTest {
                           "   _/                                                     \n" +
                           "_/                                                        \n"),
 
-                arguments(Font.ELITE,
+                arguments(XeroFonts.Elite,
                           "jufmt",
                           " ▐▄▄▄▄• ▄▌·▄▄▄• ▌ ▄ ·. ▄▄▄▄▄\n" +
                           "  ·███▪██▌▐▄▄··██ ▐███▪•██  \n" +
@@ -86,11 +85,69 @@ public class JufmtFigletCommandTest {
                           "▐▌▐█▌▐█▄█▌██▌.██ ██▌▐█▌ ▐█▌·\n" +
                           " ▀▀▀• ▀▀▀ ▀▀▀ ▀▀  █▪▀▀▀ ▀▀▀ \n"),
 
-                arguments(Font.CALVIN_S,
+                arguments(XeroFonts.Calvin_S,
                           "jufmt",
                           " ┬┬ ┬┌─┐┌┬┐┌┬┐\n" +
                           " ││ │├┤ │││ │ \n" +
-                          "└┘└─┘└  ┴ ┴ ┴ \n")
+                          "└┘└─┘└  ┴ ┴ ┴ \n"),
+
+                arguments(XeroFonts.Bear,
+                          "jufmt",
+                          "   _     _      _     _      _     _      _     _      _     _   \n" +
+                          "  (c).-.(c)    (c).-.(c)    (c).-.(c)    (c).-.(c)    (c).-.(c)  \n" +
+                          "   / ._. \\      / ._. \\      / ._. \\      / ._. \\      / ._. \\   \n" +
+                          " __\\( Y )/__  __\\( Y )/__  __\\( Y )/__  __\\( Y )/__  __\\( Y )/__ \n" +
+                          "(_.-/'-'\\-._)(_.-/'-'\\-._)(_.-/'-'\\-._)(_.-/'-'\\-._)(_.-/'-'\\-._)\n" +
+                          "   || J ||      || U ||      || F ||      || M ||      || T ||   \n" +
+                          " _.' `-' '._  _.' `-' '._  _.' `-' '._  _.' `-' '._  _.' `-' '._ \n" +
+                          "(.-./`-'\\.-.)(.-./`-'\\.-.)(.-./`-'\\.-.)(.-./`-'\\.-.)(.-./`-'\\.-.)\n" +
+                          " `-'     `-'  `-'     `-'  `-'     `-'  `-'     `-'  `-'     `-' \n"),
+
+                arguments(XeroFonts.smpoison,
+                          "jufmt",
+                          "                                              \n" +
+                          "    @@@ @@@  @@@ @@@@@@@@ @@@@@@@@@@  @@@@@@@ \n" +
+                          "    @@! @@!  @@@ @@!      @@! @@! @@!   @!!   \n" +
+                          "    !!@ @!@  !@! @!!!:!   @!! !!@ @!@   @!!   \n" +
+                          ".  .!!  !!:  !!! !!:      !!:     !!:   !!:   \n" +
+                          "::.::    :.:: :   :        :      :      :    \n" +
+                          "                                              \n"),
+
+                arguments(XeroFonts.future,
+                          "jufmt",
+                          " ┏┓╻ ╻┏━╸┏┳┓╺┳╸\n" +
+                          "  ┃┃ ┃┣╸ ┃┃┃ ┃ \n" +
+                          "┗━┛┗━┛╹  ╹ ╹ ╹ \n"),
+
+                arguments(XeroFonts.pagga,
+                          "jufmt",
+                          "░▀▀█░█░█░█▀▀░█▄█░▀█▀\n" +
+                          "░░░█░█░█░█▀▀░█░█░░█░\n" +
+                          "░▀▀░░▀▀▀░▀░░░▀░▀░░▀░\n"),
+
+                arguments(XeroFonts.bigmono9,
+                          "jufmt",
+                          "                                   \n" +
+                          "                                   \n" +
+                          "    █            ▒██               \n" +
+                          "                 █░            █   \n" +
+                          "                 █             █   \n" +
+                          "  ███   █   █  █████  ██▓█▓  █████ \n" +
+                          "    █   █   █    █    █▒█▒█    █   \n" +
+                          "    █   █   █    █    █ █ █    █   \n" +
+                          "    █   █   █    █    █ █ █    █   \n" +
+                          "    █   █   █    █    █ █ █    █   \n" +
+                          "    █   █▒ ▓█    █    █ █ █    █░  \n" +
+                          "    █   ▒██▒█    █    █ █ █    ▒██ \n" +
+                          "    █                              \n" +
+                          "   ▒█                              \n" +
+                          "  ██▒                              \n"),
+
+                arguments(XeroFonts.rusto,
+                          "jufmt",
+                          "  ┬┬ ┐┬─┐┌┌┐┌┐┐\n" +
+                          "┌ ││ │├─ │││ │ \n" +
+                          "└─┆┆─┘┆  ┘ ┆ ┆ \n")
         );
     }
 }
