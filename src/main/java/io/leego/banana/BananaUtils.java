@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentMap;
 public final class BananaUtils {
     private static final String EMPTY = "";
     private static final String BLANK = " ";
-    private static final ConcurrentMap<Font, Meta> cache = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<FontSpec, Meta> cache = new ConcurrentHashMap<>();
 
     private BananaUtils() {
     }
@@ -60,7 +60,7 @@ public final class BananaUtils {
      * @param font the specified font.
      * @return the FIGlet of the text.
      */
-    public static String bananaify(String text, Font font) {
+    public static String bananaify(String text, FontSpec font) {
         return bananaify(text, font, null, null);
     }
 
@@ -72,7 +72,7 @@ public final class BananaUtils {
      * @param verticalLayout   the vertical layout.
      * @return the FIGlet of the text.
      */
-    public static String bananaify(String text, Font font, Layout horizontalLayout, Layout verticalLayout) {
+    public static String bananaify(String text, FontSpec font, Layout horizontalLayout, Layout verticalLayout) {
         String[] lines = generateFiglet(text, font, horizontalLayout, verticalLayout);
         if (lines == null || lines.length == 0) {
             return EMPTY;
@@ -152,7 +152,7 @@ public final class BananaUtils {
      * @param verticalLayout   the vertical layout.
      * @return the FIGlet of the text.
      */
-    public static String[] generateFiglet(String text, Font font, Layout horizontalLayout, Layout verticalLayout) {
+    public static String[] generateFiglet(String text, FontSpec font, Layout horizontalLayout, Layout verticalLayout) {
         if (text == null) {
             return new String[0];
         }
@@ -173,7 +173,7 @@ public final class BananaUtils {
         return output;
     }
 
-    private static Meta getMeta(Font font) {
+    private static Meta getMeta(FontSpec font) {
         if (font == null) {
             font = Constants.DEFAULT_FONT;
         }
@@ -189,11 +189,11 @@ public final class BananaUtils {
         return null;
     }
 
-    private static Meta buildMeta(Font font) {
+    private static Meta buildMeta(FontSpec font) {
         // Reads file content.
         List<String> data = new ArrayList<>();
         try {
-            String path = Constants.FONT_DIR_PATH + font.getFilename();
+            String path = font.getFilename();
             InputStream inputStream = BananaUtils.class.getClassLoader().getResourceAsStream(path);
             if (inputStream == null) {
                 return null;

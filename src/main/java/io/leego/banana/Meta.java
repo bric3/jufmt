@@ -6,19 +6,19 @@ import java.util.Map;
  * @author Yihleego
  */
 public class Meta {
-    private Font font;
+    private FontSpec font;
     private Option option;
     private Map<Integer, String[]> figletMap;
     private String comment;
 
-    public Meta(Font font, Option option, Map<Integer, String[]> figletMap, String comment) {
+    public Meta(FontSpec font, Option option, Map<Integer, String[]> figletMap, String comment) {
         this.font = font;
         this.option = option;
         this.figletMap = figletMap;
         this.comment = comment;
     }
 
-    public Font getFont() {
+    public FontSpec getFont() {
         return font;
     }
 
