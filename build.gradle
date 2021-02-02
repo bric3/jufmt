@@ -31,7 +31,7 @@ nativeImage {
             '--native-image-info',
             '--verbose',
             '-H:IncludeResources=java/lang/uniName.dat\$' /* https://github.com/oracle/graal/issues/3133 */,
-            '-H:IncludeResources=banana/fonts/.*.flf\$'
+            '-H:IncludeResources=banana/fonts/.*.[tf]lf\$'
     )
 }
 
@@ -40,8 +40,6 @@ dependencies {
 
     annotationProcessor("info.picocli:picocli-codegen:4.6.1")
     implementation("info.picocli:picocli:4.6.1")
-
-//    implementation("io.leego:banana:2.0.0")
 
     runtimeOnly("ch.qos.logback:logback-classic")
 
@@ -72,6 +70,8 @@ task downloadFigletFonts(type: Download) {
 
 task downloadAndUnzipFigletFonts(dependsOn: downloadFigletFonts, type: Copy) {
     from(zipTree(downloadFigletFonts.dest)) {
+        include('**/*.tlf', '**/*.flf')
+        includeEmptyDirs(false)
         eachFile { FileCopyDetails fcd ->
             fcd.relativePath = new RelativePath(true, fcd.relativePath.segments.drop(1))
         }
