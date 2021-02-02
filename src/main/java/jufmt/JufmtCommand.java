@@ -1,14 +1,19 @@
 package jufmt;
 
 
+import io.leego.banana.BananaUtils;
+import io.leego.banana.Font;
 import picocli.CommandLine;
 import picocli.CommandLine.*;
 import picocli.CommandLine.Model.CommandSpec;
 
+import java.io.PrintWriter;
 import java.lang.Character.UnicodeBlock;
 import java.lang.Character.UnicodeScript;
 import java.text.Normalizer;
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Random;
 
 @Command(name = "jufmt",
          header = {
@@ -19,7 +24,7 @@ import java.util.EnumSet;
          mixinStandardHelpOptions = true)
 public class JufmtCommand implements Runnable {
     @Option(names = {"-n", "--normalize"},
-            description = "Normalize inout string using the given strategy, " +
+            description = "Normalize input string using the given strategy, " +
                           "possible forms: ${COMPLETION-CANDIDATES}",
             paramLabel = "FORM")
     Normalizer.Form normalizationForm;
@@ -30,18 +35,18 @@ public class JufmtCommand implements Runnable {
     boolean stripDiacriticalMarks;
 
     @Option(names = {"-c", "--converter"},
-            description = "Charset, valid charsets: ${COMPLETION-CANDIDATES}",
-            paramLabel = "CHARSET",
+            description = "Converter, valid converters: ${COMPLETION-CANDIDATES}",
+            paramLabel = "CONVERTER",
             defaultValue = "none")
     FancyConverters converter;
 
     @Option(names = {"-s", "--style"},
-            description = "Styles, valid charsets: ${COMPLETION-CANDIDATES}",
+            description = "Styles, valid styles: ${COMPLETION-CANDIDATES}",
             paramLabel = "STYLE")
     FancyStyle style;
 
     @Option(names = {"-o", "--ornament"},
-            description = "Ornaments, valid charsets: ${COMPLETION-CANDIDATES}",
+            description = "Ornaments, valid ornaments: ${COMPLETION-CANDIDATES}",
             paramLabel = "ORNAMENT")
     FancyOrnaments ornament;
 
@@ -62,7 +67,8 @@ public class JufmtCommand implements Runnable {
     CommandSpec spec;
 
     public static void main(String[] args) {
-        new CommandLine(JufmtCommand.class).execute(args);
+        new CommandLine(JufmtCommand.class).setCaseInsensitiveEnumValuesAllowed(true)
+                                           .execute(args);
     }
 
     private static void charDetails(int c) {
@@ -156,5 +162,57 @@ public class JufmtCommand implements Runnable {
         }
 
         spec.commandLine().getOut().printf("%s%n", result);
+    }
+
+    @Command(description = "Renders input string as a text banner (FIGlet)",
+             mixinStandardHelpOptions = true)
+    void figlet(
+            @Option(names = {"-f", "--font"},
+                    description = "Specify a FIGlet font among: ${COMPLETION-CANDIDATES}",
+                    paramLabel = "FONT"
+            ) Font font,
+            @Option(names = {"-r", "--random"},
+                    description = "Render with a random font"
+            ) boolean random,
+            @Option(names = {"-a", "--all"},
+                    description = "Render renderAll font"
+            ) boolean renderAll,
+            @Parameters(description = "The string to process",
+                        paramLabel = "STR",
+                        arity = "0..1"
+            ) String stringToProcess
+    ) {
+        /*
+         * https://en.wikipedia.org/wiki/FIGlet
+         * https://github.com/lalyos/jfiglet (old, font non included)
+         * https://github.com/ColOfAbRiX/figlet4s (scala, recent, lots of feature)
+         * https://github.com/dtmo/jfiglet (no deps, lots of feature, recent, some fonts included (can load others))
+         * https://github.com/yihleego/banana (no deps, lots of feature, recent, many fonts)
+         *
+         * TODO expose layout options
+         */
+
+        var out = spec.commandLine()
+                      .getOut();
+        if (random) {
+            var fonts = Font.values();
+            out
+                .println(BananaUtils.bananaify(stringToProcess,
+                                               fonts[new Random().nextInt(fonts.length)]));
+            return;
+        }
+        if (renderAll) {
+            Arrays.stream(Font.values())
+                  .forEach(f -> {
+                      out.printf("%s:%n", f);
+                      out.println();
+                      out.println(BananaUtils.bananaify(stringToProcess, f));
+                      out.println();
+                  });
+            return;
+        }
+
+        var rendered = BananaUtils.bananaify(stringToProcess, font);
+        out.println(rendered);
     }
 }
