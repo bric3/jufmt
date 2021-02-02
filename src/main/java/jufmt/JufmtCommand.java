@@ -191,6 +191,8 @@ public class JufmtCommand implements Runnable {
          * https://github.com/dtmo/jfiglet (no deps, lots of feature, recent, some fonts included (can load others))
          * https://github.com/yihleego/banana (no deps, lots of feature, recent, many fonts)
          *
+         * https://github.com/vzvz4/jfiglol
+         *
          * TODO expose layout options
          */
 
