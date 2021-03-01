@@ -2,7 +2,6 @@ package jufmt;
 
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -44,6 +43,33 @@ public enum FancyConverters {
     greek("BЯIᑕ3", "\"\\ !#$%&'()*+,-./0123456789:;<=>?@ΛBᑕDΣFGΉIJKᒪMПӨPQЯƧƬЦVЩXYZ[]^_`ΛBᑕDΣFGΉIJKᒪMПӨPQЯƧƬЦVЩXYZ{|}~"),
     japanese("乃尺丨匚3", "\"\\ !#$%&'()*+,-./0123456789:;<=>?@卂乃匚ᗪ乇千Ꮆ卄丨ﾌҜㄥ爪几ㄖ卩Ɋ尺丂ㄒㄩᐯ山乂ㄚ乙[]^_`卂乃匚ᗪ乇千Ꮆ卄丨ﾌҜㄥ爪几ㄖ卩Ɋ尺丂ㄒㄩᐯ山乂ㄚ乙{|}~"),
     fauxEthiopian("ጌዪጎር3", "\"\\ !#$%&'()*+,-./0123456789:;<=>?@ልጌርዕቿቻኗዘጎጋጕረጠክዐየዒዪነፕሁሀሠሸሃጊ[]^_`ልጌርዕቿቻኗዘጎጋጕረጠክዐየዒዪነፕሁሀሠሸሃጊ{|}~"),
+    /**
+     * Based on Ogham letters
+     * <p>
+     * See the wikipedia page on the <a href="https://en.wikipedia.org/wiki/Ogham">Ogham alphabet</a>.
+     * These latin letters don't have equivalent ogham letters : c, f, h, q, v, x, y, z
+     * <ul>
+     *     <li><code>c</code> &rArr; <code>ᚙ</code></li>
+     *     <li><code>f</code> &rArr; <code>ᚘ</code></li>
+     *     <li><code>h</code> &rArr; <code>ᚍ</code></li>
+     *     <li><code>q</code> &rArr; <code>ᚊ</code></li>
+     *     <li><code>v</code> &rArr; <code>ᚗ</code></li>
+     *     <li><code>x</code> &rArr; <code>ᚕ</code></li>
+     *     <li><code>y</code> &rArr; <code>ᚖ</code></li>
+     *     <li><code>z</code> &rArr; <code>ᚎ</code></li>
+     * </ul>
+     */
+    ogham("᚛ᚁᚏᚔᚙ3᚜", "\"\\\u1680!#$%&'()*+,-./0123456789:;<=>?@ᚐᚁᚙᚇᚓᚘᚌᚍᚔᚆᚉᚂᚋᚅᚑᚚᚊᚏᚄᚈᚒᚗᚃᚕᚖᚎ[]^_`ᚐᚁᚙᚇᚓᚘᚌᚍᚔᚆᚉᚂᚋᚅᚑᚚᚊᚏᚄᚈᚒᚗᚃᚕᚖᚎ{|}~") {
+        @Override
+        public StringBuilder convert(String stringToProcess) {
+            return stringToProcess.codePoints()
+                                  .map(this::translateChar)
+                                  .boxed()
+                                  .collect(FancyCollectors.toStringBuilder(stringToProcess.length()))
+                                  .insert(0, "᚛")
+                                  .append("᚜");
+        }
+    },
 
     /**
      * Ascii Braille.
@@ -63,7 +89,7 @@ public enum FancyConverters {
     asciiBrailleGrade1("⠃⠗⠊⠉⠒", "⠐⠳ ⠮⠼⠫⠩⠯⠄⠷⠾⠡⠬⠠⠤⠨⠌⠴⠂⠆⠒⠲⠢⠖⠶⠦⠔⠱⠰⠣⠿⠜⠹⠈⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠥⠧⠺⠭⠽⠵⠪⠻⠘⠸ ⠁⠃⠉⠙⠑⠋⠛⠓⠊⠚⠅⠇⠍⠝⠕⠏⠟⠗⠎⠞⠥⠧⠺⠭⠽⠵    "),
 
     // TODO
-    //  - hieroglyphs  𓆐𓆏𓄚𓄇𓃻𓃷𓃠     goges from \u13000 to \u1342F
+    //  - hieroglyphs  𓆐𓆏𓄚𓄇𓃻𓃷𓃠     goes from \u13000 to \u1342F
 
     morse(ITUMorseConverter.example, "") {
         @Override
@@ -101,7 +127,7 @@ public enum FancyConverters {
                                                     Function.identity()));
     }
 
-    private int translateChar(int codepoint) {
+    protected int translateChar(int codepoint) {
         var codepointAt = codepointIndex.get(codepoint);
 
         return indexToCodepoint.get(codepointAt);
