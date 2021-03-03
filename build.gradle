@@ -31,7 +31,11 @@ nativeImage {
             '--native-image-info',
             '--verbose',
             '-H:IncludeResources=java/lang/uniName.dat\$' /* https://github.com/oracle/graal/issues/3133 */,
-            '-H:IncludeResources=banana/fonts/.*.[tf]lf\$'
+            '-H:IncludeResources=banana/fonts/.*.[tf]lf\$',
+            // https://medium.com/graalvm/making-sense-of-native-image-contents-741a688dab4d
+            // https://www.graalvm.org/docs/tools/dashboard/?ojr=dashboard
+            '-H:DashboardDump=jufmt-native-image-dashboard',
+            '-H:+DashboardAll'
     )
 }
 
