@@ -90,6 +90,7 @@ public enum FancyConverters {
 
     // TODO
     //  - hieroglyphs  𓆐𓆏𓄚𓄇𓃻𓃷𓃠     goes from \u13000 to \u1342F
+    //  - cuneiforms  𒐪 𒐫 𒐬 𒁏 𒁐 𒀰 𒀱 𒀲 goes from   \u12000 ot \u123FF, punctuation \u12400 to \u1247F
 
     morse(ITUMorseConverter.example, "") {
         @Override
