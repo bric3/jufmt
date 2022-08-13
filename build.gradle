@@ -2,7 +2,7 @@ plugins {
     id("org.asciidoctor.jvm.convert") version "3.3.2"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("io.micronaut.application") version "1.5.4"
-    id("de.undercouch.download") version "5.1.0"
+    id("de.undercouch.download") version "5.1.1"
 }
 
 group = "jufmt"
