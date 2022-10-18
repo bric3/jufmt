@@ -1,29 +1,28 @@
 plugins {
-    id("application")
+    `application`
     id("org.graalvm.buildtools.native") version "0.9.15"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
     id("com.github.johnrengelman.shadow") version "7.1.2"
-//    id("io.micronaut.application") version "1.5.4"
     id("de.undercouch.download") version "5.3.0"
 }
 
 group = "io.github.bric3.jufmt"
 
-apply from: "gradle/asciidoc.gradle"
+apply(from="gradle/asciidoc.gradle")
 repositories {
     mavenCentral()
 }
 
 graalvmNative {
     metadataRepository {
-        enabled = true
+        enabled.set(true)
     }
     binaries {
-        main {
-            javaLauncher = javaToolchains.launcherFor {
-                languageVersion = JavaLanguageVersion.of(17)
-                vendor = JvmVendorSpec.matching("GraalVM Community")
-            }
+        named("main") {
+            javaLauncher.set(javaToolchains.launcherFor {
+                languageVersion.set(JavaLanguageVersion.of(17))
+                vendor.set(JvmVendorSpec.matching("GraalVM Community"))
+            })
             buildArgs.addAll(
                     // "--no-fallback",
                     "--native-image-info",
@@ -54,36 +53,36 @@ application {
     mainClass.set("jufmt.JufmtCommand")
 }
 
-//jar.enabled(false)
-distTar.enabled(false)
-distZip.enabled(false)
-shadowDistTar.enabled(false)
-shadowDistZip.enabled(false)
-
-java {
-    sourceCompatibility = JavaVersion.toVersion("11")
-    targetCompatibility = JavaVersion.toVersion("11")
-}
-
-task downloadFigletFonts(type: Download) {
-    src('https://github.com/xero/figlet-fonts/archive/master.zip')
-    dest("$buildDir/xero-figlet-fonts-master.zip")
-}
-
-task downloadAndUnzipFigletFonts(dependsOn: downloadFigletFonts, type: Copy) {
-    from(zipTree(downloadFigletFonts.dest)) {
-        include('**/*.tlf', '**/*.flf')
-        includeEmptyDirs(false)
-        eachFile { FileCopyDetails fcd ->
-            fcd.relativePath = new RelativePath(true, fcd.relativePath.segments.drop(1))
-        }
-    }
-    into("${sourceSets.main.output.resourcesDir}/banana/fonts")
-}
-compileJava.finalizedBy(downloadAndUnzipFigletFonts)
-
 tasks {
+    distZip { enabled = false }
+    distTar { enabled = false }
+    shadowDistZip { enabled = false }
+    shadowDistTar { enabled = false }
 
+    val downloadFigletFonts by registering(de.undercouch.gradle.tasks.download.Download::class) {
+        src("https://github.com/xero/figlet-fonts/archive/master.zip")
+        dest("$buildDir/xero-figlet-fonts-master.zip")
+    }
 
+    val downloadAndUnzipFigletFonts by registering(Copy::class) {
+        dependsOn(downloadFigletFonts)
+        from(zipTree(downloadFigletFonts.get().dest)) {
+            include("**/*.tlf", "**/*.flf")
+            includeEmptyDirs = false
+            eachFile {
+                relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())
+            }
+        }
+        into("${sourceSets.main.get().output.resourcesDir}/banana/fonts")
+    }
+
+    named("compileJava") {
+        finalizedBy(downloadAndUnzipFigletFonts)
+    }
+
+    withType<JavaCompile> {
+        options.encoding = "UTF-8"
+        options.release.set(17)
+    }
 }
 
