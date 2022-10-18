@@ -38,7 +38,7 @@ graalvmNative {
 }
 
 dependencies {
-    compileOnly("org.graalvm.nativeimage:svm:22.2.0.1")
+    compileOnly("org.graalvm.nativeimage:svm:22.3.0")
 
     annotationProcessor("info.picocli:picocli-codegen:4.6.3")
     implementation("info.picocli:picocli:4.6.3")
