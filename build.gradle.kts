@@ -8,7 +8,6 @@ plugins {
 
 group = "io.github.bric3.jufmt"
 
-apply(from="gradle/asciidoc.gradle")
 repositories {
     mavenCentral()
 }
@@ -86,3 +85,28 @@ tasks {
     }
 }
 
+asciidoctorj {
+    setVersion("2.5.6")
+    modules {
+        diagram.setVersion("2.2.3")
+    }
+
+    options(mapOf(
+        "doctype" to "book",
+        "ruby" to "erubis"
+    ))
+
+    attributes(mapOf(
+        "sourcedir" to "src/docs/asciidoc",
+        "source-highlighter" to "coderay",
+        "toc" to "left",
+        "idprefix" to "",
+        "idseparator" to "-",
+        "icons" to "font",
+        "setanchors" to "",
+        "listing-caption" to "",
+        "imagesdir" to "images",
+        "project-version" to "$project.version",
+        "revnumber" to "$project.version"
+    ))
+}
