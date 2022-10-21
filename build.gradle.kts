@@ -1,6 +1,6 @@
 plugins {
     `application`
-    id("org.graalvm.buildtools.native") version "0.9.15"
+    id("org.graalvm.buildtools.native") version "0.9.16"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("de.undercouch.download") version "5.3.0"
