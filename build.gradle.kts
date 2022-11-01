@@ -41,7 +41,7 @@ dependencies {
     compileOnly("org.graalvm.nativeimage:svm:22.2.0.1")
 
     annotationProcessor("info.picocli:picocli-codegen:4.6.3")
-    implementation("info.picocli:picocli:4.6.3")
+    implementation("info.picocli:picocli:4.7.0")
 
     testImplementation("org.assertj:assertj-core:3.23.1")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.1")
