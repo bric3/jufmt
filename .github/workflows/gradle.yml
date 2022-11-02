@@ -44,3 +44,13 @@ jobs:
       uses: gradle/gradle-build-action@v2
       with:
         arguments: build
+
+    - name: Build native image
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: nativeCompile
+
+    - name: Produce doc
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: asciidoctor
