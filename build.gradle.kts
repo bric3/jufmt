@@ -1,5 +1,5 @@
 plugins {
-    `application`
+    application
     id("org.graalvm.buildtools.native") version "0.9.16"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
     id("com.github.johnrengelman.shadow") version "7.1.2"
@@ -38,7 +38,7 @@ graalvmNative {
 }
 
 dependencies {
-    compileOnly("org.graalvm.nativeimage:svm:22.2.0.1")
+    compileOnly("org.graalvm.nativeimage:svm:22.3.0")
 
     annotationProcessor("info.picocli:picocli-codegen:4.7.0")
     implementation("info.picocli:picocli:4.7.0")
