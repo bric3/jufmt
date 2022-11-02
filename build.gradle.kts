@@ -1,9 +1,9 @@
 plugins {
     application
-    id("org.graalvm.buildtools.native") version "0.9.16"
-    id("org.asciidoctor.jvm.convert") version "3.3.2"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("de.undercouch.download") version "5.3.0"
+    alias(libs.plugins.asciidoctor)
+    alias(libs.plugins.graalvmBuildtoolsNative)
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.download)
 }
 
 group = "io.github.bric3.jufmt"
@@ -12,6 +12,20 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    compileOnly(libs.graalvm.nativeimage.svm)
+    annotationProcessor(libs.picocli.codegen)
+    implementation(libs.picocli)
+
+    testImplementation(libs.assertj)
+    testImplementation(libs.jupiter.params)
+}
+
+application {
+    mainClass.set("jufmt.JufmtCommand")
+}
+
+val javaVersion = 17
 graalvmNative {
     metadataRepository {
         enabled.set(true)
@@ -19,7 +33,7 @@ graalvmNative {
     binaries {
         named("main") {
             javaLauncher.set(javaToolchains.launcherFor {
-                languageVersion.set(JavaLanguageVersion.of(17))
+                languageVersion.set(JavaLanguageVersion.of(javaVersion))
                 vendor.set(JvmVendorSpec.matching("GraalVM Community"))
             })
             buildArgs.addAll(
@@ -35,21 +49,6 @@ graalvmNative {
             )
         }
     }
-}
-
-dependencies {
-    compileOnly("org.graalvm.nativeimage:svm:22.3.0")
-
-    annotationProcessor("info.picocli:picocli-codegen:4.7.0")
-    implementation("info.picocli:picocli:4.7.0")
-
-    testImplementation("org.assertj:assertj-core:3.23.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.1")
-}
-
-
-application {
-    mainClass.set("jufmt.JufmtCommand")
 }
 
 tasks {
@@ -81,14 +80,14 @@ tasks {
 
     withType<JavaCompile> {
         options.encoding = "UTF-8"
-        options.release.set(17)
+        options.release.set(javaVersion)
     }
 }
 
 asciidoctorj {
-    setVersion("2.5.6")
+    setVersion(libs.versions.asciidoctorj.get())
     modules {
-        diagram.setVersion("2.2.3")
+        diagram.setVersion(libs.versions.asciidoctorjDiagram.get())
     }
 
     options(mapOf(
