@@ -38,7 +38,6 @@ graalvmNative {
             })
             buildArgs.addAll(
                     "--native-image-info",
-                    "-H:IncludeResources=java/lang/uniName.dat\$" /* https://github.com/oracle/graal/issues/3133 */,
                     "-H:IncludeResources=banana/fonts/.*.[tf]lf\$",
                     // https://medium.com/graalvm/making-sense-of-native-image-contents-741a688dab4d
                     // https://www.graalvm.org/docs/tools/dashboard/?ojr=dashboard
