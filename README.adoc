@@ -1,3 +1,4 @@
+// suppress inspection "GrazieInspection" for whole file
 // suppress inspection "SpellCheckingInspection" for whole file
 = Java Unicode Formatter (jufmt)
 
@@ -53,14 +54,14 @@ If using GraalVM, micronaut offers the `nativeImage` task :
 
 [source, shell]
 ----
-$ asdf local java graalvm-21.0.0+java11
+$ asdf local java graalvm-22.3.0+java17
 $ java --version
-openjdk 11.0.10 2021-01-19
-OpenJDK Runtime Environment GraalVM CE 21.0.0 (build 11.0.10+8-jvmci-21.0-b06)
-OpenJDK 64-Bit Server VM GraalVM CE 21.0.0 (build 11.0.10+8-jvmci-21.0-b06, mixed mode, sharing)
-$ ./gradlew nativeImage
+openjdk 17.0.5 2022-10-18
+OpenJDK Runtime Environment GraalVM CE 22.3.0 (build 17.0.5+8-jvmci-22.3-b08)
+OpenJDK 64-Bit Server VM GraalVM CE 22.3.0 (build 17.0.5+8-jvmci-22.3-b08, mixed mode, sharing)
+$ ./gradlew nativeCompile
 ...
-$ build/native-image/jufmt figlet -r bric3
+$ build/native/nativeCompile/jufmt figlet -r bric3
 ___.           .__         ________
 \_ |__ _______ |__|  ____  \_____  \
  | __ \\_  __ \|  |_/ ___\   _(__  <
