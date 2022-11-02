@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly(libs.graalvm.nativeimage.svm)
+    nativeImageCompileOnly(libs.graalvm.nativeimage.svm)
     annotationProcessor(libs.picocli.codegen)
     implementation(libs.picocli)
 
@@ -37,9 +37,7 @@ graalvmNative {
                 vendor.set(JvmVendorSpec.matching("GraalVM Community"))
             })
             buildArgs.addAll(
-                    // "--no-fallback",
                     "--native-image-info",
-                    "--verbose",
                     "-H:IncludeResources=java/lang/uniName.dat\$" /* https://github.com/oracle/graal/issues/3133 */,
                     "-H:IncludeResources=banana/fonts/.*.[tf]lf\$",
                     // https://medium.com/graalvm/making-sense-of-native-image-contents-741a688dab4d
@@ -47,6 +45,8 @@ graalvmNative {
                     "-H:DashboardDump=jufmt-native-image-dashboard",
                     "-H:+DashboardAll"
             )
+            verbose.set(true)
+            debug.set(false) // to play with native debugger in IJ
         }
     }
 }
@@ -60,6 +60,8 @@ tasks {
     val downloadFigletFonts by registering(de.undercouch.gradle.tasks.download.Download::class) {
         src("https://github.com/xero/figlet-fonts/archive/master.zip")
         dest("$buildDir/xero-figlet-fonts-master.zip")
+        onlyIfModified(true)
+        useETag(true) // Use the ETag on GH
     }
 
     val downloadAndUnzipFigletFonts by registering(Copy::class) {
@@ -74,8 +76,12 @@ tasks {
         into("${sourceSets.main.get().output.resourcesDir}/banana/fonts")
     }
 
-    named("compileJava") {
+    compileJava {
         finalizedBy(downloadAndUnzipFigletFonts)
+    }
+
+    jar {
+        dependsOn(downloadAndUnzipFigletFonts)
     }
 
     withType<JavaCompile> {
