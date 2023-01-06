@@ -12,7 +12,7 @@ graalvm-nativeimage-svm = { module = "org.graalvm.nativeimage:svm", version = "2
 picocli = { module = "info.picocli:picocli", version = "4.7.0" }
 picocli-codegen = { module = "info.picocli:picocli-codegen", version = "4.7.0" }
 
-assertj = { module = "org.assertj:assertj-core", version = "3.24.0" }
+assertj = { module = "org.assertj:assertj-core", version = "3.24.1" }
 jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version = "5.9.1" }
 
 
