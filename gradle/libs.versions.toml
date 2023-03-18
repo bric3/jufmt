@@ -23,4 +23,4 @@ jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version = 
 graalvmBuildtoolsNative = { id = "org.graalvm.buildtools.native", version = "0.9.20" }
 asciidoctor = { id = "org.asciidoctor.jvm.convert", version = "3.3.2" }
 shadow = { id = "com.github.johnrengelman.shadow", version = "7.1.2" }
-download = { id = "de.undercouch.download", version = "5.3.1" }
+download = { id = "de.undercouch.download", version = "5.4.0" }
