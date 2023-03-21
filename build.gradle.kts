@@ -60,7 +60,7 @@ tasks {
         src("https://github.com/xero/figlet-fonts/archive/master.zip")
         dest("$buildDir/xero-figlet-fonts-master.zip")
         onlyIfModified(true)
-        useETag(true) // Use the ETag on GH
+        useETag("all") // Use the ETag on GH
     }
 
     val downloadAndUnzipFigletFonts by registering(Copy::class) {
