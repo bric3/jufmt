@@ -75,11 +75,7 @@ tasks {
         into("${sourceSets.main.get().output.resourcesDir}/banana/fonts")
     }
 
-    compileJava {
-        finalizedBy(downloadAndUnzipFigletFonts)
-    }
-
-    jar {
+    processResources {
         dependsOn(downloadAndUnzipFigletFonts)
     }
 
