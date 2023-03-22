@@ -46,6 +46,7 @@ graalvmNative {
                 "-H:+DashboardAll",
 
                 // https://www.graalvm.org/dev/reference-manual/native-image/guides/build-and-run-native-executable-with-jfr/
+                // https://github.com/oracle/graal/blob/master/docs/reference-manual/native-image/JFR.md
                 // Use with `./jufmt {args} -XX:+FlightRecorder -XX:StartFlightRecording="filename=recording.jfr`
                 "--enable-monitoring=jfr",
             )
