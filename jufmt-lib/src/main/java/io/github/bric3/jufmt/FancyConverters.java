@@ -1,4 +1,4 @@
-package jufmt;
+package io.github.bric3.jufmt;
 
 import java.util.Map;
 import java.util.function.Function;

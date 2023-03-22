@@ -1,9 +1,10 @@
-package jufmt;
+package io.github.bric3.jufmt;
 
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Random;
 
+@SuppressWarnings("UnnecessaryUnicodeEscape")
 public class Zalgo {
 
     private static final int[] zalgo_up = {
@@ -53,13 +54,13 @@ public class Zalgo {
                || Arrays.binarySearch(zalgo_down, c) != -1;
     }
 
-    enum Level {
+    public enum Level {
         mini,
         medium,
         maxi
     }
 
-    enum Position {
+    public enum Position {
         up,
         mid,
         down

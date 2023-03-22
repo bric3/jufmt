@@ -3,10 +3,9 @@ plugins {
     alias(libs.plugins.asciidoctor)
     alias(libs.plugins.graalvmBuildtoolsNative)
     alias(libs.plugins.shadow)
-    alias(libs.plugins.download)
 }
 
-group = "io.github.bric3.jufmt"
+group = "io.github.bric3.jufmt.app"
 
 repositories {
     mavenCentral()
@@ -16,13 +15,14 @@ dependencies {
     nativeImageCompileOnly(libs.graalvm.nativeimage.svm)
     annotationProcessor(libs.picocli.codegen)
     implementation(libs.picocli)
+    implementation(projects.jufmtLib)
 
     testImplementation(libs.assertj)
     testImplementation(libs.jupiter.params)
 }
 
 application {
-    mainClass.set("jufmt.JufmtCommand")
+    mainClass.set("io.github.bric3.jufmt.app.JufmtCommand")
 }
 
 val javaVersion = 17
@@ -32,9 +32,10 @@ graalvmNative {
     }
     binaries {
         named("main") {
+            imageName.set("jufmt")
             javaLauncher.set(javaToolchains.launcherFor {
                 languageVersion.set(JavaLanguageVersion.of(javaVersion))
-                vendor.set(JvmVendorSpec.matching("GraalVM Community"))
+                vendor.set(JvmVendorSpec.GRAAL_VM)
             })
             buildArgs.addAll(
                     "--native-image-info",
@@ -55,29 +56,6 @@ tasks {
     distTar { enabled = false }
     shadowDistZip { enabled = false }
     shadowDistTar { enabled = false }
-
-    val downloadFigletFonts by registering(de.undercouch.gradle.tasks.download.Download::class) {
-        src("https://github.com/xero/figlet-fonts/archive/master.zip")
-        dest("$buildDir/xero-figlet-fonts-master.zip")
-        onlyIfModified(true)
-        useETag("all") // Use the ETag on GH
-    }
-
-    val downloadAndUnzipFigletFonts by registering(Copy::class) {
-        dependsOn(downloadFigletFonts)
-        from(zipTree(downloadFigletFonts.get().dest)) {
-            include("**/*.tlf", "**/*.flf")
-            includeEmptyDirs = false
-            eachFile {
-                relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())
-            }
-        }
-        into("${sourceSets.main.get().output.resourcesDir}/banana/fonts")
-    }
-
-    processResources {
-        dependsOn(downloadAndUnzipFigletFonts)
-    }
 
     withType<JavaCompile> {
         options.encoding = "UTF-8"

@@ -1,10 +1,7 @@
-package jufmt;
+package io.github.bric3.jufmt;
 
-import com.sun.jdi.Mirror;
 import io.leego.banana.Constants;
 import io.leego.banana.FontSpec;
-
-import javax.sound.sampled.Line;
 
 public enum XeroFonts implements FontSpec {
     _1_Row("1Row", "1Row.flf"),

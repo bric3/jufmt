@@ -1,9 +1,9 @@
-package jufmt;
+package io.github.bric3.jufmt.app;
 
 
+import io.github.bric3.jufmt.*;
 import io.leego.banana.BananaUtils;
 import io.leego.banana.Font;
-import jufmt.Zalgo.Position;
 import picocli.CommandLine;
 import picocli.CommandLine.*;
 import picocli.CommandLine.Model.CommandSpec;
@@ -228,7 +228,7 @@ public class JufmtCommand implements Runnable {
                     description = "Zalgo positions: ${COMPLETION-CANDIDATES}",
                     split = ",",
                     defaultValue = "up,mid,down"
-            ) Position[] positions,
+            ) Zalgo.Position[] positions,
             @Parameters(description = "The string to process",
                         paramLabel = "STR"
             ) String stringToProcess

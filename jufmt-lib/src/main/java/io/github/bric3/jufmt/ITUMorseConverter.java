@@ -1,10 +1,9 @@
-package jufmt;
+package io.github.bric3.jufmt;
 
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This converter implements basic ITU morse conversion
