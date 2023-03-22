@@ -38,12 +38,16 @@ graalvmNative {
                 vendor.set(JvmVendorSpec.GRAAL_VM)
             })
             buildArgs.addAll(
-                    "--native-image-info",
-                    "-H:IncludeResources=banana/fonts/.*.[tf]lf\$",
-                    // https://medium.com/graalvm/making-sense-of-native-image-contents-741a688dab4d
-                    // https://www.graalvm.org/docs/tools/dashboard/?ojr=dashboard
-                    "-H:DashboardDump=jufmt-native-image-dashboard",
-                    "-H:+DashboardAll"
+                "--native-image-info",
+                "-H:IncludeResources=banana/fonts/.*.[tf]lf\$",
+                // https://medium.com/graalvm/making-sense-of-native-image-contents-741a688dab4d
+                // https://www.graalvm.org/docs/tools/dashboard/?ojr=dashboard
+                "-H:DashboardDump=jufmt-native-image-dashboard",
+                "-H:+DashboardAll",
+
+                // https://www.graalvm.org/dev/reference-manual/native-image/guides/build-and-run-native-executable-with-jfr/
+                // Use with `./jufmt {args} -XX:+FlightRecorder -XX:StartFlightRecording="filename=recording.jfr`
+                "--enable-monitoring=jfr",
             )
             verbose.set(true)
             debug.set(false) // to play with native debugger in IJ
@@ -69,22 +73,26 @@ asciidoctorj {
         diagram.setVersion(libs.versions.asciidoctorjDiagram.get())
     }
 
-    options(mapOf(
-        "doctype" to "book",
-        "ruby" to "erubis"
-    ))
+    options(
+        mapOf(
+            "doctype" to "book",
+            "ruby" to "erubis"
+        )
+    )
 
-    attributes(mapOf(
-        "sourcedir" to "src/docs/asciidoc",
-        "source-highlighter" to "coderay",
-        "toc" to "left",
-        "idprefix" to "",
-        "idseparator" to "-",
-        "icons" to "font",
-        "setanchors" to "",
-        "listing-caption" to "",
-        "imagesdir" to "images",
-        "project-version" to "$project.version",
-        "revnumber" to "$project.version"
-    ))
+    attributes(
+        mapOf(
+            "sourcedir" to "src/docs/asciidoc",
+            "source-highlighter" to "coderay",
+            "toc" to "left",
+            "idprefix" to "",
+            "idseparator" to "-",
+            "icons" to "font",
+            "setanchors" to "",
+            "listing-caption" to "",
+            "imagesdir" to "images",
+            "project-version" to "$project.version",
+            "revnumber" to "$project.version"
+        )
+    )
 }
