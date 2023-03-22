@@ -1,9 +1,9 @@
-package io.leego.banana;
+package io.github.bric3.jufmt.internal.banana;
 
 /**
  * @author Yihleego
  */
-public enum RuleEnum {
+enum RuleEnum {
     VERTICAL_LAYOUT_SMUSH("vLayout", 16384, Layout.SMUSH_U.getCode()),
     VERTICAL_LAYOUT_FITTED("vLayout", 8192, Layout.FITTED.getCode()),
     VERTICAL_5("v5", 4096, 1),

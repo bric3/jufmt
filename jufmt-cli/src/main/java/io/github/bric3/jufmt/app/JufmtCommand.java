@@ -2,8 +2,6 @@ package io.github.bric3.jufmt.app;
 
 
 import io.github.bric3.jufmt.*;
-import io.leego.banana.BananaUtils;
-import io.leego.banana.Font;
 import picocli.CommandLine;
 import picocli.CommandLine.*;
 import picocli.CommandLine.Model.CommandSpec;
@@ -14,7 +12,6 @@ import java.lang.Character.UnicodeScript;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.Random;
 
 @Command(name = "jufmt",
          header = {
@@ -70,7 +67,7 @@ public class JufmtCommand implements Runnable {
     public static void main(String[] args) {
         var cmd = new CommandLine(JufmtCommand.class).setCaseInsensitiveEnumValuesAllowed(true);
         cmd.getHelpSectionMap().put(UsageMessageSpec.SECTION_KEY_HEADER,
-                                    help -> BananaUtils.bananaify("jufmt", randomEnum(Font.class)) + "\n\n");
+                                    help -> Figlet.render("jufmt") + "\n\n");
         cmd.execute(args);
     }
 
@@ -198,7 +195,7 @@ public class JufmtCommand implements Runnable {
 
         var out = spec.commandLine().getOut();
         if (random) {
-            out.println(BananaUtils.bananaify(stringToProcess, randomEnum(XeroFonts.class)));
+            out.println(Figlet.render(stringToProcess));
             return;
         }
         if (renderAll) {
@@ -206,13 +203,13 @@ public class JufmtCommand implements Runnable {
                   .forEach(f -> {
                       out.printf("%s:%n", f);
                       out.println();
-                      out.println(BananaUtils.bananaify(stringToProcess, f));
+                      out.println(Figlet.render(stringToProcess, f));
                       out.println();
                   });
             return;
         }
 
-        var rendered = BananaUtils.bananaify(stringToProcess, font);
+        var rendered = Figlet.render(stringToProcess, font);
         out.println(rendered);
     }
 
@@ -234,10 +231,5 @@ public class JufmtCommand implements Runnable {
             ) String stringToProcess
     ) {
         spec.commandLine().getOut().println(Zalgo.zalgo(stringToProcess, level, positions));
-    }
-
-    public static <T extends Enum<?>> T randomEnum(Class<T> clazz) {
-        var enumConstants = clazz.getEnumConstants();
-        return enumConstants[new Random().nextInt(enumConstants.length)];
     }
 }

@@ -1,4 +1,6 @@
-package io.leego.banana;
+package io.github.bric3.jufmt.internal.banana;
+
+import io.github.bric3.jufmt.Figlet;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,7 +8,7 @@ import java.util.Map;
 /**
  * @author Yihleego
  */
-public enum Font implements FontSpec {
+public enum Font implements Figlet.FontSpec {
     ONE_ROW("1Row", "1Row.flf"),
     THREE_D("3-D", "3-D.flf"),
     THREE_D_ASCII("3D-ASCII", "3D-ASCII.flf"),
@@ -313,7 +315,7 @@ public enum Font implements FontSpec {
         }
     }
 
-    public static FontSpec get(String name) {
+    public static Figlet.FontSpec get(String name) {
         return map.get(name);
     }
 }

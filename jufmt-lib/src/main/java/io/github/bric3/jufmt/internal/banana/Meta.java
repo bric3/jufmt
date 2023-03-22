@@ -1,24 +1,26 @@
-package io.leego.banana;
+package io.github.bric3.jufmt.internal.banana;
+
+import io.github.bric3.jufmt.Figlet;
 
 import java.util.Map;
 
 /**
  * @author Yihleego
  */
-public class Meta {
-    private FontSpec font;
+class Meta {
+    private Figlet.FontSpec font;
     private Option option;
     private Map<Integer, String[]> figletMap;
     private String comment;
 
-    public Meta(FontSpec font, Option option, Map<Integer, String[]> figletMap, String comment) {
+    public Meta(Figlet.FontSpec font, Option option, Map<Integer, String[]> figletMap, String comment) {
         this.font = font;
         this.option = option;
         this.figletMap = figletMap;
         this.comment = comment;
     }
 
-    public FontSpec getFont() {
+    public Figlet.FontSpec getFont() {
         return font;
     }
 

@@ -1,9 +1,9 @@
-package io.leego.banana;
+package io.github.bric3.jufmt.internal.banana;
 
 /**
  * @author Yihleego
  */
-public class Rule {
+class Rule {
     private Layout horizontalLayout;
     private boolean horizontal1;
     private boolean horizontal2;

@@ -1,4 +1,4 @@
-package io.leego.banana;
+package io.github.bric3.jufmt.internal.banana;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,5 +41,4 @@ public final class Constants {
         Collections.addAll(fonts, Font.values());
         return fonts;
     }
-
 }

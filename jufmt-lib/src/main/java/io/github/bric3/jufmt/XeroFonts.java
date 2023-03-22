@@ -1,9 +1,8 @@
 package io.github.bric3.jufmt;
 
-import io.leego.banana.Constants;
-import io.leego.banana.FontSpec;
+import io.github.bric3.jufmt.internal.banana.Constants;
 
-public enum XeroFonts implements FontSpec {
+public enum XeroFonts implements Figlet.FontSpec {
     _1_Row("1Row", "1Row.flf"),
     _3_D("3-D", "3-D.flf"),
     _3d("3d", "3d.flf"),
@@ -393,7 +392,7 @@ public enum XeroFonts implements FontSpec {
     Whimsy("Whimsy", "Whimsy.flf"),
     wideterm("wideterm", "wideterm.tlf"),
     Wow("Wow", "Wow.flf"),
-        ;
+    ;
 
     private final String name;
     private final String filename;

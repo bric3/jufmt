@@ -1,4 +1,4 @@
-package io.leego.banana;
+package io.github.bric3.jufmt.internal.banana;
 
 /**
  * @author Yihleego

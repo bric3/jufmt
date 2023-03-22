@@ -1,9 +1,9 @@
-package io.leego.banana;
+package io.github.bric3.jufmt.internal.banana;
 
 /**
  * @author Yihleego
  */
-public class Option {
+class Option {
     private Integer baseline;
     private Integer codeTagCount;
     private Rule rule;
