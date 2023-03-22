@@ -1,6 +1,8 @@
 package io.github.bric3.jufmt;
 
-import io.github.bric3.jufmt.internal.banana.Constants;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Random;
 
 public enum XeroFonts implements Figlet.FontSpec {
     _1_Row("1Row", "1Row.flf"),
@@ -402,14 +404,18 @@ public enum XeroFonts implements Figlet.FontSpec {
         this.filename = filename;
     }
 
+    public static Figlet.FontSpec random() {
+        var values = values();
+        return values[new Random().nextInt(values.length)];
+    }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return name;
     }
 
     @Override
-    public String getFilename() {
-        return Constants.FONT_DIR_PATH + filename;
+    public @NotNull String getFilename() {
+        return ("banana/fonts/") + filename;
     }
 }

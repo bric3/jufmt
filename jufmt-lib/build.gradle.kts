@@ -11,6 +11,8 @@ repositories {
 }
 
 dependencies {
+    implementation(libs.jetbrains.annotations)
+
     testImplementation(libs.assertj)
     testImplementation(libs.jupiter.params)
 }

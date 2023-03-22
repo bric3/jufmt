@@ -1,4 +1,4 @@
-package io.github.bric3.jufmt.internal.banana;
+package io.github.bric3.jufmt.internal.figlet;
 
 /**
  * @author Yihleego
