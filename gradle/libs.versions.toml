@@ -7,7 +7,7 @@ asciidoctorjDiagram = "2.2.7"
 asciidoctorj = { module = "org.asciidoctor:asciidoctorj", version.ref = "asciidoctorj" }
 asciidoctorj-diagram = { module = "org.asciidoctor:asciidoctorj-diagram", version.ref = "asciidoctorjDiagram" }
 
-graalvm-nativeimage-svm = { module = "org.graalvm.nativeimage:svm", version = "22.3.1" }
+graalvm-nativeimage-svm = { module = "org.graalvm.nativeimage:svm", version = "22.3.2" }
 
 picocli = { module = "info.picocli:picocli", version = "4.7.3" }
 picocli-codegen = { module = "info.picocli:picocli-codegen", version = "4.7.3" }
