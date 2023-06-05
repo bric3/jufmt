@@ -1,5 +1,5 @@
 [versions]
-asciidoctorj = "2.5.9"
+asciidoctorj = "2.5.10"
 asciidoctorjDiagram = "2.2.8"
 
 [libraries]
