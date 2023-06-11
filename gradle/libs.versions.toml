@@ -1,6 +1,6 @@
 [versions]
 asciidoctorj = "2.5.10"
-asciidoctorjDiagram = "2.2.8"
+asciidoctorjDiagram = "2.2.9"
 
 [libraries]
 # Used to help bot retrieve and bump the version of asciidoctor
