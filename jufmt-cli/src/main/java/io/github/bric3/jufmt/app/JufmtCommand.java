@@ -209,7 +209,10 @@ public class JufmtCommand implements Runnable {
             return;
         }
 
-        var rendered = Figlet.render(stringToProcess, font);
+        var rendered = Figlet.render(
+                stringToProcess,
+                font == null ? XeroFonts.random() : font
+        );
         out.println(rendered);
     }
 
