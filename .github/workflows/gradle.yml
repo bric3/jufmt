@@ -68,15 +68,15 @@ jobs:
 
     - name: Rename linux binary
       if: contains(matrix.os, 'ubuntu')
-      run: mv ./whichlicense ./whichlicense-linux-amd64
+      run: mv ./jufmt ./jufmt-linux-amd64
       working-directory: ./jufmt-cli/build/native/nativeCompile
     - name: Rename Windows binary
       if: contains(matrix.os, 'windows')
-      run: mv ./whichlicense.exe ./whichlicense-windows-amd64.exe
+      run: mv ./jufmt.exe ./jufmt-windows-amd64.exe
       working-directory: ./jufmt-cli/build/native/nativeCompile
     - name: Rename macOS binary
       if: contains(matrix.os, 'macos')
-      run: mv ./whichlicense ./whichlicense-darwin-amd64
+      run: mv ./jufmt ./jufmt-darwin-amd64
       working-directory: ./jufmt-cli/build/native/nativeCompile
 
     - name: Upload binary
