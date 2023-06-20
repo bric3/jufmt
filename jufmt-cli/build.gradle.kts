@@ -12,7 +12,6 @@ repositories {
 }
 
 dependencies {
-    nativeImageCompileOnly(libs.graalvm.nativeimage.svm)
     annotationProcessor(libs.picocli.codegen)
     implementation(libs.picocli)
     implementation(projects.jufmtLib)
@@ -25,7 +24,7 @@ application {
     mainClass.set("io.github.bric3.jufmt.app.JufmtCommand")
 }
 
-val javaVersion = 17
+val javaVersion = 20
 graalvmNative {
     metadataRepository {
         enabled.set(true)
@@ -39,19 +38,28 @@ graalvmNative {
             })
             buildArgs.addAll(
                 "--native-image-info",
-                "-H:IncludeResources=banana/fonts/.*.[tf]lf\$",
+                "-H:IncludeResources=banana/fonts/.*.[tf]lf",
+                "-H:Log=registerResource:3",
                 // https://medium.com/graalvm/making-sense-of-native-image-contents-741a688dab4d
                 // https://www.graalvm.org/docs/tools/dashboard/?ojr=dashboard
                 "-H:DashboardDump=jufmt-native-image-dashboard",
                 "-H:+DashboardAll",
 
-                // https://www.graalvm.org/dev/reference-manual/native-image/guides/build-and-run-native-executable-with-jfr/
+                // https://www.graalvm.org/latest/reference-manual/native-image/guides/create-heap-dump/
+                // https://www.graalvm.org/latest/reference-manual/native-image/guides/build-and-run-native-executable-with-jfr/
                 // https://github.com/oracle/graal/blob/master/docs/reference-manual/native-image/JFR.md
                 // Use with `./jufmt {args} -XX:+FlightRecorder -XX:StartFlightRecording="filename=recording.jfr`
-                "--enable-monitoring=jfr",
+                "--enable-monitoring=jfr,heapdump,jvmstat,jmxclient,jmxserver",
+
+                // Not available in GraalVM community edition
+                // "--enable-sbom=cyclonedx",
             )
             verbose.set(true)
             debug.set(false) // to play with native debugger in IJ
+
+            runtimeArgs.addAll(
+                "-XX:StartFlightRecording=filename=recording.jfr"
+            )
         }
     }
 }
