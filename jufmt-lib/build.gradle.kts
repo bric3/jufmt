@@ -66,11 +66,11 @@ tasks {
                 }
             }
         }
-        into("${sourceSets.main.get().output.resourcesDir}/banana/fonts")
+        into("${sourceSets.main.get().output.resourcesDir}/jufmt/figlet-fonts")
     }
 
     val scrapeAolFonts by registering(AolFontScrapper::class) {
-        dest.set("${sourceSets.main.get().output.resourcesDir}/banana/aol-fonts")
+        dest.set("${sourceSets.main.get().output.resourcesDir}/jufmt/aol-fonts")
     }
 
     processResources {

@@ -9,7 +9,7 @@
  *    or {@link io.github.bric3.jufmt.internal.figlet.Ansi}.
  * * Visibility changes.
  * * Removed {@code io.github.bric3.jufmt.internal.banana.Font},
- *   replaced by {@link io.github.bric3.jufmt.XeroFonts}
+ *   replaced by {@link io.github.bric3.jufmt.EmbeddedFigletFonts}
  * * Made BananaUtils an instance rather that static singleton
  * * Split BananaUtils methods to related types, {@code buildMeta}
  *   is now in {@link io.github.bric3.jufmt.internal.figlet.FontMetadata},

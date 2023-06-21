@@ -31,7 +31,7 @@ public class Figlet {
      */
     @NotNull
     public static String render(@NotNull String text) {
-        return render(text, XeroFonts.random());
+        return render(text, EmbeddedFigletFonts.random());
     }
 
     /**

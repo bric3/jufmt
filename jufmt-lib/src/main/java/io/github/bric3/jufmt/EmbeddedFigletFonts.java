@@ -5,7 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Path;
 import java.util.Random;
 
-public enum XeroFonts implements Figlet.FontSpec {
+public enum EmbeddedFigletFonts implements Figlet.FontSpec {
+    // https://github.com/xero/figlet-fonts
     _1_Row("1Row", "1Row.flf"),
     _3_D("3-D", "3-D.flf"),
     _3d("3d", "3d.flf"),
@@ -395,12 +396,20 @@ public enum XeroFonts implements Figlet.FontSpec {
     Whimsy("Whimsy", "Whimsy.flf"),
     wideterm("wideterm", "wideterm.tlf"),
     Wow("Wow", "Wow.flf"),
+
+
+    // https://github.com/thugcrowd/gangshit
+
+    cholo1("cholo1", "cholo1.flf"),
+    gangshit1("gangshit1", "gangshit1.flf"),
+    gangshit2("gangshit2", "gangshit2.flf"),
+    philly("philly", "philly.flf"),
     ;
 
     private final String name;
     private final String filename;
 
-    XeroFonts(String name, String filename) {
+    EmbeddedFigletFonts(String name, String filename) {
         this.name = name;
         this.filename = filename;
     }
@@ -417,6 +426,6 @@ public enum XeroFonts implements Figlet.FontSpec {
 
     @Override
     public @NotNull Path getPath() {
-        return Path.of ("banana/fonts/").resolve(filename);
+        return Path.of ("jufmt/figlet-fonts/").resolve(filename);
     }
 }

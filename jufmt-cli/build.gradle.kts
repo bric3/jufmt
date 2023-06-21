@@ -50,7 +50,7 @@ graalvmNative {
             })
             buildArgs.addAll(
                 "--native-image-info",
-                "-H:IncludeResources=banana/fonts/.*.[tf]lf",
+                "-H:IncludeResources=jufmt/fonts/.*.[tf]lf",
                 "-H:Log=registerResource:3",
                 // https://medium.com/graalvm/making-sense-of-native-image-contents-741a688dab4d
                 // https://www.graalvm.org/docs/tools/dashboard/?ojr=dashboard
@@ -89,6 +89,10 @@ tasks {
 
     withType<JavaExec> {
         javaLauncher.set(javaToolchainLauncher)
+    }
+
+    test {
+        useJUnitPlatform()
     }
 }
 

@@ -7,7 +7,6 @@ import picocli.CommandLine.*;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Model.UsageMessageSpec;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.Character.UnicodeBlock;
 import java.lang.Character.UnicodeScript;
@@ -181,7 +180,7 @@ public class JufmtCommand implements Runnable {
                 description = "Specify a FIGlet font among: ${COMPLETION-CANDIDATES}",
                 paramLabel = "FONT"
         )
-        XeroFonts font;
+        EmbeddedFigletFonts font;
         @Option(names = {"--font-file"},
                 description = "Specify a FIGlet or Toilet font file",
                 paramLabel = "FILE"
@@ -222,7 +221,7 @@ public class JufmtCommand implements Runnable {
             return;
         }
         if (renderAll) {
-            Arrays.stream(XeroFonts.values())
+            Arrays.stream(EmbeddedFigletFonts.values())
                     .forEach(f -> {
                         out.printf("%s:%n", f);
                         out.println();
@@ -234,7 +233,7 @@ public class JufmtCommand implements Runnable {
 
         Figlet.FontSpec font;
         if (figletFont == null) {
-            font = XeroFonts.random();
+            font = EmbeddedFigletFonts.random();
         } else if (figletFont.fontFile != null) {
             try {
                 var fontFile = Path.of(".").toRealPath().resolve(figletFont.fontFile);

@@ -1,6 +1,7 @@
 package io.github.bric3.jufmt.app;
 
-import io.github.bric3.jufmt.XeroFonts;
+import io.github.bric3.jufmt.EmbeddedFigletFonts;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 public class JufmtFigletCommandTest {
 
     @Test
+    @Disabled("No more default font, only random")
     void choose_same_default_font() {
         var stringWriter = new StringWriter();
         new CommandLine(new JufmtCommand())
@@ -45,7 +47,7 @@ public class JufmtFigletCommandTest {
 
     @ParameterizedTest
     @MethodSource("figletArguments")
-    void supports_figlet(XeroFonts font, String input, String expected) {
+    void supports_figlet(EmbeddedFigletFonts font, String input, String expected) {
         var stringWriter = new StringWriter();
         new CommandLine(new JufmtCommand())
                 .setOut(new PrintWriter(stringWriter))
@@ -58,8 +60,8 @@ public class JufmtFigletCommandTest {
 
     private static Stream<Arguments> figletArguments() {
         return Stream.of(
-                arguments(XeroFonts.Sub_Zero,
-                        "io/github/bric3/jufmt",
+                arguments(EmbeddedFigletFonts.Sub_Zero,
+                        "jufmt",
                           "   __     __  __     ______   __    __     ______  \n" +
                           "  /\\ \\   /\\ \\/\\ \\   /\\  ___\\ /\\ \"-./  \\   /\\__  _\\ \n" +
                           " _\\_\\ \\  \\ \\ \\_\\ \\  \\ \\  __\\ \\ \\ \\-./\\ \\  \\/_/\\ \\/ \n" +
@@ -67,8 +69,8 @@ public class JufmtFigletCommandTest {
                           "\\/_____/   \\/_____/   \\/_/     \\/_/  \\/_/     \\/_/ \n" +
                           "                                                   \n"),
 
-                arguments(XeroFonts.Lean,
-                        "io/github/bric3/jufmt",
+                arguments(EmbeddedFigletFonts.Lean,
+                        "jufmt",
                           "                                                          \n" +
                           "        _/                _/_/                    _/      \n" +
                           "           _/    _/    _/      _/_/_/  _/_/    _/_/_/_/   \n" +
@@ -78,22 +80,22 @@ public class JufmtFigletCommandTest {
                           "   _/                                                     \n" +
                           "_/                                                        \n"),
 
-                arguments(XeroFonts.Elite,
-                        "io/github/bric3/jufmt",
+                arguments(EmbeddedFigletFonts.Elite,
+                        "jufmt",
                           " ▐▄▄▄▄• ▄▌·▄▄▄• ▌ ▄ ·. ▄▄▄▄▄\n" +
                           "  ·███▪██▌▐▄▄··██ ▐███▪•██  \n" +
                           "▪▄ ███▌▐█▌██▪ ▐█ ▌▐▌▐█· ▐█.▪\n" +
                           "▐▌▐█▌▐█▄█▌██▌.██ ██▌▐█▌ ▐█▌·\n" +
                           " ▀▀▀• ▀▀▀ ▀▀▀ ▀▀  █▪▀▀▀ ▀▀▀ \n"),
 
-                arguments(XeroFonts.Calvin_S,
-                        "io/github/bric3/jufmt",
+                arguments(EmbeddedFigletFonts.Calvin_S,
+                        "jufmt",
                           " ┬┬ ┬┌─┐┌┬┐┌┬┐\n" +
                           " ││ │├┤ │││ │ \n" +
                           "└┘└─┘└  ┴ ┴ ┴ \n"),
 
-                arguments(XeroFonts.Bear,
-                        "io/github/bric3/jufmt",
+                arguments(EmbeddedFigletFonts.Bear,
+                        "jufmt",
                           "   _     _      _     _      _     _      _     _      _     _   \n" +
                           "  (c).-.(c)    (c).-.(c)    (c).-.(c)    (c).-.(c)    (c).-.(c)  \n" +
                           "   / ._. \\      / ._. \\      / ._. \\      / ._. \\      / ._. \\   \n" +
@@ -104,8 +106,8 @@ public class JufmtFigletCommandTest {
                           "(.-./`-'\\.-.)(.-./`-'\\.-.)(.-./`-'\\.-.)(.-./`-'\\.-.)(.-./`-'\\.-.)\n" +
                           " `-'     `-'  `-'     `-'  `-'     `-'  `-'     `-'  `-'     `-' \n"),
 
-                arguments(XeroFonts.smpoison,
-                        "io/github/bric3/jufmt",
+                arguments(EmbeddedFigletFonts.smpoison,
+                        "jufmt",
                           "                                              \n" +
                           "    @@@ @@@  @@@ @@@@@@@@ @@@@@@@@@@  @@@@@@@ \n" +
                           "    @@! @@!  @@@ @@!      @@! @@! @@!   @!!   \n" +
@@ -114,20 +116,20 @@ public class JufmtFigletCommandTest {
                           "::.::    :.:: :   :        :      :      :    \n" +
                           "                                              \n"),
 
-                arguments(XeroFonts.future,
-                        "io/github/bric3/jufmt",
+                arguments(EmbeddedFigletFonts.future,
+                        "jufmt",
                           " ┏┓╻ ╻┏━╸┏┳┓╺┳╸\n" +
                           "  ┃┃ ┃┣╸ ┃┃┃ ┃ \n" +
                           "┗━┛┗━┛╹  ╹ ╹ ╹ \n"),
 
-                arguments(XeroFonts.pagga,
-                        "io/github/bric3/jufmt",
+                arguments(EmbeddedFigletFonts.pagga,
+                        "jufmt",
                           "░▀▀█░█░█░█▀▀░█▄█░▀█▀\n" +
                           "░░░█░█░█░█▀▀░█░█░░█░\n" +
                           "░▀▀░░▀▀▀░▀░░░▀░▀░░▀░\n"),
 
-                arguments(XeroFonts.bigmono9,
-                        "io/github/bric3/jufmt",
+                arguments(EmbeddedFigletFonts.bigmono9,
+                        "jufmt",
                           "                                   \n" +
                           "                                   \n" +
                           "    █            ▒██               \n" +
@@ -144,8 +146,8 @@ public class JufmtFigletCommandTest {
                           "   ▒█                              \n" +
                           "  ██▒                              \n"),
 
-                arguments(XeroFonts.rusto,
-                        "io/github/bric3/jufmt",
+                arguments(EmbeddedFigletFonts.rusto,
+                        "jufmt",
                           "  ┬┬ ┐┬─┐┌┌┐┌┐┐\n" +
                           "┌ ││ │├─ │││ │ \n" +
                           "└─┆┆─┘┆  ┘ ┆ ┆ \n")
