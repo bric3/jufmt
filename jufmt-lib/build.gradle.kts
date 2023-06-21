@@ -1,6 +1,19 @@
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
+import java.net.URI
+import java.net.URL
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
+
 plugins {
     `java-library`
     alias(libs.plugins.download)
+}
+
+buildscript {
+    dependencies {
+        classpath(libs.jsoup)
+    }
 }
 
 group = "io.github.bric3.jufmt"
@@ -56,8 +69,15 @@ tasks {
         into("${sourceSets.main.get().output.resourcesDir}/banana/fonts")
     }
 
+    val scrapeAolFonts by registering(AolFontScrapper::class) {
+        dest.set("${sourceSets.main.get().output.resourcesDir}/banana/aol-fonts")
+    }
+
     processResources {
-        dependsOn(downloadAndUnzipFigletFonts)
+        dependsOn(
+            downloadAndUnzipFigletFonts,
+            scrapeAolFonts
+        )
     }
 }
 
@@ -83,3 +103,57 @@ fun <C : PolymorphicDomainObjectContainer<Task>> C.registeringDownload(
         onlyIfModified(true)
         useETag("all") // Use the ETag on GH
     }
+
+
+abstract class AolFontScrapper @Inject constructor(
+    private val project: Project,
+) : DefaultTask() {
+    @get:OutputDirectory
+    abstract val dest: Property<String>
+
+    @TaskAction
+    fun scrape() {
+        val aolFontFileNames = Jsoup.connect("https://patorjk.com/software/taag/").get()
+            .body()
+            // <select id="fontList">
+            .select("select[id=fontList]")
+            // <option value="Abraxis-Big.aol">Abraxis-Big</option><
+            .select("option")
+            .map { it.attr("value") }
+            .filter { it.endsWith(".aol") }
+            .toList()
+
+        project.download.run {
+            src(aolFontFileNames.map { "https://patorjk.com/software/taag/fonts/${it}".encodeURI() })
+            dest("${project.buildDir}/aol-fonts")
+            compress(true)
+            tempAndMove(true)
+            onlyIfNewer(true)
+            onlyIfModified(true)
+        }
+
+        project.copy {
+            from("${project.buildDir}/aol-fonts") {
+                include("*.aol")
+            }
+            rename { fileName ->
+                // poor man URI decoding of file names
+                // https://github.com/michel-kraemer/gradle-download-task/issues/337
+                fileName.replace("%20", " ")
+            }
+            into(dest)
+        }
+    }
+
+    private fun String.encodeURI() = URL(this).let {
+        URI(
+            it.protocol,
+            it.userInfo,
+            it.host,
+            it.port,
+            it.path,
+            it.query,
+            it.ref
+        ).toASCIIString()
+    }
+}
