@@ -35,20 +35,26 @@ tasks {
         useJUnitPlatform()
     }
 
-    val downloadFigletFonts by registering(de.undercouch.gradle.tasks.download.Download::class) {
-        src("https://github.com/xero/figlet-fonts/archive/master.zip")
-        dest("$buildDir/xero-figlet-fonts-master.zip")
-        onlyIfModified(true)
-        useETag("all") // Use the ETag on GH
+    val downloadXeroFigletFonts by registering(DownloadGHMaster::class) {
+        sourceUrl.set("https://github.com/xero/figlet-fonts")
+    }
+    val downloadGangshitFigletFonts by registering(DownloadGHMaster::class) {
+        sourceUrl.set("https://github.com/thugcrowd/gangshit")
     }
 
     val downloadAndUnzipFigletFonts by registering(Copy::class) {
-        dependsOn(downloadFigletFonts)
-        from(zipTree(downloadFigletFonts.get().dest)) {
-            include("**/*.tlf", "**/*.flf")
-            includeEmptyDirs = false
-            eachFile {
-                relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())
+        dependsOn(
+            downloadXeroFigletFonts,
+            downloadGangshitFigletFonts,
+        )
+
+        dependsOn.filterIsInstance<TaskProvider<DownloadGHMaster>>().forEach {
+            from(zipTree(it.get().dest)) {
+                include("**/*.tlf", "**/*.flf")
+                includeEmptyDirs = false
+                eachFile {
+                    relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())
+                }
             }
         }
         into("${sourceSets.main.get().output.resourcesDir}/banana/fonts")
@@ -56,5 +62,36 @@ tasks {
 
     processResources {
         dependsOn(downloadAndUnzipFigletFonts)
+    }
+}
+
+@Suppress("LeakingThis")
+abstract class DownloadGHMaster @Inject constructor(project: Project) : de.undercouch.gradle.tasks.download.Download() {
+    @get:Input
+    abstract val sourceUrl: Property<String>
+
+    init {
+        this.description = "Download github repo archive"
+
+        val repoArchiveUrl =
+            sourceUrl.map {
+                when {
+                    it.endsWith("archive/master.zip") -> it
+                    else -> "${it.removeSuffix("/")}/archive/master.zip"
+                }
+            }
+
+        val repoArchiveFile =
+            sourceUrl.map {
+                val repo = it.removePrefix("https://github.com/")
+                    .removeSuffix("/archive/master.zip")
+                    .replace("/", "-")
+                "${project.buildDir}/$repo-figlet-fonts-master.zip"
+            }
+
+        src(repoArchiveUrl)
+        dest(repoArchiveFile)
+        onlyIfModified(true)
+        useETag("all") // Use the ETag on GH
     }
 }

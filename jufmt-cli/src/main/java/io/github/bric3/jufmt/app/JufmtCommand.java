@@ -17,13 +17,21 @@ import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.EnumSet;
 
-@Command(name = "jufmt",
+@Command(
+        name = "jufmt",
         header = {
                 "░░▒█░█▒█▒█▀░█▄▒▄█░▀█▀",
                 "░▀▄█░▀▄█░█▀░█▒▀▒█░▒█▒",
         },
         description = "Format input latin string with fancy unicode chars",
-        mixinStandardHelpOptions = true)
+        footer = {
+                "",
+                "Fonts are provided by:",
+                " - https://github.com/xero/figlet-fonts",
+                " - https://github.com/thugcrowd/gangshit",
+        },
+        mixinStandardHelpOptions = true
+)
 public class JufmtCommand implements Runnable {
     @Option(names = {"-n", "--normalize"},
             description = "Normalize input string using the given strategy, " +
