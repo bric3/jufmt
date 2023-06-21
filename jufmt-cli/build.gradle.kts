@@ -25,6 +25,18 @@ application {
 }
 
 val javaVersion = 20
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(javaVersion))
+        // Note this one doesn't enforce graalvm
+    }
+}
+
+// Workaround for https://github.com/gradle/gradle/issues/18426
+val javaToolchainLauncher = javaToolchains.launcherFor(java.toolchain)
+val javaToolchainCompiler = javaToolchains.compilerFor(java.toolchain)
+
 graalvmNative {
     metadataRepository {
         enabled.set(true)
@@ -73,6 +85,10 @@ tasks {
     withType<JavaCompile> {
         options.encoding = "UTF-8"
         options.release.set(javaVersion)
+    }
+
+    withType<JavaExec> {
+        javaLauncher.set(javaToolchainLauncher)
     }
 }
 
