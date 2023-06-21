@@ -2,6 +2,7 @@ package io.github.bric3.jufmt;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.Path;
 import java.util.Random;
 
 public enum XeroFonts implements Figlet.FontSpec {
@@ -415,7 +416,7 @@ public enum XeroFonts implements Figlet.FontSpec {
     }
 
     @Override
-    public @NotNull String getFilename() {
-        return ("banana/fonts/") + filename;
+    public @NotNull Path getPath() {
+        return Path.of ("banana/fonts/").resolve(filename);
     }
 }

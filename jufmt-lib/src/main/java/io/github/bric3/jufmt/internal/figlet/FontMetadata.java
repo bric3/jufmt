@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -109,9 +110,11 @@ class FontMetadata {
     @NotNull
     private static List<String> readFileContent(@NotNull Figlet.FontSpec font) {
         var data = new ArrayList<String>();
-        var path = font.getFilename();
+        var path = font.getPath();
 
-        try (var resourceStream = FigletRenderer.class.getClassLoader().getResourceAsStream(path);
+        try (var resourceStream = path.isAbsolute() ?
+                Files.newInputStream(path) :
+                FigletRenderer.class.getClassLoader().getResourceAsStream(path.toString());
              var inputStream = IOUtils.unwrapZippedFontIfNecessary(resourceStream)) {
             var bufferedReader = new BufferedReader(new InputStreamReader(inputStream, font.getCharset()));
             String line;

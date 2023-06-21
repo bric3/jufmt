@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 
 public class Figlet {
     private static final FigletRenderer renderer = new FigletRenderer();
@@ -58,7 +59,7 @@ public class Figlet {
         String getName();
 
         @NotNull
-        String getFilename();
+        Path getPath();
 
         @NotNull
         default Charset getCharset() {
@@ -67,7 +68,7 @@ public class Figlet {
 
         ;
 
-        static FontSpec of(@NotNull String name, @NotNull String filename) {
+        static FontSpec of(@NotNull String name, @NotNull Path filename) {
             return new FontSpec() {
                 @NotNull
                 @Override
@@ -77,7 +78,7 @@ public class Figlet {
 
                 @NotNull
                 @Override
-                public String getFilename() {
+                public Path getPath() {
                     return filename;
                 }
             };

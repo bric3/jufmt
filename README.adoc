@@ -1,3 +1,4 @@
+
 // suppress inspection "GrazieInspection" for whole file
 // suppress inspection "SpellCheckingInspection" for whole file
 = Java Unicode Formatter (jufmt)
@@ -24,7 +25,7 @@ Format input latin string with fancy unicode chars
                               squared, squaredNegative, parenthesized,
                               smallCaps, subscript, superscript, inverted,
                               mirrored, rounded, greek, japanese,
-                              fauxEthiopian, asciiBrailleGrade1, morse
+                              fauxEthiopian, ogham, asciiBrailleGrade1, morse
   -d, --describe            Describe characters, or more precisely codepoints
   -h, --help                Show this help message and exit.
   -n, --normalize=FORM      Normalize input string using the given strategy,
@@ -48,6 +49,7 @@ Format input latin string with fancy unicode chars
   -V, --version             Print version information and exit.
 Commands:
   figlet  Renders input string as a text banner (FIGlet)
+  zalgo   Renders input with Zalgo
 ----
 
 If using GraalVM, micronaut offers the `nativeImage` task :
