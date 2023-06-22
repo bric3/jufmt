@@ -50,7 +50,7 @@ graalvmNative {
             })
             buildArgs.addAll(
                 "--native-image-info",
-                "-H:IncludeResources=jufmt/figlet-fonts/.*.[tf]lf",
+                // Log resources
                 "-H:Log=registerResource:3",
                 // https://medium.com/graalvm/making-sense-of-native-image-contents-741a688dab4d
                 // https://www.graalvm.org/docs/tools/dashboard/?ojr=dashboard
