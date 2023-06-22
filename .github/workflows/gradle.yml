@@ -77,11 +77,13 @@ jobs:
       with:
         arguments: nativeCompile
 
+    - name: Run native image
+      run: ./jufmt-cli/build/native/nativeCompile/jufmt --help
+
     - name: Produce doc
       uses: gradle/gradle-build-action@v2
       with:
         arguments: asciidoctor
-
 
     - name: Rename linux binary
       if: contains(matrix.os, 'ubuntu')
@@ -100,7 +102,9 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: jufmt-${{ github.sha }}
-        path: ./jufmt-cli/build/native/nativeCompile/jufmt*
+        path: |
+          ./jufmt-cli/build/native/nativeCompile/jufmt*
+          !./jufmt-cli/build/native/nativeCompile/jufmt*.bgv
         if-no-files-found: error
         retention-days: 1
 
