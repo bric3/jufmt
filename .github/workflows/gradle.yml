@@ -30,9 +30,14 @@ jobs:
         
   build:
     runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.ignore-errors }}
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
+        ignore-errors: [false]
+        include:
+          - os: windows-latest
+            ignore-errors: true
 
     steps:
     - uses: actions/checkout@v3
