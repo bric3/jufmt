@@ -17,7 +17,7 @@ dependencies {
     implementation(projects.jufmtLib)
 
     testImplementation(libs.assertj)
-    testImplementation(libs.jupiter.params)
+    testImplementation(libs.bundles.junit.jupiter)
 }
 
 application {

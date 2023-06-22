@@ -1,24 +1,29 @@
 [versions]
 asciidoctorj = "2.5.10"
 asciidoctorjDiagram = "2.2.9"
+junit-jupiter = "5.9.3"
+assertj = "3.24.2"
+picocli = "4.7.4"
 
 [libraries]
 # Used to help bot retrieve and bump the version of asciidoctor
 asciidoctorj = { module = "org.asciidoctor:asciidoctorj", version.ref = "asciidoctorj" }
 asciidoctorj-diagram = { module = "org.asciidoctor:asciidoctorj-diagram", version.ref = "asciidoctorjDiagram" }
 
-picocli = { module = "info.picocli:picocli", version = "4.7.4" }
-picocli-codegen = { module = "info.picocli:picocli-codegen", version = "4.7.4" }
+picocli = { module = "info.picocli:picocli", version.ref = "picocli" }
+picocli-codegen = { module = "info.picocli:picocli-codegen", version.ref = "picocli" }
 
-assertj = { module = "org.assertj:assertj-core", version = "3.24.2" }
-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version = "5.9.3" }
+assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit-jupiter" }
+junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit-jupiter" }
 
 jetbrains-annotations = { module = "org.jetbrains:annotations", version = "24.0.1" }
 
 jsoup = { module = "org.jsoup:jsoup", version = "1.16.1" }
 
 [bundles]
-
+junit-jupiter = [ "junit-jupiter-api", "junit-jupiter-engine", "junit-jupiter-params"]
 
 [plugins]
 graalvmBuildtoolsNative = { id = "org.graalvm.buildtools.native", version = "0.9.23" }

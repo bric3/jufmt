@@ -2,6 +2,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.net.URI
 import java.net.URL
+import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -27,7 +28,7 @@ dependencies {
     implementation(libs.jetbrains.annotations)
 
     testImplementation(libs.assertj)
-    testImplementation(libs.jupiter.params)
+    testImplementation(libs.bundles.junit.jupiter)
 }
 
 val javaVersion = 11
@@ -81,13 +82,7 @@ tasks {
     }
 }
 
-fun <C : PolymorphicDomainObjectContainer<Task>> C.registeringDownload(
-    src: String,
-): RegisteringDomainObjectDelegateProviderWithTypeAndAction<out C, de.undercouch.gradle.tasks.download.Download> =
-    RegisteringDomainObjectDelegateProviderWithTypeAndAction.of(
-        this,
-        de.undercouch.gradle.tasks.download.Download::class
-    ) {
+fun TaskContainer.registeringDownload(src: String) = registering(de.undercouch.gradle.tasks.download.Download::class) {
         src(
             when {
                 src.endsWith("archive/master.zip") -> src
@@ -126,6 +121,9 @@ abstract class AolFontScrapper @Inject constructor(
         project.download.run {
             src(aolFontFileNames.map { "https://patorjk.com/software/taag/fonts/${it}".encodeURI() })
             dest("${project.buildDir}/aol-fonts")
+            eachFile {
+                name = URLDecoder.decode(name, StandardCharsets.UTF_8)
+            }
             compress(true)
             tempAndMove(true)
             onlyIfNewer(true)
@@ -135,11 +133,6 @@ abstract class AolFontScrapper @Inject constructor(
         project.copy {
             from("${project.buildDir}/aol-fonts") {
                 include("*.aol")
-            }
-            rename { fileName ->
-                // poor man URI decoding of file names
-                // https://github.com/michel-kraemer/gradle-download-task/issues/337
-                fileName.replace("%20", " ")
             }
             into(dest)
         }
