@@ -1,9 +1,16 @@
+/*
+ * jufmt
+ *
+ * Copyright (c) 2023, today - Brice DUTHEIL
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
 import java.net.URI
 import java.net.URL
 import java.net.URLDecoder
-import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 plugins {
@@ -43,6 +50,12 @@ tasks {
     withType<JavaCompile> {
         options.encoding = "UTF-8"
         options.release.set(javaVersion)
+    }
+
+    jar {
+        from("${rootDir}/LICENSE") {
+            rename { "${it}_${base.archivesName}" }
+        }
     }
 
     test {

@@ -1,7 +1,9 @@
-
 // suppress inspection "GrazieInspection" for whole file
 // suppress inspection "SpellCheckingInspection" for whole file
 = Java Unicode Formatter (jufmt)
+
+image:https://github.com/bric3/jufmt/actions/workflows/gradle.yml/badge.svg["Build", link="https://github.com/bric3/jufmt/actions/workflows/gradle.yml"]
+image:https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg["License: MPL 2.0", link="https://opensource.org/licenses/MPL-2.0"]
 
 Simple Java and GraalVM toy to play with unicode formatting.
 
@@ -120,6 +122,9 @@ The tool supports the following charset:
 | Short Strikethrough | S̵h̵o̵r̵t̵ ̵S̵t̵r̵i̵k̵e̵t̵h̵r̵o̵u̵g̵h̵
 |===
 
+
+== TODO
+
 .TODO
 * [x] unicode _fonts_
 * [x] braille
@@ -203,3 +208,22 @@ This feature is inspired by this nice https://github.com/DenverCoder1/unicode-fo
 * https://en.wikipedia.org/wiki/Braille_ASCII
 * https://en.wikipedia.org/wiki/Morse_code
 * https://en.wikipedia.org/wiki/Unicode_control_characters (Bidi contorl char in particular)
+
+== License
+
+* This project
+
+> jufmt
+>
+> Copyright (c) 2020, today - Brice DUTHEIL
+>
+> This Source Code Form is subject to the terms of the Mozilla Public
+> License, v. 2.0. If a copy of the MPL was not distributed with this
+> file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+* In order to render figlet font this project uses a fork of https://github.com/yihleego/banana[yihleego/banana], tat is licensed under Apache License 2.0.
+
+* Fonts comes from
+** https://github.com/xero/figlet-fonts[xero/figlet-fonts] (unknown license)
+** https://github.com/thugcrowd/gangshit[thugcrowd/gangshit] (unknown license)
+** https://patorjk.com/software/taag/[Patrick Gillespie's Text ASCII Art Generator] (unknown license)

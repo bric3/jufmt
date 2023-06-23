@@ -1,3 +1,11 @@
+# jufmt
+#
+# Copyright (c) 2023, today - Brice DUTHEIL
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
 [versions]
 asciidoctorj = "2.5.10"
 asciidoctorjDiagram = "2.2.9"
@@ -30,3 +38,4 @@ graalvmBuildtoolsNative = { id = "org.graalvm.buildtools.native", version = "0.9
 asciidoctor = { id = "org.asciidoctor.jvm.convert", version = "3.3.2" }
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
 download = { id = "de.undercouch.download", version = "5.4.0" }
+quilt-licenser = { id = "org.quiltmc.gradle.licenser", version = "2.0.1" }
