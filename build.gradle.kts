@@ -18,10 +18,8 @@ allprojects {
         rule(file("${rootDir}/HEADER"))
         include(
             "**/*.java",
-            "**/*.properties",
-            "**/*.yaml",
             "**/*.kt",
-            "*.kts",
+            "**/*.kts",
         )
         exclude("**/internal/figlet/**")
     }
