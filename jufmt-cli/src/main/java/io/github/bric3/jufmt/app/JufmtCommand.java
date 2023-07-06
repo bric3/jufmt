@@ -29,57 +29,78 @@ import java.util.EnumSet;
 @Command(
         name = "jufmt",
         header = {
-                "░░▒█░█▒█▒█▀░█▄▒▄█░▀█▀",
-                "░▀▄█░▀▄█░█▀░█▒▀▒█░▒█▒",
+                """
+                ░░▒█░█▒█▒█▀░█▄▒▄█░▀█▀
+                ░▀▄█░▀▄█░█▀░█▒▀▒█░▒█▒
+                """,
         },
         description = "Format input latin string with fancy unicode chars",
         footer = {
-                "",
-                "Fonts are provided by:",
-                " - https://github.com/xero/figlet-fonts",
-                " - https://github.com/thugcrowd/gangshit",
+                """
+                                
+                Fonts are provided by:                             ╱|、
+                 - https://github.com/xero/figlet-fonts          (˚ˎ 。7
+                 - https://github.com/thugcrowd/gangshit          |、˜〵
+                                                                  じしˍ,)ノ
+                """,
         },
         mixinStandardHelpOptions = true
 )
 public class JufmtCommand implements Runnable {
-    @Option(names = {"-n", "--normalize"},
+    @Option(
+            names = {"-n", "--normalize"},
             description = "Normalize input string using the given strategy, " +
-                    "possible forms: ${COMPLETION-CANDIDATES}",
-            paramLabel = "FORM")
+                          "possible forms: ${COMPLETION-CANDIDATES}",
+            paramLabel = "FORM"
+    )
     Normalizer.Form normalizationForm;
 
-    @Option(names = {"--strip-diacritic-marks"},
+    @Option(
+            names = {"--strip-diacritic-marks"},
             description = "Strips the combining diacritical marks from the " +
-                    "string after normalization, only works with NFD or NFKD")
+                          "string after normalization, only works with NFD or NFKD"
+    )
     boolean stripDiacriticalMarks;
 
-    @Option(names = {"-c", "--converter"},
+    @Option(
+            names = {"-c", "--converter"},
             description = "Converter, valid converters: ${COMPLETION-CANDIDATES}",
             paramLabel = "CONVERTER",
-            defaultValue = "none")
+            defaultValue = "none"
+    )
     FancyConverters converter;
 
-    @Option(names = {"-s", "--style"},
+    @Option(
+            names = {"-s", "--style"},
             description = "Styles, valid styles: ${COMPLETION-CANDIDATES}",
-            paramLabel = "STYLE")
+            paramLabel = "STYLE"
+    )
     FancyStyle style;
 
-    @Option(names = {"-o", "--ornament"},
+    @Option(
+            names = {"-o", "--ornament"},
             description = "Ornaments, valid ornaments: ${COMPLETION-CANDIDATES}",
-            paramLabel = "ORNAMENT")
+            paramLabel = "ORNAMENT"
+    )
     FancyOrnaments ornament;
 
-    @Option(names = {"-r", "--reversed"},
-            description = "Reverse string")
+    @Option(
+            names = {"-r", "--reversed"},
+            description = "Reverse string"
+    )
     boolean reversed;
 
-    @Option(names = {"-d", "--describe"},
-            description = "Describe characters, or more precisely codepoints")
+    @Option(
+            names = {"-d", "--describe"},
+            description = "Describe characters, or more precisely codepoints"
+    )
     boolean describe;
 
-    @Parameters(description = "The string to process",
+    @Parameters(
+            description = "The string to process",
             paramLabel = "STR",
-            arity = "0..1")
+            arity = "0..1"
+    )
     String stringToProcess;
 
     @Spec
@@ -87,8 +108,10 @@ public class JufmtCommand implements Runnable {
 
     public static void main(String[] args) {
         var cmd = new CommandLine(JufmtCommand.class).setCaseInsensitiveEnumValuesAllowed(true);
-        cmd.getHelpSectionMap().put(UsageMessageSpec.SECTION_KEY_HEADER,
-                help -> Figlet.render("jufmt") + "\n\n");
+        cmd.getHelpSectionMap().put(
+                UsageMessageSpec.SECTION_KEY_HEADER,
+                help -> Figlet.render("jufmt") + "\n\n"
+        );
         cmd.execute(args);
     }
 
@@ -147,14 +170,14 @@ public class JufmtCommand implements Runnable {
         if (describe) {
             if (stringToProcess != null && !stringToProcess.isBlank()) {
                 stringToProcess.codePoints()
-                        .onClose(() -> System.out.println("--------"))
-                        .forEach(JufmtCommand::charDetails);
+                               .onClose(() -> System.out.println("--------"))
+                               .forEach(JufmtCommand::charDetails);
                 return;
             }
             if (converter != FancyConverters.none) {
                 converter.chars.codePoints()
-                        .onClose(() -> System.out.println("--------"))
-                        .forEach(JufmtCommand::charDetails);
+                               .onClose(() -> System.out.println("--------"))
+                               .forEach(JufmtCommand::charDetails);
                 return;
             }
         }
@@ -172,14 +195,14 @@ public class JufmtCommand implements Runnable {
 
         if (style != null) {
             result = result.codePoints()
-                    .boxed()
-                    .collect(style.collector(result.length()));
+                           .boxed()
+                           .collect(style.collector(result.length()));
         }
 
         if (ornament != null) {
             result = result.codePoints()
-                    .boxed()
-                    .collect(ornament.collector(result.length()));
+                           .boxed()
+                           .collect(ornament.collector(result.length()));
         }
 
         spec.commandLine().getOut().printf("%s%n", result);
@@ -198,20 +221,28 @@ public class JufmtCommand implements Runnable {
         Path fontFile;
     }
 
-    @Command(description = "Renders input string as a text banner (FIGlet)",
-            mixinStandardHelpOptions = true)
+    @Command(
+            description = "Renders input string as a text banner (FIGlet)",
+            mixinStandardHelpOptions = true
+    )
     void figlet(
             @ArgGroup(exclusive = true)
             FigletFont figletFont,
-            @Option(names = {"-r", "--random"},
+            @Option(
+                    names = {"-r", "--random"},
                     description = "Render with a random font"
-            ) boolean random,
-            @Option(names = {"-a", "--all"},
+            )
+            boolean random,
+            @Option(
+                    names = {"-a", "--all"},
                     description = "Render renderAll font"
-            ) boolean renderAll,
-            @Parameters(description = "The string to process",
+            )
+            boolean renderAll,
+            @Parameters(
+                    description = "The string to process",
                     paramLabel = "STR"
-            ) String stringToProcess
+            )
+            String stringToProcess
     ) {
         /*
          * https://en.wikipedia.org/wiki/FIGlet
@@ -232,12 +263,12 @@ public class JufmtCommand implements Runnable {
         }
         if (renderAll) {
             Arrays.stream(EmbeddedFigletFonts.values())
-                    .forEach(f -> {
-                        out.printf("%s:%n", f);
-                        out.println();
-                        out.println(Figlet.render(stringToProcess, f));
-                        out.println();
-                    });
+                  .forEach(f -> {
+                      out.printf("%s:%n", f);
+                      out.println();
+                      out.println(Figlet.render(stringToProcess, f));
+                      out.println();
+                  });
             return;
         }
 
@@ -273,8 +304,10 @@ public class JufmtCommand implements Runnable {
         out.println(rendered);
     }
 
-    @Command(description = "Renders input with Zalgo",
-            mixinStandardHelpOptions = true)
+    @Command(
+            description = "Renders input with Zalgo",
+            mixinStandardHelpOptions = true
+    )
     void zalgo(
             @Option(names = {"-l", "--level"},
                     description = "Zalgo level: ${COMPLETION-CANDIDATES}",
@@ -287,7 +320,7 @@ public class JufmtCommand implements Runnable {
                     defaultValue = "up,mid,down"
             ) Zalgo.Position[] positions,
             @Parameters(description = "The string to process",
-                    paramLabel = "STR"
+                        paramLabel = "STR"
             ) String stringToProcess
     ) {
         spec.commandLine().getOut().println(Zalgo.zalgo(stringToProcess, level, positions));
