@@ -11,7 +11,7 @@ asciidoctorj = "2.5.10"
 asciidoctorjDiagram = "2.2.11"
 junit-jupiter = "5.10.0"
 assertj = "3.24.2"
-picocli = "4.7.4"
+picocli = "4.7.5"
 
 [libraries]
 # Used to help bot retrieve and bump the version of asciidoctor
