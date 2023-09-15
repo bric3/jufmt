@@ -11,6 +11,7 @@
 package io.github.bric3.jufmt.app;
 
 import io.github.bric3.jufmt.EmbeddedFigletFonts;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,17 +27,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class JufmtFigletCommandTest {
+    private final StringWriter outWriter = new StringWriter();
+    private final StringWriter errWriter = new StringWriter();
 
     @Test
     @Disabled("No more default font, only random")
     void choose_same_default_font() {
-        var stringWriter = new StringWriter();
-        new CommandLine(new JufmtCommand())
-                .setOut(new PrintWriter(stringWriter))
-                .execute("figlet", "bric3");
+        jufmt().execute("figlet", "bric3");
 
-        assertThat(stringWriter.toString())
-                .isEqualToIgnoringNewLines("""
+        assertThat(outWriter.toString())
+                .isEqualToNormalizingNewlines("""
                              _          _      _____\s
                             | |__  _ __(_) ___|___ /\s
                             | '_ \\| '__| |/ __| |_ \\\s
@@ -48,26 +48,30 @@ public class JufmtFigletCommandTest {
 
     @Test
     void can_pick_random_font() {
-        var stringWriter = new StringWriter();
-        new CommandLine(new JufmtCommand())
-                .setOut(new PrintWriter(stringWriter))
-                .execute("figlet", "-r", "bric3");
+        jufmt().execute("figlet", "-r", "bric3");
 
-
-        assertThat(stringWriter.toString()).isNotBlank();
+        assertThat(outWriter.toString()).isNotBlank();
     }
 
     @ParameterizedTest
     @MethodSource("figletArguments")
     void supports_figlet(EmbeddedFigletFonts font, String input, String expected) {
-        var stringWriter = new StringWriter();
-        new CommandLine(new JufmtCommand())
-                .setOut(new PrintWriter(stringWriter))
-                .execute("figlet", "-f", font.name(), input);
+        jufmt().execute("figlet", "-f", font.name(), input);
 
-        assertThat(stringWriter.toString())
+        assertThat(outWriter.toString())
                 .describedAs(font.toString())
-                .isEqualToIgnoringNewLines(expected);
+                .isEqualToNormalizingNewlines(expected);
+    }
+
+    @AfterEach
+    void checks_err_is_empty() {
+        assertThat(errWriter.toString()).isEmpty();
+    }
+
+    private CommandLine jufmt() {
+        return new CommandLine(new JufmtCommand())
+                .setOut(new PrintWriter(outWriter))
+                .setErr(new PrintWriter(errWriter));
     }
 
     private static Stream<Arguments> figletArguments() {
