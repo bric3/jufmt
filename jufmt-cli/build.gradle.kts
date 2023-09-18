@@ -103,6 +103,7 @@ tasks {
     }
 
     test {
+        dependsOn(":jufmt-lib:test")
         useJUnitPlatform()
     }
 }
