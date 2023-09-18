@@ -1,6 +1,15 @@
+/*
+ * jufmt
+ *
+ * Copyright (c) 2023, today - Brice DUTHEIL
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
 package io.github.bric3.jufmt.app;
 
-import io.github.bric3.jufmt.app.JufmtCommand;
 import picocli.CommandLine;
 
 import java.io.PrintWriter;
