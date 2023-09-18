@@ -18,7 +18,6 @@ import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Model.UsageMessageSpec;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.Character.UnicodeBlock;
 import java.lang.Character.UnicodeScript;
 import java.nio.file.Files;
@@ -31,19 +30,19 @@ import java.util.EnumSet;
         name = "jufmt",
         header = {
                 """
-                ░░▒█░█▒█▒█▀░█▄▒▄█░▀█▀
-                ░▀▄█░▀▄█░█▀░█▒▀▒█░▒█▒
-                """,
+                        ░░▒█░█▒█▒█▀░█▄▒▄█░▀█▀
+                        ░▀▄█░▀▄█░█▀░█▒▀▒█░▒█▒
+                        """,
         },
         description = "Format input latin string with fancy unicode chars",
         footer = {
                 """
-                                
-                Fonts are provided by:                             ╱|、
-                 - https://github.com/xero/figlet-fonts          (˚ˎ 。7
-                 - https://github.com/thugcrowd/gangshit          |、˜〵
-                                                                  じしˍ,)ノ
-                """,
+                                        
+                        Fonts are provided by:                             ╱|、
+                         - https://github.com/xero/figlet-fonts          (˚ˎ 。7
+                         - https://github.com/thugcrowd/gangshit          |、˜〵
+                                                                          じしˍ,)ノ
+                        """,
         },
         mixinStandardHelpOptions = true
 )
@@ -116,19 +115,56 @@ public class JufmtCommand implements Runnable {
         cmd.execute(args);
     }
 
-    private void charDetails(int c) {
+    private void charDetails(int codePoint) {
         var out = spec.commandLine().getOut();
         out.println("--------");
-        out.printf("char          : %04x %s%n", c, Character.toString(c));
-        out.printf("char count    : %d%n", Character.charCount(c));
-        out.printf("lower case    : %04x %s%n", Character.toLowerCase(c), Character.toString(Character.toLowerCase(c)));
-        out.printf("title case    : %04x %s%n", Character.toTitleCase(c), Character.toString(Character.toTitleCase(c)));
-        out.printf("upper case    : %04x %s%n", Character.toUpperCase(c), Character.toString(Character.toUpperCase(c)));
-        out.printf("char name     : %s%n", Character.getName(c));
-        out.printf("char type     : %d%n", Character.getType(c));
-        out.printf("char direction: %d%n", Character.getDirectionality(c));
-        out.printf("unicode block : %s%n", UnicodeBlock.of(c));
-        out.printf("unicode script: %s%n", UnicodeScript.of(c));
+        out.printf("char          : %04x %s%n", codePoint, Character.toString(codePoint));
+        out.printf("char count    : %d%n", Character.charCount(codePoint));
+        out.printf("lower case    : %04x %s%n", Character.toLowerCase(codePoint), Character.toString(Character.toLowerCase(codePoint)));
+        out.printf("title case    : %04x %s%n", Character.toTitleCase(codePoint), Character.toString(Character.toTitleCase(codePoint)));
+        out.printf("upper case    : %04x %s%n", Character.toUpperCase(codePoint), Character.toString(Character.toUpperCase(codePoint)));
+        out.printf("char name     : %s%n", Character.getName(codePoint));
+        out.printf("char type     : %s%n", getCharacterCategoryName(codePoint));
+        out.printf("char direction: %d%n", Character.getDirectionality(codePoint));
+        out.printf("unicode block : %s%n", UnicodeBlock.of(codePoint));
+        out.printf("unicode script: %s%n", UnicodeScript.of(codePoint));
+    }
+
+    private String getCharacterCategoryName(int codePoint) {
+        // Unfortunately, character class doesn't give access to category name.
+        return switch (Character.getType(codePoint)) {
+            case Character.UNASSIGNED -> "UNASSIGNED";
+            case Character.UPPERCASE_LETTER -> "UPPERCASE_LETTER";
+            case Character.LOWERCASE_LETTER -> "LOWERCASE_LETTER";
+            case Character.TITLECASE_LETTER -> "TITLECASE_LETTER";
+            case Character.MODIFIER_LETTER -> "MODIFIER_LETTER";
+            case Character.OTHER_LETTER -> "OTHER_LETTER";
+            case Character.NON_SPACING_MARK -> "NON_SPACING_MARK";
+            case Character.ENCLOSING_MARK -> "ENCLOSING_MARK";
+            case Character.COMBINING_SPACING_MARK -> "COMBINING_SPACING_MARK";
+            case Character.DECIMAL_DIGIT_NUMBER -> "DECIMAL_DIGIT_NUMBER";
+            case Character.LETTER_NUMBER -> "LETTER_NUMBER";
+            case Character.OTHER_NUMBER -> "OTHER_NUMBER";
+            case Character.SPACE_SEPARATOR -> "SPACE_SEPARATOR";
+            case Character.LINE_SEPARATOR -> "LINE_SEPARATOR";
+            case Character.PARAGRAPH_SEPARATOR -> "PARAGRAPH_SEPARATOR";
+            case Character.CONTROL -> "CONTROL";
+            case Character.FORMAT -> "FORMAT";
+            case Character.PRIVATE_USE -> "PRIVATE_USE";
+            case Character.SURROGATE -> "SURROGATE";
+            case Character.DASH_PUNCTUATION -> "DASH_PUNCTUATION";
+            case Character.START_PUNCTUATION -> "START_PUNCTUATION";
+            case Character.END_PUNCTUATION -> "END_PUNCTUATION";
+            case Character.CONNECTOR_PUNCTUATION -> "CONNECTOR_PUNCTUATION";
+            case Character.OTHER_PUNCTUATION -> "OTHER_PUNCTUATION";
+            case Character.MATH_SYMBOL -> "MATH_SYMBOL";
+            case Character.CURRENCY_SYMBOL -> "CURRENCY_SYMBOL";
+            case Character.MODIFIER_SYMBOL -> "MODIFIER_SYMBOL";
+            case Character.OTHER_SYMBOL -> "OTHER_SYMBOL";
+            case Character.INITIAL_QUOTE_PUNCTUATION -> "INITIAL_QUOTE_PUNCTUATION";
+            case Character.FINAL_QUOTE_PUNCTUATION -> "FINAL_QUOTE_PUNCTUATION";
+            default -> "UNKNOWN";
+        };
     }
 
     public void run() {
@@ -172,14 +208,14 @@ public class JufmtCommand implements Runnable {
         if (describe) {
             if (stringToProcess != null && !stringToProcess.isBlank()) {
                 stringToProcess.codePoints()
-                               .onClose(() -> spec.commandLine().getOut().println("--------"))
-                               .forEach(this::charDetails);
+                        .onClose(() -> spec.commandLine().getOut().println("--------"))
+                        .forEach(this::charDetails);
                 return;
             }
             if (converter != FancyConverters.none) {
                 converter.chars.codePoints()
-                               .onClose(() -> spec.commandLine().getOut().println("--------"))
-                               .forEach(this::charDetails);
+                        .onClose(() -> spec.commandLine().getOut().println("--------"))
+                        .forEach(this::charDetails);
                 return;
             }
         }
@@ -197,14 +233,14 @@ public class JufmtCommand implements Runnable {
 
         if (style != null) {
             result = result.codePoints()
-                           .boxed()
-                           .collect(style.collector(result.length()));
+                    .boxed()
+                    .collect(style.collector(result.length()));
         }
 
         if (ornament != null) {
             result = result.codePoints()
-                           .boxed()
-                           .collect(ornament.collector(result.length()));
+                    .boxed()
+                    .collect(ornament.collector(result.length()));
         }
 
         spec.commandLine().getOut().printf("%s%n", result);
@@ -318,7 +354,7 @@ public class JufmtCommand implements Runnable {
                     defaultValue = "up,mid,down"
             ) Zalgo.Position[] positions,
             @Parameters(description = "The string to process",
-                        paramLabel = "STR"
+                    paramLabel = "STR"
             ) String stringToProcess
     ) {
         spec.commandLine().getOut().println(Zalgo.zalgo(stringToProcess, level, positions));
