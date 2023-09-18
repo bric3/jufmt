@@ -87,6 +87,10 @@ graalvmNative {
     }
 }
 
+testlogger {
+    showStandardStreams = true
+}
+
 tasks {
     distZip { enabled = false }
     distTar { enabled = false }

@@ -47,10 +47,6 @@ java {
 //    }
 }
 
-testlogger {
-    showStandardStreams = true
-}
-
 tasks {
     withType<JavaCompile> {
         options.encoding = "UTF-8"
