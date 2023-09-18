@@ -71,21 +71,14 @@ public class JufmtFigletCommandTest {
     }
 
     private int jufmt(String... args) {
-        PrintWriter printOut = new PrintWriter(outWriter, true);
-        PrintWriter printErr = new PrintWriter(errWriter, true);
-        try {
+        var printOut = new PrintWriter(outWriter, true);
+        var printErr = new PrintWriter(errWriter, true);
 
-            var status = new CommandLine(new JufmtCommand())
-                    .setOut(printOut)
-                    .setErr(printErr)
-                    .execute(args);
-
-            return status;
-        } catch (Throwable t) {
-            printOut.flush();
-            printErr.flush();
-            throw t;
-        }
+        return new CommandLine(new JufmtCommand())
+                .setOut(printOut)
+                .setErr(printErr)
+                .setColorScheme(CommandLine.Help.defaultColorScheme(CommandLine.Help.Ansi.OFF))
+                .execute(args);
     }
 
     private static Stream<Arguments> figletArguments() {
