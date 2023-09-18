@@ -28,6 +28,7 @@ dependencies {
     implementation(projects.jufmtLib)
 
     testImplementation(libs.assertj)
+    testImplementation(libs.mockito.core)
     testImplementation(libs.bundles.junit.jupiter)
 }
 

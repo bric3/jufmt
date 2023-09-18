@@ -28,6 +28,7 @@ import java.io.StringWriter;
 import java.text.Normalizer;
 import java.util.stream.Stream;
 
+import static io.github.bric3.jufmt.app.JufmtTestUtil.jufmt;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
@@ -38,57 +39,45 @@ public class JufmtCommandTest {
     @ParameterizedTest
     @EnumSource
     public void check_style(FancyStyle style) {
-        var stringWriter = new StringWriter();
-        new CommandLine(new JufmtCommand())
-                .setOut(new PrintWriter(stringWriter))
-                .execute("-s", style.name(), "bric3");
+        var result = jufmt("-s", style.name(), "bric3");
 
-        assertThat(stringWriter.toString())
+        assertThat(result.out())
                 .describedAs(style.name())
                 .isEqualToIgnoringNewLines(style.example);
 
-        System.out.printf("%s: %s", style.name(), stringWriter.toString());
+        System.out.printf("%s: %s", style.name(), result.out());
 
     }
 
     @ParameterizedTest
     @EnumSource(mode = Mode.EXCLUDE, names = {"none"})
     public void check_charset(FancyConverters converter) {
-        var stringWriter = new StringWriter();
-        new CommandLine(new JufmtCommand())
-                .setOut(new PrintWriter(stringWriter))
-                .execute("-c", converter.name(), "bric3");
+        var result = jufmt("-c", converter.name(), "bric3");
 
-        assertThat(stringWriter.toString())
+        assertThat(result.out())
                 .describedAs(converter.name())
                 .isEqualToIgnoringNewLines(converter.example);
 
-        System.out.printf("%s: %s", converter.name(), stringWriter.toString());
+        System.out.printf("%s: %s", converter.name(), result.out());
     }
 
     @ParameterizedTest
     @EnumSource(FancyOrnaments.class)
     public void check_ornament(FancyOrnaments ornaments) {
-        var stringWriter = new StringWriter();
-        new CommandLine(new JufmtCommand())
-                .setOut(new PrintWriter(stringWriter))
-                .execute("-o", ornaments.name(), "bric3");
+        var result = jufmt("-o", ornaments.name(), "bric3");
 
-        assertThat(stringWriter.toString())
+        assertThat(result.out())
                 .describedAs(ornaments.name())
                 .isEqualToIgnoringNewLines(ornaments.example);
 
-        System.out.printf("%s: %s", ornaments.name(), stringWriter.toString());
+        System.out.printf("%s: %s", ornaments.name(), result.out());
     }
 
     @Test
     public void check_reversed() {
-        var stringWriter = new StringWriter();
-        new CommandLine(new JufmtCommand())
-                .setOut(new PrintWriter(stringWriter))
-                .execute("-r", "bric3");
+        var result = jufmt("-r", "bric3");
 
-        assertThat(stringWriter.toString())
+        assertThat(result.out())
                 .describedAs("reversed")
                 .isEqualToIgnoringNewLines("3cirb");
 
@@ -100,15 +89,11 @@ public class JufmtCommandTest {
         @ParameterizedTest
         @MethodSource("normalizationArguments")
         void check_normalizer(Normalizer.Form form, String input, String expected) {
-            var cmd = new CommandLine(new JufmtCommand());
-
-            var stringWriter = new StringWriter();
-            cmd.setOut(new PrintWriter(stringWriter));
-            cmd.execute("-n", form.name(), input);
+            var result = jufmt("-n", form.name(), input);
 
 //            System.out.printf("Normalizer.Form.%s:%n%s%n%s", form.name(), input, stringWriter.toString());
 
-            assertThat(stringWriter.toString())
+            assertThat(result.out())
                     .describedAs(form.name())
                     .isEqualToIgnoringNewLines(expected);
         }
@@ -258,15 +243,11 @@ public class JufmtCommandTest {
         @ParameterizedTest
         @MethodSource("diacriticalMarkStrippingArguments")
         void check_normalizer_with_diacritical_mark_stripping(Normalizer.Form form, String input, String expected) {
+            var result = jufmt("-n", form.name(), "--strip-diacritic-marks", input);
 
-            var stringWriter = new StringWriter();
-            new CommandLine(new JufmtCommand())
-                    .setOut(new PrintWriter(stringWriter))
-                    .execute("-n", form.name(), "--strip-diacritic-marks", input);
+            System.out.printf("%s: %s", form.name(), result.out());
 
-            System.out.printf("%s: %s", form.name(), stringWriter);
-
-            assertThat(stringWriter.toString())
+            assertThat(result.out())
                     .describedAs(form.name())
                     .isEqualToIgnoringNewLines(expected);
         }
@@ -281,16 +262,10 @@ public class JufmtCommandTest {
         @ParameterizedTest
         @EnumSource(mode = Mode.INCLUDE, names = {"NFC", "NFKC"})
         void check_incompatible_normalizer_with_diacritical_mark_stripping(Normalizer.Form form) {
+            var result = jufmt("-n", form.name(), "--strip-diacritic-marks", "ignored");
 
-            var stdout = new StringWriter();
-            var stderr = new StringWriter();
-            var status = new CommandLine(new JufmtCommand())
-                    .setOut(new PrintWriter(stdout))
-                    .setErr(new PrintWriter(stderr))
-                    .execute("-n", form.name(), "--strip-diacritic-marks", "ignored");
-
-            assertThat(status).isEqualTo(CommandLine.ExitCode.USAGE);
-            assertThat(stderr.toString())
+            assertThat(result.status()).isEqualTo(CommandLine.ExitCode.USAGE);
+            assertThat(result.err())
                     .describedAs(form.name())
                     .containsIgnoringCase("diacritical mark stripping")
                     .containsIgnoringCase("NFD")

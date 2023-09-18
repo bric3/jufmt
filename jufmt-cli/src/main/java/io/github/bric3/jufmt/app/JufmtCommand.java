@@ -18,6 +18,7 @@ import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Model.UsageMessageSpec;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.Character.UnicodeBlock;
 import java.lang.Character.UnicodeScript;
 import java.nio.file.Files;
@@ -115,18 +116,19 @@ public class JufmtCommand implements Runnable {
         cmd.execute(args);
     }
 
-    private static void charDetails(int c) {
-        System.out.println("--------");
-        System.out.printf("char          : %04x %s%n", c, Character.toString(c));
-        System.out.printf("char count    : %d%n", Character.charCount(c));
-        System.out.printf("lower case    : %04x %s%n", Character.toLowerCase(c), Character.toString(Character.toLowerCase(c)));
-        System.out.printf("title case    : %04x %s%n", Character.toTitleCase(c), Character.toString(Character.toTitleCase(c)));
-        System.out.printf("upper case    : %04x %s%n", Character.toUpperCase(c), Character.toString(Character.toUpperCase(c)));
-        System.out.printf("char name     : %s%n", Character.getName(c));
-        System.out.printf("char type     : %d%n", Character.getType(c));
-        System.out.printf("char direction: %d%n", Character.getDirectionality(c));
-        System.out.printf("unicode block : %s%n", UnicodeBlock.of(c));
-        System.out.printf("unicode script: %s%n", UnicodeScript.of(c));
+    private void charDetails(int c) {
+        var out = spec.commandLine().getOut();
+        out.println("--------");
+        out.printf("char          : %04x %s%n", c, Character.toString(c));
+        out.printf("char count    : %d%n", Character.charCount(c));
+        out.printf("lower case    : %04x %s%n", Character.toLowerCase(c), Character.toString(Character.toLowerCase(c)));
+        out.printf("title case    : %04x %s%n", Character.toTitleCase(c), Character.toString(Character.toTitleCase(c)));
+        out.printf("upper case    : %04x %s%n", Character.toUpperCase(c), Character.toString(Character.toUpperCase(c)));
+        out.printf("char name     : %s%n", Character.getName(c));
+        out.printf("char type     : %d%n", Character.getType(c));
+        out.printf("char direction: %d%n", Character.getDirectionality(c));
+        out.printf("unicode block : %s%n", UnicodeBlock.of(c));
+        out.printf("unicode script: %s%n", UnicodeScript.of(c));
     }
 
     public void run() {
@@ -170,14 +172,14 @@ public class JufmtCommand implements Runnable {
         if (describe) {
             if (stringToProcess != null && !stringToProcess.isBlank()) {
                 stringToProcess.codePoints()
-                               .onClose(() -> System.out.println("--------"))
-                               .forEach(JufmtCommand::charDetails);
+                               .onClose(() -> spec.commandLine().getOut().println("--------"))
+                               .forEach(this::charDetails);
                 return;
             }
             if (converter != FancyConverters.none) {
                 converter.chars.codePoints()
-                               .onClose(() -> System.out.println("--------"))
-                               .forEach(JufmtCommand::charDetails);
+                               .onClose(() -> spec.commandLine().getOut().println("--------"))
+                               .forEach(this::charDetails);
                 return;
             }
         }
@@ -255,27 +257,24 @@ public class JufmtCommand implements Runnable {
          *
          * TODO expose layout options
          */
-
         var out = spec.commandLine().getOut();
-        if (random) {
+        if (random || figletFont == null && !renderAll) {
             out.println(Figlet.render(stringToProcess));
             return;
         }
         if (renderAll) {
             Arrays.stream(EmbeddedFigletFonts.values())
-                  .forEach(f -> {
-                      out.printf("%s:%n", f);
-                      out.println();
-                      out.println(Figlet.render(stringToProcess, f));
-                      out.println();
-                  });
+                    .forEach(f -> {
+                        out.printf("%s:%n", f);
+                        out.println();
+                        out.println(Figlet.render(stringToProcess, f));
+                        out.println();
+                    });
             return;
         }
 
         Figlet.FontSpec font;
-        if (figletFont == null) {
-            font = EmbeddedFigletFonts.random();
-        } else if (figletFont.fontFile != null) {
+        if (figletFont.fontFile != null) {
             try {
                 var fontFile = Path.of(".").toRealPath().resolve(figletFont.fontFile);
                 var fileName = fontFile.getFileName().toString();
@@ -300,8 +299,7 @@ public class JufmtCommand implements Runnable {
             font = figletFont.font;
         }
 
-        var rendered = Figlet.render(stringToProcess, font);
-        out.println(rendered);
+        out.println(Figlet.render(stringToProcess, font));
     }
 
     @Command(
