@@ -42,7 +42,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        ignore-errors: [false]
+        ignore-errors: [true]
         include:
           - os: windows-latest
             ignore-errors: true

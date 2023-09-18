@@ -301,7 +301,10 @@ public class JufmtCommand implements Runnable {
             font = figletFont.font;
         }
 
-        out.println(Figlet.render(stringToProcess, font));
+        String render = Figlet.render(stringToProcess, font);
+        out.println("😮‍💨🤨😞☹️😤: " + render.length());
+        out.println(render);
+        out.flush();
     }
 
     @Command(
