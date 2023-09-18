@@ -258,7 +258,7 @@ public class JufmtCommand implements Runnable {
          * TODO expose layout options
          */
         var out = spec.commandLine().getOut();
-        if (random) {
+        if (random || figletFont == null && !renderAll) {
             out.println(Figlet.render(stringToProcess));
             return;
         }
@@ -274,9 +274,7 @@ public class JufmtCommand implements Runnable {
         }
 
         Figlet.FontSpec font;
-        if (figletFont == null) {
-            font = EmbeddedFigletFonts.random();
-        } else if (figletFont.fontFile != null) {
+        if (figletFont.fontFile != null) {
             try {
                 var fontFile = Path.of(".").toRealPath().resolve(figletFont.fontFile);
                 var fileName = fontFile.getFileName().toString();
@@ -301,10 +299,7 @@ public class JufmtCommand implements Runnable {
             font = figletFont.font;
         }
 
-        String render = Figlet.render(stringToProcess, font);
-        out.println("😮‍💨🤨😞☹️😤: " + render.length());
-        out.println(render);
-        out.flush();
+        out.println(Figlet.render(stringToProcess, font));
     }
 
     @Command(
