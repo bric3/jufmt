@@ -11,6 +11,7 @@
 package io.github.bric3.jufmt.app;
 
 import io.github.bric3.jufmt.EmbeddedFigletFonts;
+import jdk.dynalink.StandardNamespace;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import picocli.CommandLine;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,8 +71,8 @@ public class JufmtFigletCommandTest {
     }
 
     private int jufmt(String... args) {
-        PrintWriter printOut = new PrintWriter(outWriter);
-        PrintWriter printErr = new PrintWriter(errWriter);
+        PrintWriter printOut = new PrintWriter(outWriter, true);
+        PrintWriter printErr = new PrintWriter(errWriter, true);
         try {
 
             var status = new CommandLine(new JufmtCommand())

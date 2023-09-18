@@ -256,55 +256,51 @@ public class JufmtCommand implements Runnable {
          * TODO expose layout options
          */
         var out = spec.commandLine().getOut();
-        try {
-            if (random) {
-                out.println(Figlet.render(stringToProcess));
-                return;
-            }
-            if (renderAll) {
-                Arrays.stream(EmbeddedFigletFonts.values())
-                        .forEach(f -> {
-                            out.printf("%s:%n", f);
-                            out.println();
-                            out.println(Figlet.render(stringToProcess, f));
-                            out.println();
-                        });
-                return;
-            }
+        if (random) {
+            out.println(Figlet.render(stringToProcess));
+            return;
+        }
+        if (renderAll) {
+            Arrays.stream(EmbeddedFigletFonts.values())
+                    .forEach(f -> {
+                        out.printf("%s:%n", f);
+                        out.println();
+                        out.println(Figlet.render(stringToProcess, f));
+                        out.println();
+                    });
+            return;
+        }
 
-            Figlet.FontSpec font;
-            if (figletFont == null) {
-                font = EmbeddedFigletFonts.random();
-            } else if (figletFont.fontFile != null) {
-                try {
-                    var fontFile = Path.of(".").toRealPath().resolve(figletFont.fontFile);
-                    var fileName = fontFile.getFileName().toString();
-                    if (!Files.isRegularFile(fontFile) || !(fileName.endsWith(".flf") || fileName.endsWith(".tlf"))) {
-                        throw new ParameterException(
-                                spec.commandLine(),
-                                "Not a regular FIGlet file: " + figletFont.fontFile
-                        );
-                    }
-
-                    font = Figlet.FontSpec.of(
-                            fileName.substring(0, fileName.lastIndexOf('.')),
-                            fontFile
-                    );
-                } catch (IOException e) {
+        Figlet.FontSpec font;
+        if (figletFont == null) {
+            font = EmbeddedFigletFonts.random();
+        } else if (figletFont.fontFile != null) {
+            try {
+                var fontFile = Path.of(".").toRealPath().resolve(figletFont.fontFile);
+                var fileName = fontFile.getFileName().toString();
+                if (!Files.isRegularFile(fontFile) || !(fileName.endsWith(".flf") || fileName.endsWith(".tlf"))) {
                     throw new ParameterException(
                             spec.commandLine(),
-                            "Invalid file: " + figletFont.fontFile
+                            "Not a regular FIGlet file: " + figletFont.fontFile
                     );
                 }
-            } else {
-                font = figletFont.font;
-            }
 
-            var rendered = Figlet.render(stringToProcess, font);
-            out.println(rendered);
-        } finally {
-            out.flush();
+                font = Figlet.FontSpec.of(
+                        fileName.substring(0, fileName.lastIndexOf('.')),
+                        fontFile
+                );
+            } catch (IOException e) {
+                throw new ParameterException(
+                        spec.commandLine(),
+                        "Invalid file: " + figletFont.fontFile
+                );
+            }
+        } else {
+            font = figletFont.font;
         }
+
+        var rendered = Figlet.render(stringToProcess, font);
+        out.println(rendered);
     }
 
     @Command(
