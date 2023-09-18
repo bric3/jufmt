@@ -33,7 +33,7 @@ public class JufmtFigletCommandTest {
     @Test
     @Disabled("No more default font, only random")
     void choose_same_default_font() {
-        jufmt().execute("figlet", "bric3");
+        jufmt("figlet", "bric3");
 
         assertThat(outWriter.toString())
                 .isEqualToNormalizingNewlines("""
@@ -48,7 +48,7 @@ public class JufmtFigletCommandTest {
 
     @Test
     void can_pick_random_font() {
-        jufmt().execute("figlet", "-r", "bric3");
+        jufmt("figlet", "-r", "bric3");
 
         assertThat(outWriter.toString()).isNotBlank();
     }
@@ -56,7 +56,7 @@ public class JufmtFigletCommandTest {
     @ParameterizedTest
     @MethodSource("figletArguments")
     void supports_figlet(EmbeddedFigletFonts font, String input, String expected) {
-        jufmt().execute("figlet", "-f", font.name(), input);
+        jufmt("figlet", "-f", font.name(), input);
 
         assertThat(outWriter.toString())
                 .describedAs(font.toString())
@@ -68,10 +68,22 @@ public class JufmtFigletCommandTest {
         assertThat(errWriter.toString()).isEmpty();
     }
 
-    private CommandLine jufmt() {
-        return new CommandLine(new JufmtCommand())
-                .setOut(new PrintWriter(outWriter))
-                .setErr(new PrintWriter(errWriter));
+    private int jufmt(String... args) {
+        PrintWriter printOut = new PrintWriter(outWriter);
+        PrintWriter printErr = new PrintWriter(errWriter);
+        try {
+
+            var status = new CommandLine(new JufmtCommand())
+                    .setOut(printOut)
+                    .setErr(printErr)
+                    .execute(args);
+
+            return status;
+        } catch (Throwable t) {
+            printOut.flush();
+            printErr.flush();
+            throw t;
+        }
     }
 
     private static Stream<Arguments> figletArguments() {
