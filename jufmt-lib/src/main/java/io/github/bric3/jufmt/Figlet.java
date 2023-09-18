@@ -30,10 +30,7 @@ public class Figlet {
      */
     @NotNull
     public static String render(@NotNull String text, @NotNull FontSpec font) {
-        String render = renderer.render(text, font);
-        System.out.println("Render for " + text + " with " + font.getName() +
-                           "\n" + render + "\n");
-        return render;
+        return renderer.render(text, font);
     }
 
     /**

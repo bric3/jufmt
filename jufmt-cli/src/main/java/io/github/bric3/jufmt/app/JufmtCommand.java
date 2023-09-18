@@ -259,11 +259,7 @@ public class JufmtCommand implements Runnable {
          */
         var out = spec.commandLine().getOut();
         if (random) {
-            String rendered = Figlet.render(stringToProcess);
-            if (rendered.isBlank()) {
-                throw new IllegalStateException("No font found");
-            }
-            out.println(rendered);
+            out.println(Figlet.render(stringToProcess));
             return;
         }
         if (renderAll) {
@@ -271,11 +267,7 @@ public class JufmtCommand implements Runnable {
                     .forEach(f -> {
                         out.printf("%s:%n", f);
                         out.println();
-                        String rendered = Figlet.render(stringToProcess, f);
-                        if (rendered.isBlank()) {
-                            throw new IllegalStateException("No font found");
-                        }
-                        out.println(rendered);
+                        out.println(Figlet.render(stringToProcess, f));
                         out.println();
                     });
             return;
@@ -309,11 +301,7 @@ public class JufmtCommand implements Runnable {
             font = figletFont.font;
         }
 
-        var rendered = Figlet.render(stringToProcess, font);
-        if (rendered.isBlank()) {
-            throw new IllegalStateException("No font found");
-        }
-        out.println(rendered);
+        out.println(Figlet.render(stringToProcess, font));
     }
 
     @Command(
