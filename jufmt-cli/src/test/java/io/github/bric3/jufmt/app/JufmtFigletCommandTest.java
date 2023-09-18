@@ -11,33 +11,25 @@
 package io.github.bric3.jufmt.app;
 
 import io.github.bric3.jufmt.EmbeddedFigletFonts;
-import jdk.dynalink.StandardNamespace;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import picocli.CommandLine;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
+import static io.github.bric3.jufmt.app.JufmtTestUtil.jufmt;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class JufmtFigletCommandTest {
-    private final StringWriter outWriter = new StringWriter();
-    private final StringWriter errWriter = new StringWriter();
-
     @Test
     @Disabled("No more default font, only random")
     void choose_same_default_font() {
-        jufmt("figlet", "bric3");
+        var result = jufmt("figlet", "bric3");
 
-        assertThat(outWriter.toString())
+        assertThat(result.out())
                 .isEqualToNormalizingNewlines("""
                              _          _      _____\s
                             | |__  _ __(_) ___|___ /\s
@@ -50,35 +42,19 @@ public class JufmtFigletCommandTest {
 
     @Test
     void can_pick_random_font() {
-        jufmt("figlet", "-r", "bric3");
+        var result = jufmt("figlet", "-r", "bric3");
 
-        assertThat(outWriter.toString()).isNotBlank();
+        assertThat(result.out()).isNotBlank();
     }
 
     @ParameterizedTest
     @MethodSource("figletArguments")
     void supports_figlet(EmbeddedFigletFonts font, String input, String expected) {
-        jufmt("figlet", "-f", font.name(), input);
+        var result = jufmt("figlet", "-f", font.name(), input);
 
-        assertThat(outWriter.toString())
+        assertThat(result.out())
                 .describedAs(font.toString())
                 .isEqualToNormalizingNewlines(expected);
-    }
-
-    @AfterEach
-    void checks_err_is_empty() {
-        assertThat(errWriter.toString()).isEmpty();
-    }
-
-    private int jufmt(String... args) {
-        var printOut = new PrintWriter(outWriter, true);
-        var printErr = new PrintWriter(errWriter, true);
-
-        return new CommandLine(new JufmtCommand())
-                .setOut(printOut)
-                .setErr(printErr)
-                .setColorScheme(CommandLine.Help.defaultColorScheme(CommandLine.Help.Ansi.OFF))
-                .execute(args);
     }
 
     private static Stream<Arguments> figletArguments() {
