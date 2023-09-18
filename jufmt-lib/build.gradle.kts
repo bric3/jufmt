@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets
 plugins {
     `java-library`
     alias(libs.plugins.download)
+    alias(libs.plugins.testLogger)
 }
 
 buildscript {

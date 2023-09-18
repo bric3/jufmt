@@ -39,3 +39,4 @@ asciidoctor = { id = "org.asciidoctor.jvm.convert", version = "3.3.2" }
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
 download = { id = "de.undercouch.download", version = "5.5.0" }
 quilt-licenser = { id = "org.quiltmc.gradle.licenser", version = "2.0.1" }
+testLogger = { id = "com.adarshr.test-logger", version = "3.2.0" }

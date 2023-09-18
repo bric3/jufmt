@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.asciidoctor)
     alias(libs.plugins.graalvmBuildtoolsNative)
     alias(libs.plugins.shadow)
+    alias(libs.plugins.testLogger)
 }
 
 group = "io.github.bric3.jufmt.app"
