@@ -36,7 +36,7 @@ jsoup = { module = "org.jsoup:jsoup", version = "1.16.2" }
 junit-jupiter = [ "junit-jupiter-api", "junit-jupiter-engine", "junit-jupiter-params"]
 
 [plugins]
-graalvmBuildtoolsNative = { id = "org.graalvm.buildtools.native", version = "0.9.27" }
+graalvmBuildtoolsNative = { id = "org.graalvm.buildtools.native", version = "0.9.28" }
 asciidoctor = { id = "org.asciidoctor.jvm.convert", version = "3.3.2" }
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
 download = { id = "de.undercouch.download", version = "5.5.0" }
