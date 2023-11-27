@@ -30,7 +30,7 @@ mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 
 jetbrains-annotations = { module = "org.jetbrains:annotations", version = "24.1.0" }
 
-jsoup = { module = "org.jsoup:jsoup", version = "1.16.2" }
+jsoup = { module = "org.jsoup:jsoup", version = "1.17.1" }
 
 [bundles]
 junit-jupiter = [ "junit-jupiter-api", "junit-jupiter-engine", "junit-jupiter-params"]
