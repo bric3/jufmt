@@ -11,7 +11,7 @@ asciidoctorj = "2.5.10"
 asciidoctorjDiagram = "2.2.13"
 assertj = "3.24.2"
 junit-jupiter = "5.10.1"
-mockito = "5.7.0"
+mockito = "5.8.0"
 picocli = "4.7.5"
 
 [libraries]
