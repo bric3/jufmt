@@ -73,7 +73,7 @@ jobs:
         arguments: build
 
     - name: Upload Test Report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always() # always run even if the previous step fails
       with:
         name: junit-test-results-${{ matrix.os }}
@@ -107,7 +107,7 @@ jobs:
       working-directory: ./jufmt-cli/build/native/nativeCompile
 
     - name: Upload binary
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: jufmt-${{ github.sha }}
         path: |
