@@ -134,7 +134,7 @@ jobs:
 
     steps:
       - name: Download Test Report
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: junit-test-results-${{ matrix.os }}
       - name: Publish Test Report
@@ -152,7 +152,7 @@ jobs:
 
     steps:
       - name: Download binary artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: jufmt-${{ github.sha }}
       - name: Release binary artifacts
