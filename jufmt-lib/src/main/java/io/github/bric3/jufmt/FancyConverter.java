@@ -16,7 +16,7 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.toMap;
 
 @SuppressWarnings("SpellCheckingInspection")
-public enum FancyConverters {
+public enum FancyConverter {
     none("", "") {
         @Override
         public StringBuilder convert(String stringToProcess) {
@@ -129,7 +129,7 @@ public enum FancyConverters {
     public String chars;
     private final Map<Integer, Integer> indexToCodepoint;
 
-    FancyConverters(String example, String chars) {
+    FancyConverter(String example, String chars) {
         this.example = example;
         this.chars = chars;
         this.indexToCodepoint = chars.codePoints()

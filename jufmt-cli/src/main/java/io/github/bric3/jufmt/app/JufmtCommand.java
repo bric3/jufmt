@@ -30,27 +30,31 @@ import java.util.EnumSet;
         name = "jufmt",
         header = {
                 """
-                        ░░▒█░█▒█▒█▀░█▄▒▄█░▀█▀
-                        ░▀▄█░▀▄█░█▀░█▒▀▒█░▒█▒
-                        """,
+                ░░▒█░█▒█▒█▀░█▄▒▄█░▀█▀
+                ░▀▄█░▀▄█░█▀░█▒▀▒█░▒█▒
+                """,
         },
         description = "Format input latin string with fancy unicode chars",
         footer = {
                 """
-                                        
-                        Fonts are provided by:                             ╱|、
-                         - https://github.com/xero/figlet-fonts          (˚ˎ 。7
-                         - https://github.com/thugcrowd/gangshit          |、˜〵
-                                                                          じしˍ,)ノ
-                        """,
+                To learn more about normalization: https://www.unicode.org/reports/tr15/
+                                
+                Fonts are provided by:                             ╱|、
+                 - https://github.com/xero/figlet-fonts          (˚ˎ 。7
+                 - https://github.com/thugcrowd/gangshit          |、˜〵
+                                                                  じしˍ,)ノ
+                """,
         },
         mixinStandardHelpOptions = true
 )
 public class JufmtCommand implements Runnable {
     @Option(
             names = {"-n", "--normalize"},
-            description = "Normalize input string using the given strategy, " +
-                          "possible forms: ${COMPLETION-CANDIDATES}",
+            description = "Normalize input string using the given Unicode Normalization Forms:  " +
+                          "NFD (Canonical decomposition), " +
+                          "NFC (Canonical decomposition, followed by canonical composition)," +
+                          "NFKD (Compatibility decomposition) or " +
+                          "NFKC (Compatibility decomposition, followed by canonical composition).",
             paramLabel = "FORM"
     )
     Normalizer.Form normalizationForm;
@@ -68,7 +72,7 @@ public class JufmtCommand implements Runnable {
             paramLabel = "CONVERTER",
             defaultValue = "none"
     )
-    FancyConverters converter;
+    FancyConverter converter;
 
     @Option(
             names = {"-s", "--style"},
@@ -82,7 +86,7 @@ public class JufmtCommand implements Runnable {
             description = "Ornaments, valid ornaments: ${COMPLETION-CANDIDATES}",
             paramLabel = "ORNAMENT"
     )
-    FancyOrnaments ornament;
+    FancyOrnament ornament;
 
     @Option(
             names = {"-r", "--reversed"},
@@ -212,7 +216,7 @@ public class JufmtCommand implements Runnable {
                         .forEach(this::charDetails);
                 return;
             }
-            if (converter != FancyConverters.none) {
+            if (converter != FancyConverter.none) {
                 converter.chars.codePoints()
                         .onClose(() -> spec.commandLine().getOut().println("--------"))
                         .forEach(this::charDetails);

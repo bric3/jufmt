@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.stream.Collector;
 
 @SuppressWarnings("SpellCheckingInspection")
-public enum FancyOrnaments {
+public enum FancyOrnament {
     // wrapping chars, e.g. : 【b】【r】【i】【c】【3】, 〖b〗〖r〗〖i〗〖c〗〖3〗, ⧼b⧽⧼r⧽⧼i⧽⧼c⧽⧼3⧽, etc.
     // insert chars, e.g. : b྿r྿i྿c྿3, ፠b፠r፠i፠c፠3, b࿐r࿐i࿐c࿐3, etc.
     // lots of interesting symbols there :
@@ -125,7 +125,7 @@ public enum FancyOrnaments {
     public final int[] value;
     public final String example;
 
-    FancyOrnaments(String example, String... codePointName) {
+    FancyOrnament(String example, String... codePointName) {
         this.example = example;
         this.value = Arrays.stream(codePointName).mapToInt(Character::codePointOf).toArray();
     }

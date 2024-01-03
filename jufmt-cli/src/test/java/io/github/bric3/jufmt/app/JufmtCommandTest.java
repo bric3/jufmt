@@ -11,8 +11,8 @@
 package io.github.bric3.jufmt.app;
 
 
-import io.github.bric3.jufmt.FancyConverters;
-import io.github.bric3.jufmt.FancyOrnaments;
+import io.github.bric3.jufmt.FancyConverter;
+import io.github.bric3.jufmt.FancyOrnament;
 import io.github.bric3.jufmt.FancyStyle;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,8 +23,6 @@ import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.junit.jupiter.params.provider.MethodSource;
 import picocli.CommandLine;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.Normalizer;
 import java.util.stream.Stream;
 
@@ -51,7 +49,7 @@ public class JufmtCommandTest {
 
     @ParameterizedTest
     @EnumSource(mode = Mode.EXCLUDE, names = {"none"})
-    public void check_charset(FancyConverters converter) {
+    public void check_charset(FancyConverter converter) {
         var result = jufmt("-c", converter.name(), "bric3");
 
         assertThat(result.out())
@@ -62,8 +60,8 @@ public class JufmtCommandTest {
     }
 
     @ParameterizedTest
-    @EnumSource(FancyOrnaments.class)
-    public void check_ornament(FancyOrnaments ornaments) {
+    @EnumSource(FancyOrnament.class)
+    public void check_ornament(FancyOrnament ornaments) {
         var result = jufmt("-o", ornaments.name(), "bric3");
 
         assertThat(result.out())
