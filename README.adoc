@@ -30,8 +30,6 @@ Format input latin string with fancy unicode chars
                               fauxEthiopian, ogham, asciiBrailleGrade1, morse
   -d, --describe            Describe characters, or more precisely codepoints
   -h, --help                Show this help message and exit.
-  -n, --normalize=FORM      Normalize input string using the given strategy,
-                              possible forms: NFD, NFC, NFKD, NFKC
   -o, --ornament=ORNAMENT   Ornaments, valid ornaments: curvedAngleBracket,
                               blackLenticularBracket, whiteLenticularBracket,
                               tortoiseBracket, whiteTortoiseBracket,
@@ -44,13 +42,10 @@ Format input latin string with fancy unicode chars
                               macronBelow, lowline, doubleLowline, overline,
                               doubleOverline, shadow, upwardArrowBelow,
                               hotFumes, doubleArrow, electric, snow, smeared
-      --strip-diacritic-marks
-                            Strips the combining diacritical marks from the
-                              string after normalization, only works with NFD
-                              or NFKD
   -V, --version             Print version information and exit.
 Commands:
   figlet  Renders input string as a text banner (FIGlet)
+  normalize  Normalize input string using the given Unicode Normalization Forms
   zalgo   Renders input with Zalgo
 ----
 

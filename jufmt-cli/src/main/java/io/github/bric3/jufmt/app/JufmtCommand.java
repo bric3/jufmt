@@ -49,24 +49,6 @@ import java.util.EnumSet;
 )
 public class JufmtCommand implements Runnable {
     @Option(
-            names = {"-n", "--normalize"},
-            description = "Normalize input string using the given Unicode Normalization Forms:  " +
-                          "NFD (Canonical decomposition), " +
-                          "NFC (Canonical decomposition, followed by canonical composition)," +
-                          "NFKD (Compatibility decomposition) or " +
-                          "NFKC (Compatibility decomposition, followed by canonical composition).",
-            paramLabel = "FORM"
-    )
-    Normalizer.Form normalizationForm;
-
-    @Option(
-            names = {"--strip-diacritic-marks"},
-            description = "Strips the combining diacritical marks from the " +
-                          "string after normalization, only works with NFD or NFKD"
-    )
-    boolean stripDiacriticalMarks;
-
-    @Option(
             names = {"-c", "--converter"},
             description = "Converter, valid converters: ${COMPLETION-CANDIDATES}",
             paramLabel = "CONVERTER",
@@ -172,43 +154,6 @@ public class JufmtCommand implements Runnable {
     }
 
     public void run() {
-        if (normalizationForm != null) {
-            // https://unicode.org/reports/tr15/#Norm_Forms
-            // https://towardsdatascience.com/difference-between-nfd-nfc-nfkd-and-nfkc-explained-with-python-code-e2631f96ae6c
-            // - Normalization Form D (NFD) : Canonical Decomposition
-            // - Normalization Form C (NFC) : Canonical Decomposition, followed by Canonical Composition
-            // - Normalization Form KD (NFKD) : Compatibility Decomposition
-            // - Normalization Form KC (NFKC) : Compatibility Decomposition, followed by Canonical Composition
-            //
-            // In compatibility mode (K), the length can change,
-            //    because a character can be decomposed for "compatibility",
-            //    e.g. '…' -> '...'
-            // In decomposition mode (D), the length can change,
-            //    because a character can be decomposed by main char and combining mark,
-            //    e.g. 'ポ'(U+30DD) -> 'ホ'(U+30DB) + '  ゚'(U+309A)
-            // If followed by composition (C), then some separated chars are composed back together
-            var normalized = Normalizer.normalize(stringToProcess, normalizationForm);
-            if (stripDiacriticalMarks) {
-                if (EnumSet.of(Normalizer.Form.NFC, Normalizer.Form.NFKC).contains(normalizationForm)) {
-                    throw new ParameterException(
-                            spec.commandLine(),
-                            "Diacritical mark stripping only works without canonical composition, e.g. only NFD and NFKD");
-                }
-                normalized = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}", "");
-            }
-
-
-//            spec.commandLine().getOut().printf(
-//                    "input length: %d, output length %d, %s%n",
-//                    stringToProcess.codePointCount(0, stringToProcess.length() - 1),
-//                    normalized.codePointCount(0, normalized.length() - 1),
-//                    normalized
-//            );
-
-            spec.commandLine().getOut().printf("%s%n", normalized);
-            return;
-        }
-
         if (describe) {
             if (stringToProcess != null && !stringToProcess.isBlank()) {
                 stringToProcess.codePoints()
@@ -248,6 +193,69 @@ public class JufmtCommand implements Runnable {
         }
 
         spec.commandLine().getOut().printf("%s%n", result);
+    }
+
+    @Command(
+            description = "Normalize input string using the given Unicode Normalization Forms",
+            mixinStandardHelpOptions = true
+    )
+    void normalize(
+            @Option(
+                    names = { "--form" },
+                    description = "Available forms:  " +
+                                  "NFD (Canonical decomposition), " +
+                                  "NFC (Canonical decomposition, followed by canonical composition)," +
+                                  "NFKD (Compatibility decomposition) or " +
+                                  "NFKC (Compatibility decomposition, followed by canonical composition).",
+                    paramLabel = "FORM"
+            )
+            Normalizer.Form normalizationForm,
+            @Option(
+                    names = {"--strip-diacritic-marks"},
+                    description = "Strips the combining diacritical marks from the " +
+                                  "string after normalization, only works with NFD or NFKD",
+                    defaultValue = "false"
+            )
+            boolean stripDiacriticalMarks,
+            @Parameters(
+                    description = "The string to process",
+                    paramLabel = "STR"
+            )
+            String stringToProcess
+    ) {
+        // https://unicode.org/reports/tr15/#Norm_Forms
+        // https://towardsdatascience.com/difference-between-nfd-nfc-nfkd-and-nfkc-explained-with-python-code-e2631f96ae6c
+        // - Normalization Form D (NFD) : Canonical Decomposition
+        // - Normalization Form C (NFC) : Canonical Decomposition, followed by Canonical Composition
+        // - Normalization Form KD (NFKD) : Compatibility Decomposition
+        // - Normalization Form KC (NFKC) : Compatibility Decomposition, followed by Canonical Composition
+        //
+        // In compatibility mode (K), the length can change,
+        //    because a character can be decomposed for "compatibility",
+        //    e.g. '…' -> '...'
+        // In decomposition mode (D), the length can change,
+        //    because a character can be decomposed by main char and combining mark,
+        //    e.g. 'ポ'(U+30DD) -> 'ホ'(U+30DB) + '  ゚'(U+309A)
+        // If followed by composition (C), then some separated chars are composed back together
+        var normalized = Normalizer.normalize(stringToProcess, normalizationForm);
+        if (stripDiacriticalMarks) {
+            if (EnumSet.of(Normalizer.Form.NFC, Normalizer.Form.NFKC).contains(normalizationForm)) {
+                throw new ParameterException(
+                        spec.commandLine(),
+                        "Diacritical mark stripping only works without canonical composition, e.g. only NFD and NFKD");
+            }
+            normalized = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}", "");
+        }
+
+
+//            spec.commandLine().getOut().printf(
+//                    "input length: %d, output length %d, %s%n",
+//                    stringToProcess.codePointCount(0, stringToProcess.length() - 1),
+//                    normalized.codePointCount(0, normalized.length() - 1),
+//                    normalized
+//            );
+
+        spec.commandLine().getOut().printf("%s%n", normalized);
     }
 
     static class FigletFont {

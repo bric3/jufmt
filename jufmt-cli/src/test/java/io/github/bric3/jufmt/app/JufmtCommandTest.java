@@ -87,7 +87,7 @@ public class JufmtCommandTest {
         @ParameterizedTest
         @MethodSource("normalizationArguments")
         void check_normalizer(Normalizer.Form form, String input, String expected) {
-            var result = jufmt("-n", form.name(), input);
+            var result = jufmt( "normalize", "--form", form.name(), input);
 
 //            System.out.printf("Normalizer.Form.%s:%n%s%n%s", form.name(), input, stringWriter.toString());
 
@@ -241,7 +241,7 @@ public class JufmtCommandTest {
         @ParameterizedTest
         @MethodSource("diacriticalMarkStrippingArguments")
         void check_normalizer_with_diacritical_mark_stripping(Normalizer.Form form, String input, String expected) {
-            var result = jufmt("-n", form.name(), "--strip-diacritic-marks", input);
+            var result = jufmt("normalize", "--form", form.name(), "--strip-diacritic-marks", input);
 
             System.out.printf("%s: %s", form.name(), result.out());
 
@@ -260,7 +260,7 @@ public class JufmtCommandTest {
         @ParameterizedTest
         @EnumSource(mode = Mode.INCLUDE, names = {"NFC", "NFKC"})
         void check_incompatible_normalizer_with_diacritical_mark_stripping(Normalizer.Form form) {
-            var result = jufmt("-n", form.name(), "--strip-diacritic-marks", "ignored");
+            var result = jufmt("normalize", "--form", form.name(), "--strip-diacritic-marks", "ignored");
 
             assertThat(result.status()).isEqualTo(CommandLine.ExitCode.USAGE);
             assertThat(result.err())
