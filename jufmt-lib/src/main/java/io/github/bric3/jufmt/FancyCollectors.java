@@ -19,7 +19,9 @@ public class FancyCollectors {
         return Collector.of(() -> new StringBuilder(length),
                             (sb, codePoint) -> {
                                 sb.appendCodePoint(codePoint);
-                                IntStream.of(codepoints).forEach(sb::appendCodePoint);
+                                for (int codepoint : codepoints) {
+                                    sb.appendCodePoint(codepoint);
+                                }
                             },
                             StringBuilder::append);
     }
@@ -27,12 +29,16 @@ public class FancyCollectors {
     public static Collector<Integer, StringBuilder, StringBuilder> surroundCodepoints(int length, int... codepoints) {
         return Collector.of(() -> new StringBuilder(length),
                             (sb, codePoint) -> {
-                                IntStream.of(codepoints).forEach(sb::appendCodePoint);
+                                for (int codepoint : codepoints) {
+                                    sb.appendCodePoint(codepoint);
+                                }
                                 sb.appendCodePoint(codePoint);
                             },
                             StringBuilder::append,
                             sb -> {
-                                IntStream.of(codepoints).forEach(sb::appendCodePoint);
+                                for (int codepoint : codepoints) {
+                                    sb.appendCodePoint(codepoint);
+                                }
                                 return sb;
                             });
     }
@@ -40,7 +46,9 @@ public class FancyCollectors {
     public static Collector<Integer, StringBuilder, StringBuilder> betweenCodepoints(int length, int... codepoints) {
         return Collector.of(() -> new StringBuilder(length),
                             (sb, codePoint) -> {
-                                IntStream.of(codepoints).forEach(sb::appendCodePoint);
+                                for (int codepoint : codepoints) {
+                                    sb.appendCodePoint(codepoint);
+                                }
                                 sb.appendCodePoint(codePoint);
                             },
                             StringBuilder::append,
