@@ -31,7 +31,7 @@ class FigletTest {
                 );
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "[{index}] figlet {0}")
     @MethodSource("figletArguments")
     void supports_figlet(EmbeddedFigletFonts font, String input, String expected) {
         var result = Figlet.render(input, font);

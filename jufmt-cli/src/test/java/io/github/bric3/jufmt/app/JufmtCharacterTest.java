@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class JufmtCharacterTest {
-    @ParameterizedTest
+    @ParameterizedTest(name = "[{index}] describing \"{0}\"")
     @MethodSource("characterDescription")
     void can_describe_input_characters(String input, String expected) {
         var result = jufmt("describe", input);

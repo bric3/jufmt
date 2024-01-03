@@ -84,7 +84,7 @@ public class JufmtCommandTest {
 
     @Nested
     class Normalization {
-        @ParameterizedTest
+        @ParameterizedTest(name = "[{index}] normalizing \"{1}\" with {0}")
         @MethodSource("normalizationArguments")
         void check_normalizer(Normalizer.Form form, String input, String expected) {
             var result = jufmt( "normalize", "--form", form.name(), input);
@@ -238,7 +238,7 @@ public class JufmtCommandTest {
         }
 
 
-        @ParameterizedTest
+        @ParameterizedTest(name = "[{index}] normalizing and stripping diacritical marks \"{1}\" with {0}")
         @MethodSource("diacriticalMarkStrippingArguments")
         void check_normalizer_with_diacritical_mark_stripping(Normalizer.Form form, String input, String expected) {
             var result = jufmt("normalize", "--form", form.name(), "--strip-diacritic-marks", input);

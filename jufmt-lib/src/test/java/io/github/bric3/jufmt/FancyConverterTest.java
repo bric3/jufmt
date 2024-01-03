@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class FancyConverterTest {
-    @ParameterizedTest
+    @ParameterizedTest(name = "[{index}] converter {0}")
     @MethodSource("fancyConverterArguments")
     void converterTest(FancyConverter converter, String expected) {
         var result = converter.convert("\"\\ !#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~");
