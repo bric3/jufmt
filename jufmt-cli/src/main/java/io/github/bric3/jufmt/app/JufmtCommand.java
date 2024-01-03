@@ -18,8 +18,6 @@ import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Model.UsageMessageSpec;
 
 import java.io.IOException;
-import java.lang.Character.UnicodeBlock;
-import java.lang.Character.UnicodeScript;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Normalizer;
@@ -76,12 +74,6 @@ public class JufmtCommand implements Runnable {
     )
     boolean reversed;
 
-    @Option(
-            names = {"-d", "--describe"},
-            description = "Describe characters, or more precisely codepoints"
-    )
-    boolean describe;
-
     @Parameters(
             description = "The string to process",
             paramLabel = "STR",
@@ -101,74 +93,7 @@ public class JufmtCommand implements Runnable {
         cmd.execute(args);
     }
 
-    private void charDetails(int codePoint) {
-        var out = spec.commandLine().getOut();
-        out.println("--------");
-        out.printf("char          : %04x %s%n", codePoint, Character.toString(codePoint));
-        out.printf("char count    : %d%n", Character.charCount(codePoint));
-        out.printf("lower case    : %04x %s%n", Character.toLowerCase(codePoint), Character.toString(Character.toLowerCase(codePoint)));
-        out.printf("title case    : %04x %s%n", Character.toTitleCase(codePoint), Character.toString(Character.toTitleCase(codePoint)));
-        out.printf("upper case    : %04x %s%n", Character.toUpperCase(codePoint), Character.toString(Character.toUpperCase(codePoint)));
-        out.printf("char name     : %s%n", Character.getName(codePoint));
-        out.printf("char type     : %s%n", getCharacterCategoryName(codePoint));
-        out.printf("char direction: %d%n", Character.getDirectionality(codePoint));
-        out.printf("unicode block : %s%n", UnicodeBlock.of(codePoint));
-        out.printf("unicode script: %s%n", UnicodeScript.of(codePoint));
-    }
-
-    // Unfortunately, character class doesn't give access to category **name**.
-    private String getCharacterCategoryName(int codePoint) {
-        return switch (Character.getType(codePoint)) {
-            case Character.COMBINING_SPACING_MARK -> "COMBINING_SPACING_MARK";
-            case Character.CONNECTOR_PUNCTUATION -> "CONNECTOR_PUNCTUATION";
-            case Character.CONTROL -> "CONTROL";
-            case Character.CURRENCY_SYMBOL -> "CURRENCY_SYMBOL";
-            case Character.DASH_PUNCTUATION -> "DASH_PUNCTUATION";
-            case Character.DECIMAL_DIGIT_NUMBER -> "DECIMAL_DIGIT_NUMBER";
-            case Character.ENCLOSING_MARK -> "ENCLOSING_MARK";
-            case Character.END_PUNCTUATION -> "END_PUNCTUATION";
-            case Character.FINAL_QUOTE_PUNCTUATION -> "FINAL_QUOTE_PUNCTUATION";
-            case Character.FORMAT -> "FORMAT";
-            case Character.INITIAL_QUOTE_PUNCTUATION -> "INITIAL_QUOTE_PUNCTUATION";
-            case Character.LETTER_NUMBER -> "LETTER_NUMBER";
-            case Character.LINE_SEPARATOR -> "LINE_SEPARATOR";
-            case Character.LOWERCASE_LETTER -> "LOWERCASE_LETTER";
-            case Character.MATH_SYMBOL -> "MATH_SYMBOL";
-            case Character.MODIFIER_LETTER -> "MODIFIER_LETTER";
-            case Character.MODIFIER_SYMBOL -> "MODIFIER_SYMBOL";
-            case Character.NON_SPACING_MARK -> "NON_SPACING_MARK";
-            case Character.OTHER_LETTER -> "OTHER_LETTER";
-            case Character.OTHER_NUMBER -> "OTHER_NUMBER";
-            case Character.OTHER_PUNCTUATION -> "OTHER_PUNCTUATION";
-            case Character.OTHER_SYMBOL -> "OTHER_SYMBOL";
-            case Character.PARAGRAPH_SEPARATOR -> "PARAGRAPH_SEPARATOR";
-            case Character.PRIVATE_USE -> "PRIVATE_USE";
-            case Character.SPACE_SEPARATOR -> "SPACE_SEPARATOR";
-            case Character.START_PUNCTUATION -> "START_PUNCTUATION";
-            case Character.SURROGATE -> "SURROGATE";
-            case Character.TITLECASE_LETTER -> "TITLECASE_LETTER";
-            case Character.UNASSIGNED -> "UNASSIGNED";
-            case Character.UPPERCASE_LETTER -> "UPPERCASE_LETTER";
-            default -> "UNKNOWN";
-        };
-    }
-
     public void run() {
-        if (describe) {
-            if (stringToProcess != null && !stringToProcess.isBlank()) {
-                stringToProcess.codePoints()
-                        .onClose(() -> spec.commandLine().getOut().println("--------"))
-                        .forEach(this::charDetails);
-                return;
-            }
-            if (converter != FancyConverter.none) {
-                converter.chars.codePoints()
-                        .onClose(() -> spec.commandLine().getOut().println("--------"))
-                        .forEach(this::charDetails);
-                return;
-            }
-        }
-
         if (stringToProcess == null || stringToProcess.isBlank()) {
             throw new ParameterException(spec.commandLine(), "Expects a non blank STR.");
         }
@@ -193,6 +118,27 @@ public class JufmtCommand implements Runnable {
         }
 
         spec.commandLine().getOut().printf("%s%n", result);
+    }
+
+    @Command(
+            description = "Describe codepoints and graphemes",
+            mixinStandardHelpOptions = true
+    )
+    void describe(
+            @Parameters(
+                    description = "The string to describe",
+                    paramLabel = "STR"
+            )
+            String stringToProcess
+    ) {
+        var out = spec.commandLine().getOut();
+        if (stringToProcess == null || stringToProcess.isBlank()) {
+            throw new ParameterException(spec.commandLine(), "Expects a non blank STR.");
+        }
+
+        CharacterDescriber.graphemes(stringToProcess)
+                          .onClose(() -> out.println("--------"))
+                          .forEach(codePoints -> CharacterDescriber.graphemeDetails(out, codePoints.toArray()));
     }
 
     @Command(
