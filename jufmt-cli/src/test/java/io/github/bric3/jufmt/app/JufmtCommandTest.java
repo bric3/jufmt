@@ -49,7 +49,7 @@ public class JufmtCommandTest {
 
     @ParameterizedTest
     @EnumSource(mode = Mode.EXCLUDE, names = {"none"})
-    public void check_charset(FancyConverter converter) {
+    public void check_converter(FancyConverter converter) {
         var result = jufmt("-c", converter.name(), "bric3");
 
         assertThat(result.out())

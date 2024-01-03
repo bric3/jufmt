@@ -34,6 +34,7 @@ public class CharacterDescriber {
 
 
     public static void graphemeDetails(PrintWriter out, int[] codePoints) {
+        assert codePoints.length != 0 : "codePoints must not be empty";
         out.println("---");
 
         out.printf("Grapheme       : `%s`%n", new String(codePoints, 0, codePoints.length));
@@ -87,10 +88,16 @@ public class CharacterDescriber {
             return;
         }
 
+        // Note some characters like digits have the property Emoji, and their representation can change
+        // with the use of a _Variation Selector_.
+        // * VARIATION SELECTOR-15 (FE0E) is used to request a text presentation, ex 1
+        // * VARIATION SELECTOR-16 (FE0F) is used to request an emoji presentation, ex 1️⃣
+        // See https://unicode.org/reports/tr51/#Emoji_Variation_Sequences
+
         out.println("| CodePoint -> Emoji  | Base | Modifier | Presentation | Component | Extended Pictographic | Name |");
         out.println("|---------------------|------|----------|--------------|-----------|-----------------------|------|");
         Arrays.stream(codePoints)
-              .forEach(codePoint -> System.out.printf(
+              .forEach(codePoint -> out.printf(
                       "| `%08x` -> %5s | %4c | %8c | %12c | %9c | %20c | %s |%n",
                       codePoint,
                       Character.toString(codePoint),

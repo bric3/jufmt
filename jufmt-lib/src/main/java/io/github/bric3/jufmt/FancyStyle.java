@@ -28,9 +28,8 @@ public enum FancyStyle {
     electric("b͛r͛i͛c͛3͛", "COMBINING ZIGZAG ABOVE"),
     snow("b͋r͋i͋c͋3͋", "COMBINING HOMOTHETIC ABOVE"),
     smeared("b҉r҉i҉c҉3҉", "COMBINING CYRILLIC MILLIONS SIGN"),
-    doubleBreve("", "COMBINING DOUBLE INVERTED BREVE", "COMBINING DOUBLE BREVE BELOW"), // see also UNDERTIE
+    doubleBreve("b͜͡r͜͡i͜͡c͜͡3͜͡", "COMBINING DOUBLE INVERTED BREVE", "COMBINING DOUBLE BREVE BELOW"), // see also UNDERTIE
     ;
-
 
     public final int[] combining;
     public final String example;
@@ -46,6 +45,4 @@ public enum FancyStyle {
     public Collector<Integer, StringBuilder, StringBuilder> collector(int length) {
         return FancyCollectors.afterCodepoints(length, this.combining);
     }
-
-
 }
