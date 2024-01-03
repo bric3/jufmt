@@ -22,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Normalizer;
 import java.util.Arrays;
-import java.util.EnumSet;
 
 @Command(
         name = "jufmt",
@@ -94,9 +93,7 @@ public class JufmtCommand implements Runnable {
     }
 
     public void run() {
-        if (stringToProcess == null || stringToProcess.isBlank()) {
-            throw new ParameterException(spec.commandLine(), "Expects a non blank STR.");
-        }
+        checkParam(stringToProcess == null || stringToProcess.isBlank(), "Expects a non blank STR.");
 
         var result = converter.convert(stringToProcess);
 
@@ -132,9 +129,8 @@ public class JufmtCommand implements Runnable {
             String stringToProcess
     ) {
         var out = spec.commandLine().getOut();
-        if (stringToProcess == null || stringToProcess.isBlank()) {
-            throw new ParameterException(spec.commandLine(), "Expects a non blank STR.");
-        }
+        checkParam(stringToProcess == null || stringToProcess.isBlank(),
+                   "Expects a non blank STR.");
 
         CharacterDescriber.graphemes(stringToProcess)
                           .onClose(() -> out.println("--------"))
@@ -169,42 +165,27 @@ public class JufmtCommand implements Runnable {
             )
             String stringToProcess
     ) {
-        // https://unicode.org/reports/tr15/#Norm_Forms
-        // https://towardsdatascience.com/difference-between-nfd-nfc-nfkd-and-nfkc-explained-with-python-code-e2631f96ae6c
-        // - Normalization Form D (NFD) : Canonical Decomposition
-        // - Normalization Form C (NFC) : Canonical Decomposition, followed by Canonical Composition
-        // - Normalization Form KD (NFKD) : Compatibility Decomposition
-        // - Normalization Form KC (NFKC) : Compatibility Decomposition, followed by Canonical Composition
-        //
-        // In compatibility mode (K), the length can change,
-        //    because a character can be decomposed for "compatibility",
-        //    e.g. '…' -> '...'
-        // In decomposition mode (D), the length can change,
-        //    because a character can be decomposed by main char and combining mark,
-        //    e.g. 'ポ'(U+30DD) -> 'ホ'(U+30DB) + '  ゚'(U+309A)
-        // If followed by composition (C), then some separated chars are composed back together
-        var normalized = Normalizer.normalize(stringToProcess, normalizationForm);
-        if (stripDiacriticalMarks) {
-            if (EnumSet.of(Normalizer.Form.NFC, Normalizer.Form.NFKC).contains(normalizationForm)) {
-                throw new ParameterException(
-                        spec.commandLine(),
-                        "Diacritical mark stripping only works without canonical composition, e.g. only NFD and NFKD");
-            }
-            normalized = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}", "");
+        checkParam(stringToProcess == null || stringToProcess.isBlank(),
+                   "Expects a non blank STR.");
+        try {
+            var normalized = new UnicodeNormalizer(
+                    stringToProcess,
+                    normalizationForm,
+                    stripDiacriticalMarks
+            ).normalize();
+            spec.commandLine().getOut().printf("%s%n", normalized);
+        } catch (UnsupportedOperationException e) {
+            throw new CommandLine.ParameterException(spec.commandLine(), e.getMessage());
         }
-
-
-//            spec.commandLine().getOut().printf(
-//                    "input length: %d, output length %d, %s%n",
-//                    stringToProcess.codePointCount(0, stringToProcess.length() - 1),
-//                    normalized.codePointCount(0, normalized.length() - 1),
-//                    normalized
-//            );
-
-        spec.commandLine().getOut().printf("%s%n", normalized);
     }
 
+    private void checkParam(boolean booleanExpr, String msg) {
+        if (booleanExpr) {
+            throw new ParameterException(spec.commandLine(), msg);
+        }
+    }
     static class FigletFont {
+
         @Option(names = {"-f", "--font"},
                 description = "Specify a FIGlet font among: ${COMPLETION-CANDIDATES}",
                 paramLabel = "FONT"
@@ -272,12 +253,8 @@ public class JufmtCommand implements Runnable {
             try {
                 var fontFile = Path.of(".").toRealPath().resolve(figletFont.fontFile);
                 var fileName = fontFile.getFileName().toString();
-                if (!Files.isRegularFile(fontFile) || !(fileName.endsWith(".flf") || fileName.endsWith(".tlf"))) {
-                    throw new ParameterException(
-                            spec.commandLine(),
-                            "Not a regular FIGlet file: " + figletFont.fontFile
-                    );
-                }
+                checkParam(!Files.isRegularFile(fontFile) || !(fileName.endsWith(".flf") || fileName.endsWith(".tlf")),
+                           "Not a regular FIGlet file: " + figletFont.fontFile);
 
                 font = Figlet.FontSpec.of(
                         fileName.substring(0, fileName.lastIndexOf('.')),
