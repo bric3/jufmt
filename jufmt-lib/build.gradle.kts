@@ -47,7 +47,7 @@ java {
 }
 
 val shippedJavaVersion = 11
-val toolchainJavaVersion = 20
+val toolchainJavaVersion = 21
 
 java {
     toolchain {

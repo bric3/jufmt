@@ -36,7 +36,7 @@ application {
     mainClass.set("io.github.bric3.jufmt.app.JufmtCommand")
 }
 
-val javaVersion = 20
+val javaVersion = 21
 
 java {
     toolchain {
