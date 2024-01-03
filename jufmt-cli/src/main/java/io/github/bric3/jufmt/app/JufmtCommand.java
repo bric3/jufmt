@@ -134,39 +134,39 @@ public class JufmtCommand implements Runnable {
         out.printf("unicode script: %s%n", UnicodeScript.of(codePoint));
     }
 
+    // Unfortunately, character class doesn't give access to category **name**.
     private String getCharacterCategoryName(int codePoint) {
-        // Unfortunately, character class doesn't give access to category name.
         return switch (Character.getType(codePoint)) {
+            case Character.COMBINING_SPACING_MARK -> "COMBINING_SPACING_MARK";
+            case Character.CONNECTOR_PUNCTUATION -> "CONNECTOR_PUNCTUATION";
+            case Character.CONTROL -> "CONTROL";
+            case Character.CURRENCY_SYMBOL -> "CURRENCY_SYMBOL";
+            case Character.DASH_PUNCTUATION -> "DASH_PUNCTUATION";
+            case Character.DECIMAL_DIGIT_NUMBER -> "DECIMAL_DIGIT_NUMBER";
+            case Character.ENCLOSING_MARK -> "ENCLOSING_MARK";
+            case Character.END_PUNCTUATION -> "END_PUNCTUATION";
+            case Character.FINAL_QUOTE_PUNCTUATION -> "FINAL_QUOTE_PUNCTUATION";
+            case Character.FORMAT -> "FORMAT";
+            case Character.INITIAL_QUOTE_PUNCTUATION -> "INITIAL_QUOTE_PUNCTUATION";
+            case Character.LETTER_NUMBER -> "LETTER_NUMBER";
+            case Character.LINE_SEPARATOR -> "LINE_SEPARATOR";
+            case Character.LOWERCASE_LETTER -> "LOWERCASE_LETTER";
+            case Character.MATH_SYMBOL -> "MATH_SYMBOL";
+            case Character.MODIFIER_LETTER -> "MODIFIER_LETTER";
+            case Character.MODIFIER_SYMBOL -> "MODIFIER_SYMBOL";
+            case Character.NON_SPACING_MARK -> "NON_SPACING_MARK";
+            case Character.OTHER_LETTER -> "OTHER_LETTER";
+            case Character.OTHER_NUMBER -> "OTHER_NUMBER";
+            case Character.OTHER_PUNCTUATION -> "OTHER_PUNCTUATION";
+            case Character.OTHER_SYMBOL -> "OTHER_SYMBOL";
+            case Character.PARAGRAPH_SEPARATOR -> "PARAGRAPH_SEPARATOR";
+            case Character.PRIVATE_USE -> "PRIVATE_USE";
+            case Character.SPACE_SEPARATOR -> "SPACE_SEPARATOR";
+            case Character.START_PUNCTUATION -> "START_PUNCTUATION";
+            case Character.SURROGATE -> "SURROGATE";
+            case Character.TITLECASE_LETTER -> "TITLECASE_LETTER";
             case Character.UNASSIGNED -> "UNASSIGNED";
             case Character.UPPERCASE_LETTER -> "UPPERCASE_LETTER";
-            case Character.LOWERCASE_LETTER -> "LOWERCASE_LETTER";
-            case Character.TITLECASE_LETTER -> "TITLECASE_LETTER";
-            case Character.MODIFIER_LETTER -> "MODIFIER_LETTER";
-            case Character.OTHER_LETTER -> "OTHER_LETTER";
-            case Character.NON_SPACING_MARK -> "NON_SPACING_MARK";
-            case Character.ENCLOSING_MARK -> "ENCLOSING_MARK";
-            case Character.COMBINING_SPACING_MARK -> "COMBINING_SPACING_MARK";
-            case Character.DECIMAL_DIGIT_NUMBER -> "DECIMAL_DIGIT_NUMBER";
-            case Character.LETTER_NUMBER -> "LETTER_NUMBER";
-            case Character.OTHER_NUMBER -> "OTHER_NUMBER";
-            case Character.SPACE_SEPARATOR -> "SPACE_SEPARATOR";
-            case Character.LINE_SEPARATOR -> "LINE_SEPARATOR";
-            case Character.PARAGRAPH_SEPARATOR -> "PARAGRAPH_SEPARATOR";
-            case Character.CONTROL -> "CONTROL";
-            case Character.FORMAT -> "FORMAT";
-            case Character.PRIVATE_USE -> "PRIVATE_USE";
-            case Character.SURROGATE -> "SURROGATE";
-            case Character.DASH_PUNCTUATION -> "DASH_PUNCTUATION";
-            case Character.START_PUNCTUATION -> "START_PUNCTUATION";
-            case Character.END_PUNCTUATION -> "END_PUNCTUATION";
-            case Character.CONNECTOR_PUNCTUATION -> "CONNECTOR_PUNCTUATION";
-            case Character.OTHER_PUNCTUATION -> "OTHER_PUNCTUATION";
-            case Character.MATH_SYMBOL -> "MATH_SYMBOL";
-            case Character.CURRENCY_SYMBOL -> "CURRENCY_SYMBOL";
-            case Character.MODIFIER_SYMBOL -> "MODIFIER_SYMBOL";
-            case Character.OTHER_SYMBOL -> "OTHER_SYMBOL";
-            case Character.INITIAL_QUOTE_PUNCTUATION -> "INITIAL_QUOTE_PUNCTUATION";
-            case Character.FINAL_QUOTE_PUNCTUATION -> "FINAL_QUOTE_PUNCTUATION";
             default -> "UNKNOWN";
         };
     }
@@ -186,7 +186,7 @@ public class JufmtCommand implements Runnable {
             // In decomposition mode (D), the length can change,
             //    because a character can be decomposed by main char and combining mark,
             //    e.g. 'ポ'(U+30DD) -> 'ホ'(U+30DB) + '  ゚'(U+309A)
-            // If followed by composition (C), then separated chars are composed back together
+            // If followed by composition (C), then some separated chars are composed back together
             var normalized = Normalizer.normalize(stringToProcess, normalizationForm);
             if (stripDiacriticalMarks) {
                 if (EnumSet.of(Normalizer.Form.NFC, Normalizer.Form.NFKC).contains(normalizationForm)) {
