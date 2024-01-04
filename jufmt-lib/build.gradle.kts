@@ -121,7 +121,7 @@ fun TaskContainer.registeringDownload(src: String) = registering(de.undercouch.g
             val repo = it.removePrefix("https://github.com/")
                 .removeSuffix("/archive/master.zip")
                 .replace("/", "-")
-            "${project.buildDir}/$repo-figlet-fonts-master.zip"
+            project.layout.buildDirectory.file("$repo-figlet-fonts-master.zip")
         })
         onlyIfModified(true)
         useETag("all") // Use the ETag on GH
@@ -148,7 +148,7 @@ abstract class AolFontScrapper @Inject constructor(
 
         project.download.run {
             src(aolFontFileNames.map { "https://patorjk.com/software/taag/fonts/${it}".encodeURI() })
-            dest("${project.buildDir}/aol-fonts")
+            dest(project.layout.buildDirectory.dir("aol-fonts"))
             eachFile {
                 name = URLDecoder.decode(name, StandardCharsets.UTF_8)
             }
@@ -159,7 +159,7 @@ abstract class AolFontScrapper @Inject constructor(
         }
 
         project.copy {
-            from("${project.buildDir}/aol-fonts") {
+            from(project.layout.buildDirectory.dir("aol-fonts")) {
                 include("*.aol")
             }
             into(dest)
