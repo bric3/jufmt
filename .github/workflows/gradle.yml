@@ -37,14 +37,26 @@ jobs:
           min-wrapper-count: 0
         
   build:
-    runs-on: ${{ matrix.os }}
+    name: Build ${{ matrix.tag }}
+    runs-on: ${{ matrix.runner }}
     continue-on-error: ${{ matrix.ignore-errors }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: ['linux']
+        arch: ['amd64']
+        runner: ['ubuntu-latest']
+        tag: ['linux-amd64']
         ignore-errors: [true]
         include:
-          - os: windows-latest
+          - os: macos
+            runner: macos-latest
+            arch: amd64
+            tag: darwin-amd64
+            ignore-errors: true
+          - os: windows
+            runner: windows-latest
+            arch: amd64
+            tag: windows-amd64
             ignore-errors: true
 
     steps:
@@ -76,7 +88,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: always() # always run even if the previous step fails
       with:
-        name: junit-test-results-${{ matrix.os }}
+        name: junit-test-results-${{ matrix.tag }}
         path: '**/build/test-results/test/TEST-*.xml'
         retention-days: 1
 
@@ -93,39 +105,34 @@ jobs:
       with:
         arguments: asciidoctor
 
-    - name: Rename linux binary
-      if: contains(matrix.os, 'ubuntu')
-      run: mv ./jufmt ./jufmt-linux-amd64
+    - name: Rename binary
+      if: contains(matrix.os, 'linux') || contains(matrix.os, 'macos')
+      run: mv ./jufmt ./jufmt-${{ matrix.tag }}
       working-directory: ./jufmt-cli/build/native/nativeCompile
     - name: Rename Windows binary
       if: contains(matrix.os, 'windows')
       run: mv ./jufmt.exe ./jufmt-windows-amd64.exe
       working-directory: ./jufmt-cli/build/native/nativeCompile
-    - name: Rename macOS binary
-      if: contains(matrix.os, 'macos')
-      run: mv ./jufmt ./jufmt-darwin-amd64
-      working-directory: ./jufmt-cli/build/native/nativeCompile
 
     - name: Upload binary
       uses: actions/upload-artifact@v4
       with:
-        name: jufmt-${{ github.sha }}
+        name: jufmt-${{ matrix.tag }}
         path: |
           ./jufmt-cli/build/native/nativeCompile/jufmt*
           !./jufmt-cli/build/native/nativeCompile/jufmt*.bgv
         if-no-files-found: error
-        retention-days: 1
+        retention-days: 7
 
   # This job will update the PR with the JUnit report
   # In order to be able to make the most of it this job in particular has
   # augmented permissions.
   junit-report:
-    name: JUnit Report
+    name: JUnit Report ${{ matrix.tag }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ macos-latest, windows-latest, ubuntu-latest ]
-
+        tag: ['linux-amd64', 'darwin-amd64', 'windows-amd64']
     if: |
       success() || failure()
     needs: [ build ]
@@ -136,11 +143,11 @@ jobs:
       - name: Download Test Report
         uses: actions/download-artifact@v4
         with:
-          name: junit-test-results-${{ matrix.os }}
+          name: junit-test-results-${{ matrix.tag }}
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v4
         with:
-          check_name: Test Report - ${{ matrix.os }}
+          check_name: Test Report - ${{ matrix.tag }}
           commit: ${{github.event.workflow_run.head_sha}}
           report_paths: '**/build/test-results/test/TEST-*.xml'
 
