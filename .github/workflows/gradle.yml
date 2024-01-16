@@ -106,7 +106,12 @@ jobs:
         arguments: asciidoctor
 
     - name: Rename binary
+      if: contains(matrix.os, 'linux') || contains(matrix.os, 'macos')
       run: mv ./jufmt ./jufmt-${{ matrix.tag }}
+      working-directory: ./jufmt-cli/build/native/nativeCompile
+    - name: Rename Windows binary
+      if: contains(matrix.os, 'windows')
+      run: mv ./jufmt.exe ./jufmt-windows-amd64.exe
       working-directory: ./jufmt-cli/build/native/nativeCompile
 
     - name: Upload binary
