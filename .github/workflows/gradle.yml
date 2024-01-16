@@ -112,12 +112,12 @@ jobs:
     - name: Upload binary
       uses: actions/upload-artifact@v4
       with:
-        name: jufmt-${{ github.sha }}
+        name: jufmt-${{ matrix.tag }}
         path: |
           ./jufmt-cli/build/native/nativeCompile/jufmt*
           !./jufmt-cli/build/native/nativeCompile/jufmt*.bgv
         if-no-files-found: error
-        retention-days: 1
+        retention-days: 7
 
   # This job will update the PR with the JUnit report
   # In order to be able to make the most of it this job in particular has
