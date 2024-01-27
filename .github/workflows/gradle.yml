@@ -72,15 +72,15 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup Gradle
-      uses: gradle/gradle-build-action@v2
+      uses: gradle/gradle-build-action@v3
 
     - name: Show toolchains
-      uses: gradle/gradle-build-action@v2
+      uses: gradle/gradle-build-action@v3
       with:
           arguments: -q javaToolchains
 
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@v2
+      uses: gradle/gradle-build-action@v3
       with:
         arguments: build
 
@@ -93,7 +93,7 @@ jobs:
         retention-days: 1
 
     - name: Build native image
-      uses: gradle/gradle-build-action@v2
+      uses: gradle/gradle-build-action@v3
       with:
         arguments: nativeCompile
 
@@ -101,7 +101,7 @@ jobs:
       run: ./jufmt-cli/build/native/nativeCompile/jufmt --help
 
     - name: Produce doc
-      uses: gradle/gradle-build-action@v2
+      uses: gradle/gradle-build-action@v3
       with:
         arguments: asciidoctor
 
