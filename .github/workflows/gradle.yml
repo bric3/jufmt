@@ -129,7 +129,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        tag: ['linux-amd64', 'darwin-amd64', 'windows-amd64']
+        tag: ['linux-amd64', 'darwin-amd64', 'darwin-aarch64', 'windows-amd64']
     if: |
       success() || failure()
     needs: [ build ]
