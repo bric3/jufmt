@@ -53,6 +53,11 @@ jobs:
             arch: amd64
             tag: darwin-amd64
             ignore-errors: true
+          - os: macos
+            runner: macos-14
+            arch: aarch64
+            tag: darwin-aarch64
+            ignore-errors: true
           - os: windows
             runner: windows-latest
             arch: amd64
@@ -169,3 +174,4 @@ jobs:
             jufmt-linux-amd64
             jufmt-windows-amd64.exe
             jufmt-darwin-amd64
+            jufmt-darwin-aarch64
