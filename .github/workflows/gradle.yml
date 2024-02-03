@@ -53,6 +53,11 @@ jobs:
             arch: amd64
             tag: darwin-amd64
             ignore-errors: true
+          - os: macos
+            runner: macos-14
+            arch: aarch64
+            tag: darwin-aarch64
+            ignore-errors: true
           - os: windows
             runner: windows-latest
             arch: amd64
@@ -72,17 +77,13 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup Gradle
-      uses: gradle/gradle-build-action@v2
+      uses: gradle/actions/setup-gradle@v3
 
     - name: Show toolchains
-      uses: gradle/gradle-build-action@v2
-      with:
-          arguments: -q javaToolchains
+      run: ./gradlew -q javaToolchains
 
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@v2
-      with:
-        arguments: build
+      run: ./gradlew build
 
     - name: Upload Test Report
       uses: actions/upload-artifact@v4
@@ -93,17 +94,13 @@ jobs:
         retention-days: 1
 
     - name: Build native image
-      uses: gradle/gradle-build-action@v2
-      with:
-        arguments: nativeCompile
+      run: ./gradlew nativeCompile
 
     - name: Run native image
       run: ./jufmt-cli/build/native/nativeCompile/jufmt --help
 
     - name: Produce doc
-      uses: gradle/gradle-build-action@v2
-      with:
-        arguments: asciidoctor
+      run: ./gradlew asciidoctor
 
     - name: Rename binary
       if: contains(matrix.os, 'linux') || contains(matrix.os, 'macos')
@@ -169,3 +166,4 @@ jobs:
             jufmt-linux-amd64
             jufmt-windows-amd64.exe
             jufmt-darwin-amd64
+            jufmt-darwin-aarch64
