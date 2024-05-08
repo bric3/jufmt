@@ -12,7 +12,7 @@ asciidoctorjDiagram = "2.3.0"
 assertj = "3.25.3"
 junit-jupiter = "5.10.2"
 mockito = "5.11.0"
-picocli = "4.7.5"
+picocli = "4.7.6"
 
 [libraries]
 # Used to help bot retrieve and bump the version of asciidoctor
