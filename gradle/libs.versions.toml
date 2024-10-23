@@ -10,7 +10,7 @@
 asciidoctorj = "2.5.13"
 asciidoctorjDiagram = "2.3.1"
 assertj = "3.26.3"
-junit-jupiter = "5.11.2"
+junit-jupiter = "5.11.3"
 mockito = "5.14.2"
 picocli = "4.7.6"
 
