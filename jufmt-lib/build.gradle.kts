@@ -9,7 +9,6 @@
  */
 import org.jsoup.Jsoup
 import java.net.URI
-import java.net.URL
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
@@ -166,15 +165,5 @@ abstract class AolFontScrapper @Inject constructor(
         }
     }
 
-    private fun String.encodeURI() = URL(this).let {
-        URI(
-            it.protocol,
-            it.userInfo,
-            it.host,
-            it.port,
-            it.path,
-            it.query,
-            it.ref
-        ).toASCIIString()
-    }
+    private fun String.encodeURI() = URI.create(this).toASCIIString()
 }
