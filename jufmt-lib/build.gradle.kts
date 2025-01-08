@@ -39,17 +39,11 @@ dependencies {
     testImplementation(libs.bundles.junit.jupiter)
 }
 
-java {
-    withSourcesJar()
-//    toolchain {
-//        languageVersion.set(JavaLanguageVersion.of(javaVersion))
-//    }
-}
-
 val shippedJavaVersion = 11
 val toolchainJavaVersion = 21
 
 java {
+    withSourcesJar()
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(toolchainJavaVersion))
         // Note this one doesn't enforce graalvm
@@ -60,11 +54,6 @@ tasks {
     compileJava {
         options.encoding = "UTF-8"
         options.release.set(shippedJavaVersion)
-    }
-
-    compileJava {
-        options.encoding = "UTF-8"
-        options.release.set(toolchainJavaVersion)
     }
 
     jar {
