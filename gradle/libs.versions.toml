@@ -9,7 +9,7 @@
 [versions]
 asciidoctorj = "2.5.13"
 asciidoctorjDiagram = "2.3.1"
-assertj = "3.27.0"
+assertj = "3.27.2"
 junit-jupiter = "5.11.4"
 mockito = "5.14.2"
 picocli = "4.7.6"
