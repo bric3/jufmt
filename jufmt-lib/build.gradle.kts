@@ -7,8 +7,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+import net.thauvin.erik.urlencoder.UrlEncoderUtil
 import org.jsoup.Jsoup
-import java.net.URI
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
@@ -21,6 +21,7 @@ plugins {
 buildscript {
     dependencies {
         classpath(libs.jsoup)
+        classpath(libs.urlencoder)
     }
 }
 
@@ -146,7 +147,7 @@ abstract class AolFontScrapper @Inject constructor(
             .toList()
 
         project.download.run {
-            src(aolFontFileNames.map { "https://patorjk.com/software/taag/fonts/${it}".encodeURI() })
+            src(aolFontFileNames.map { "https://patorjk.com/software/taag/fonts/${it}".encodeFontName() })
             dest(project.layout.buildDirectory.dir("aol-fonts"))
             eachFile {
                 name = URLDecoder.decode(name, StandardCharsets.UTF_8)
@@ -165,5 +166,5 @@ abstract class AolFontScrapper @Inject constructor(
         }
     }
 
-    private fun String.encodeURI() = URI.create(this).toASCIIString()
+    private fun String.encodeFontName() = this.replaceAfterLast('/', UrlEncoderUtil.encode(this.substringAfterLast('/')) )
 }
