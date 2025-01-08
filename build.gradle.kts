@@ -9,19 +9,29 @@
  */
 
 plugins {
-    alias(libs.plugins.quilt.licenser)
+    alias(libs.plugins.yumi.licenser)
 }
 
 allprojects {
-    apply(plugin=rootProject.libs.plugins.quilt.licenser.get().pluginId)
+    apply(plugin=rootProject.libs.plugins.yumi.licenser.get().pluginId)
+
     license {
-        rule(file("${rootDir}/HEADER"))
+        rule(rootProject.file("HEADER"))
+
         include(
             "**/*.java",
             "**/*.kt",
             "**/*.kts",
+            "**/*.properties",
+            "**/*.xml",
         )
+
         exclude("**/internal/figlet/**")
+    }
+    tasks {
+        withType<JavaCompile>() {
+            dependsOn(applyLicenses)
+        }
     }
 }
 
