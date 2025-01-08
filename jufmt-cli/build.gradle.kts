@@ -95,6 +95,10 @@ graalvmNative {
 
                 // Not available in GraalVM community edition
                 // "--enable-sbom=cyclonedx",
+
+                // Optimize for size: `-Os` enables all `-O2` optimizations except those that can increase code or image size significantly.
+                // https://github.com/oracle/graal/blob/d5c7b8aab207e8d6ad0eef494e316bdfdd5a4ebf/docs/reference-manual/native-image/OptimizationsAndPerformance.md?plain=1#L21
+                "-Os",
             )
 
             // debug flags
