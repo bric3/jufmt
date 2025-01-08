@@ -78,7 +78,7 @@ public class JufmtCommand implements Runnable {
             paramLabel = "STR",
             arity = "0..1"
     )
-    String stringToProcess;
+    String stringToProcessParam;
 
     @Spec
     CommandSpec spec;
@@ -93,7 +93,7 @@ public class JufmtCommand implements Runnable {
     }
 
     public void run() {
-        checkParam(stringToProcess == null || stringToProcess.isBlank(), "Expects a non blank STR.");
+        var stringToProcess = getStringToProcess(stringToProcessParam);
 
         var result = converter.convert(stringToProcess);
 
@@ -124,13 +124,13 @@ public class JufmtCommand implements Runnable {
     void describe(
             @Parameters(
                     description = "The string to describe",
-                    paramLabel = "STR"
+                    paramLabel = "STR",
+                    arity = "0..1"
             )
-            String stringToProcess
+            String stringToProcessParam
     ) {
         var out = spec.commandLine().getOut();
-        checkParam(stringToProcess == null || stringToProcess.isBlank(),
-                   "Expects a non blank STR.");
+        var stringToProcess = getStringToProcess(stringToProcessParam);
 
         CharacterDescriber.graphemes(stringToProcess)
                           .onClose(() -> out.println("--------"))
@@ -161,12 +161,12 @@ public class JufmtCommand implements Runnable {
             boolean stripDiacriticalMarks,
             @Parameters(
                     description = "The string to process",
-                    paramLabel = "STR"
+                    paramLabel = "STR",
+                    arity = "0..1"
             )
-            String stringToProcess
+            String stringToProcessParam
     ) {
-        checkParam(stringToProcess == null || stringToProcess.isBlank(),
-                   "Expects a non blank STR.");
+        var stringToProcess = getStringToProcess(stringToProcessParam);
         try {
             var normalized = new UnicodeNormalizer(
                     stringToProcess,
@@ -177,6 +177,24 @@ public class JufmtCommand implements Runnable {
         } catch (UnsupportedOperationException e) {
             throw new CommandLine.ParameterException(spec.commandLine(), e.getMessage());
         }
+    }
+
+    private String getStringToProcess(String stringToProcessParam) {
+        var stringToProcess = stringToProcessParam;
+        checkParam(
+                StdinReader.isStdinConnectedToTty && (stringToProcessParam == null || stringToProcessParam.isBlank()),
+                StdinReader.isAvailable ? "Expects a non blank STR or text from stdin." : "Expects a non blank STR."
+        );
+
+        if (StdinReader.isAvailable && !StdinReader.isStdinConnectedToTty && stringToProcessParam == null) {
+            var stdin = StdinReader.stdinCharSequence().toString();
+            checkParam(
+                    !StdinReader.isStdinConnectedToTty && stdin.isBlank(),
+                    "Expects text from stdin or a non blank STR parameter."
+            );
+            stringToProcess = stdin;
+        }
+        return stringToProcess;
     }
 
     private void checkParam(boolean booleanExpr, String msg) {
@@ -217,9 +235,10 @@ public class JufmtCommand implements Runnable {
             boolean renderAll,
             @Parameters(
                     description = "The string to process",
-                    paramLabel = "STR"
+                    paramLabel = "STR",
+                    arity = "0..1"
             )
-            String stringToProcess
+            String stringToProcessParam
     ) {
         /*
          * https://en.wikipedia.org/wiki/FIGlet
@@ -233,6 +252,7 @@ public class JufmtCommand implements Runnable {
          * TODO expose layout options
          */
         var out = spec.commandLine().getOut();
+        var stringToProcess = getStringToProcess(stringToProcessParam);
         if (random || figletFont == null && !renderAll) {
             out.println(Figlet.render(stringToProcess));
             return;
@@ -278,20 +298,25 @@ public class JufmtCommand implements Runnable {
             mixinStandardHelpOptions = true
     )
     void zalgo(
-            @Option(names = {"-l", "--level"},
+            @Option(
+                    names = {"-l", "--level"},
                     description = "Zalgo level: ${COMPLETION-CANDIDATES}",
                     paramLabel = "FONT",
                     defaultValue = "mini"
             ) Zalgo.Level level,
-            @Option(names = {"-p", "--position"},
+            @Option(
+                    names = {"-p", "--position"},
                     description = "Zalgo positions: ${COMPLETION-CANDIDATES}",
                     split = ",",
                     defaultValue = "up,mid,down"
             ) Zalgo.Position[] positions,
-            @Parameters(description = "The string to process",
-                    paramLabel = "STR"
-            ) String stringToProcess
+            @Parameters(
+                    description = "The string to process",
+                    paramLabel = "STR",
+                    arity = "0..1"
+            ) String stringToProcessParam
     ) {
+        var stringToProcess = getStringToProcess(stringToProcessParam);
         spec.commandLine().getOut().println(Zalgo.zalgo(stringToProcess, level, positions));
     }
 }

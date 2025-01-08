@@ -14,6 +14,8 @@ junit-jupiter = "5.11.4"
 mockito = "5.15.2"
 picocli = "4.7.6"
 
+graalSdk = "24.1.1"
+
 [libraries]
 # Used to help bot retrieve and bump the version of asciidoctor
 asciidoctorj = { module = "org.asciidoctor:asciidoctorj", version.ref = "asciidoctorj" }
@@ -32,6 +34,8 @@ jetbrains-annotations = { module = "org.jetbrains:annotations", version = "26.0.
 
 jsoup = { module = "org.jsoup:jsoup", version = "1.18.3" }
 urlencoder = { module = "net.thauvin.erik.urlencoder:urlencoder-lib", version = "1.6.0" }
+
+graal-sdk = { module = "org.graalvm.sdk:graal-sdk", version.ref = "graalSdk" }
 
 [bundles]
 junit-jupiter = [ "junit-jupiter-api", "junit-jupiter-engine", "junit-jupiter-params"]

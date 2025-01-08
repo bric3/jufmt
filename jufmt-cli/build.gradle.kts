@@ -1,3 +1,6 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.graalvm.buildtools.gradle.tasks.BuildNativeImageTask
+
 /*
  * jufmt
  *
@@ -22,6 +25,8 @@ repositories {
     mavenCentral()
 }
 
+val graalSourceSets = sourceSets.create("graal")
+
 dependencies {
     annotationProcessor(libs.picocli.codegen)
     implementation(libs.picocli)
@@ -30,6 +35,8 @@ dependencies {
     testImplementation(libs.assertj)
     testImplementation(libs.mockito.core)
     testImplementation(libs.bundles.junit.jupiter)
+
+    add(graalSourceSets.implementationConfigurationName, libs.graal.sdk)
 }
 
 application {
@@ -59,6 +66,7 @@ gradle.taskGraph.whenReady {
 }
 
 graalvmNative {
+    // toolchainDetection = true
     metadataRepository {
         enabled.set(true)
     }
@@ -69,6 +77,7 @@ graalvmNative {
                 languageVersion.set(JavaLanguageVersion.of(javaVersion))
                 vendor.set(JvmVendorSpec.GRAAL_VM)
             })
+
             buildArgs.addAll(
                 "--native-image-info",
                 // Log resources
@@ -87,6 +96,12 @@ graalvmNative {
                 // Not available in GraalVM community edition
                 // "--enable-sbom=cyclonedx",
             )
+
+            // debug flags
+            // "-H:+SourceLevelDebug",
+            // "-H:-DeleteLocalSymbols",
+            // "-H:-RemoveUnusedSymbols",
+            // "-H:+PreserveFramePointer",
             verbose.set(true)
             debug.set(false) // to play with native debugger in IJ
 
@@ -110,6 +125,29 @@ tasks {
 
     withType<JavaExec> {
         javaLauncher.set(javaToolchainLauncher)
+    }
+
+    jar { enabled = false }
+    shadowJar {
+        manifest {
+            attributes(
+                mapOf(
+                    "Implementation-Version" to project.version,
+                    "Enable-Native-Access" to "ALL-UNNAMED",
+                )
+            )
+        }
+    }
+
+    val shadowJarWithGraal by registering(ShadowJar::class) {
+        from(shadowJar)
+        from(graalSourceSets.output)
+        destinationDirectory = temporaryDir
+    }
+    named<BuildNativeImageTask>("nativeCompile") {
+        // Disabled as long as GraalVM doesn't support aarch64
+        // classpathJar = shadowJarWithGraal.get().archiveFile
+        classpathJar = shadowJar.get().archiveFile
     }
 
     test {
