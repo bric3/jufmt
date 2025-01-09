@@ -26,6 +26,7 @@ public class JufmtCharacterTest {
     void can_describe_input_characters(String input, String expected) {
         var result = jufmt("describe", input);
 
+        assertThat(result.err()).isEmpty();
         assertThat(result.out()).isEqualToIgnoringNewLines(expected);
     }
 

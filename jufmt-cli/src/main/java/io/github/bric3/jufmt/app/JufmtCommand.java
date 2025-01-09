@@ -17,7 +17,9 @@ import picocli.CommandLine.*;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Model.UsageMessageSpec;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Normalizer;
@@ -84,7 +86,8 @@ public class JufmtCommand implements Runnable {
     CommandSpec spec;
 
     public static void main(String[] args) {
-        var cmd = new CommandLine(JufmtCommand.class).setCaseInsensitiveEnumValuesAllowed(true);
+        var cmd = new CommandLine(new JufmtCommand())
+                .setCaseInsensitiveEnumValuesAllowed(true);
         cmd.getHelpSectionMap().put(
                 UsageMessageSpec.SECTION_KEY_HEADER,
                 help -> Figlet.render("jufmt") + "\n\n"
@@ -187,7 +190,7 @@ public class JufmtCommand implements Runnable {
         );
 
         if (StdinReader.isAvailable && !StdinReader.isStdinConnectedToTty && stringToProcessParam == null) {
-            var stdin = StdinReader.stdinCharSequence().toString();
+            var stdin = StdinReader.stdinCharSequence(System.in).toString();
             checkParam(
                     !StdinReader.isStdinConnectedToTty && stdin.isBlank(),
                     "Expects text from stdin or a non blank STR parameter."
