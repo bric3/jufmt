@@ -12,9 +12,13 @@ on:
   workflow_dispatch:
 
   push:
-    branches: [ master ]
+    branches: [ '**' ]
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
+    paths-ignore:
+      - .run/**
+      - .tool-versions
+      - .editorconfig
 
   pull_request:
     branches: [ master ]
@@ -72,18 +76,27 @@ jobs:
         # Gradle currently does not detect the Oracle GraalVM installation ('graalvm')
         distribution: 'graalvm-community'
         java-version: '23'
-        components: 'native-image'
         native-image-job-reports: 'true'
+        native-image-pr-reports: 'true'
+        cache: 'gradle'
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v4
 
+    - name: Echo Versions and Paths
+      run: |
+        echo "GRAALVM_HOME: $GRAALVM_HOME"
+        echo "JAVA_HOME: $JAVA_HOME"
+        java --version
+        native-image --version
+        ./gradlew --version
+
     - name: Show toolchains
       run: ./gradlew -q javaToolchains
 
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew build --stacktrace
 
     - name: Upload Test Report
       uses: actions/upload-artifact@v4
@@ -94,7 +107,7 @@ jobs:
         retention-days: 1
 
     - name: Build native image
-      run: ./gradlew nativeCompile
+      run: ./gradlew nativeCompile --stacktrace
 
     - name: Run native image
       run: ./jufmt-cli/build/native/nativeCompile/jufmt --help

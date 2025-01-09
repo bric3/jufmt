@@ -1,6 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.graalvm.buildtools.gradle.tasks.BuildNativeImageTask
-
 /*
  * jufmt
  *
@@ -10,6 +7,8 @@ import org.graalvm.buildtools.gradle.tasks.BuildNativeImageTask
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.graalvm.buildtools.gradle.tasks.BuildNativeImageTask
 
 plugins {
     application
@@ -25,7 +24,7 @@ repositories {
     mavenCentral()
 }
 
-val graalSourceSets = sourceSets.create("graal")
+val graal by sourceSets.creating
 
 dependencies {
     annotationProcessor(libs.picocli.codegen)
@@ -36,7 +35,7 @@ dependencies {
     testImplementation(libs.mockito.core)
     testImplementation(libs.bundles.junit.jupiter)
 
-    add(graalSourceSets.implementationConfigurationName, libs.graal.sdk)
+    add(graal.compileOnlyConfigurationName, libs.graal.sdk)
 }
 
 application {
@@ -66,10 +65,14 @@ gradle.taskGraph.whenReady {
 }
 
 graalvmNative {
-    // toolchainDetection = true
+    // https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html#configuration-toolchains-enabling
+    // Rely on the toolchain rather than the JDK running Gradle
+    toolchainDetection = false // specifying the toolchain manually
+
     metadataRepository {
         enabled.set(true)
     }
+
     binaries {
         named("main") {
             imageName.set("jufmt")
@@ -143,9 +146,10 @@ tasks {
         }
     }
 
+    // unused at this time because graalvm doesn't support ffm on aarch64, possibly for GraalVM 25
     val shadowJarWithGraal by registering(ShadowJar::class) {
         from(shadowJar)
-        from(graalSourceSets.output)
+        from(graal.output)
         destinationDirectory = temporaryDir
     }
     named<BuildNativeImageTask>("nativeCompile") {
