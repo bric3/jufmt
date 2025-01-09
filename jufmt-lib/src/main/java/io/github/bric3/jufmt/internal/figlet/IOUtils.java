@@ -12,9 +12,9 @@ import java.util.zip.ZipInputStream;
 public class IOUtils {
     public static final byte[] PKZIP_HEADER = new byte[]{0x50, 0x4b, 0x03, 0x04};
 
-    static @NotNull InputStream unwrapZippedFontIfNecessary(@Nullable InputStream inputStream) throws IOException {
+    static @NotNull InputStream unwrapZippedFontIfNecessary(@Nullable InputStream inputStream, String path) throws IOException {
         if (inputStream == null) {
-            throw new IOException("Failed to open file");
+            throw new IOException("Failed to open file : " + path);
         }
 
         // detects zipped font

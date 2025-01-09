@@ -7,9 +7,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
 
 /**
  * @author Yihleego
@@ -112,10 +114,14 @@ class FontMetadata {
         var data = new ArrayList<String>();
         var path = font.getPath();
 
-        try (var resourceStream = path.isAbsolute() ?
-                Files.newInputStream(path) :
-                FigletRenderer.class.getClassLoader().getResourceAsStream(path.toString());
-             var inputStream = IOUtils.unwrapZippedFontIfNecessary(resourceStream)) {
+        String zipPath = StreamSupport.stream(path.spliterator(), false).map(Path::toString).collect(Collectors.joining("/"));
+
+        try (
+                var resourceStream = path.isAbsolute() ?
+                                     Files.newInputStream(path) :
+                                     FigletRenderer.class.getClassLoader().getResourceAsStream(zipPath);
+                var inputStream = IOUtils.unwrapZippedFontIfNecessary(resourceStream, zipPath)
+        ) {
             var bufferedReader = new BufferedReader(new InputStreamReader(inputStream, font.getCharset()));
             String line;
             while ((line = bufferedReader.readLine()) != null) {
