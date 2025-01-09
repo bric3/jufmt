@@ -47,21 +47,21 @@ jobs:
     strategy:
       matrix:
         include:
-          # - os: linux
-          #   arch: amd64
-          #   runner: ubuntu-latest
-          #   tag: linux-amd64
-          #   ignore-errors: false
-          # - os: macos
-          #   runner: macos-latest
-          #   arch: amd64
-          #   tag: darwin-amd64
-          #   ignore-errors: false
-          # - os: macos
-          #   runner: macos-14
-          #   arch: aarch64
-          #   tag: darwin-aarch64
-          #   ignore-errors: false
+          - os: linux
+            arch: amd64
+            runner: ubuntu-latest
+            tag: linux-amd64
+            ignore-errors: false
+          - os: macos
+            runner: macos-latest
+            arch: amd64
+            tag: darwin-amd64
+            ignore-errors: false
+          - os: macos
+            runner: macos-14
+            arch: aarch64
+            tag: darwin-aarch64
+            ignore-errors: false
           - os: windows
             runner: windows-latest
             arch: amd64
