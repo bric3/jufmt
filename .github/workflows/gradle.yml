@@ -52,6 +52,11 @@ jobs:
             runner: ubuntu-latest
             tag: linux-amd64
             ignore-errors: false
+          - os: linux
+            arch: aarch64
+            runner: ubuntu-24.04-arm
+            tag: linux-aarch64
+            ignore-errors: false
           - os: macos
             runner: macos-latest
             arch: amd64
