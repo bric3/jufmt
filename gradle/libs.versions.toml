@@ -45,5 +45,5 @@ graalvmBuildtoolsNative = { id = "org.graalvm.buildtools.native", version = "0.1
 asciidoctor = { id = "org.asciidoctor.jvm.convert", version = "4.0.4" }
 shadow = { id = "com.gradleup.shadow", version = "8.3.5" }
 download = { id = "de.undercouch.download", version = "5.6.0" }
-yumi-licenser = { id = "dev.yumi.gradle.licenser", version = "2.1.0" }
+yumi-licenser = { id = "dev.yumi.gradle.licenser", version = "2.1.1" }
 testLogger = { id = "com.adarshr.test-logger", version = "4.0.0" }
