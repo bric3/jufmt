@@ -7,10 +7,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+import de.undercouch.gradle.tasks.download.Download
 import net.thauvin.erik.urlencoder.UrlEncoderUtil
+import org.gradle.kotlin.dsl.support.zipTo
 import org.jsoup.Jsoup
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 plugins {
     `java-library`
@@ -66,17 +70,19 @@ tasks {
         useJUnitPlatform()
     }
 
-    val downloadXeroFigletFonts by registeringDownload("https://github.com/xero/figlet-fonts")
-    val downloadGangshitFigletFonts by registeringDownload("https://github.com/thugcrowd/gangshit")
-
+    val downloadXeroFigletFonts by registeringMasterDownload("https://github.com/xero/figlet-fonts", "figlet-fonts")
+    val downloadGangshitFigletFonts by registeringMasterDownload(
+        "https://github.com/thugcrowd/gangshit",
+        "figlet-fonts"
+    )
     val downloadAndUnzipFigletFonts by registering(Copy::class) {
         dependsOn(
             downloadXeroFigletFonts,
             downloadGangshitFigletFonts,
         )
 
-        dependsOn.filterIsInstance<TaskProvider<de.undercouch.gradle.tasks.download.Download>>().forEach {
-            from(zipTree(it.get().dest)) {
+        dependsOn.filterIsInstance<TaskProvider<Download>>().forEach { downloadTask ->
+            from(zipTree(downloadTask.map { it.dest })) {
                 include("**/*.tlf", "**/*.flf")
                 includeEmptyDirs = false
                 eachFile {
@@ -87,41 +93,113 @@ tasks {
         into("${sourceSets.main.get().output.resourcesDir}/jufmt/figlet-fonts")
     }
 
+    val downloadAolFonts by registering(Download::class) {
+        val aolFontsRelease = project.property("aol-fonts-release").toString()
+        src("https://github.com/bric3/jufmt/releases/download/$aolFontsRelease")
+        dest(project.layout.buildDirectory.file(aolFontsRelease.substringAfterLast('/')))
+        onlyIfModified(true)
+        useETag("all") // Use the ETag on GH
+    }
+
+    val downloadAndUnzipAolFonts by registering(Copy::class) {
+        dependsOn(downloadAolFonts)
+
+        from(zipTree(downloadAolFonts.map { it.dest }))
+        into("${sourceSets.main.get().output.resourcesDir}/aol-fonts")
+    }
+
+    /**
+     * Used to scrap the font and create an archive.
+     */
     val scrapeAolFonts by registering(AolFontScrapper::class) {
-        dest.set("${sourceSets.main.get().output.resourcesDir}/jufmt/aol-fonts")
+        dest.set(project.layout.buildDirectory.map { it.dir("aol-fonts-scrape") })
+    }
+
+    val patchPropertiesIfAolFontsChanged by registering {
+        dependsOn(scrapeAolFonts)
+        val propFile = rootProject.file("gradle.properties")
+        outputs.files(propFile)
+
+        val aolFontsReleaseList = project.property("aol-fonts-release").toString().replace(".zip", "-list.txt")
+        val currentListFile = project.layout.buildDirectory
+            .file("tmp/$name/${aolFontsReleaseList.substringAfterLast('/')}")
+        doLast {
+            download.run() {
+                src("https://github.com/bric3/jufmt/releases/download/$aolFontsReleaseList")
+                dest(currentListFile)
+            }
+
+            val currentAolFonts = currentListFile.get().asFile.readLines().toSet()
+
+            val scraped = scrapeAolFonts.get().fontList.get().asFile.readLines().toSet()
+
+            if (currentAolFonts.containsAll(scraped)) {
+                throw GradleException("Same fonts")
+            } else {
+                propFile.run {
+                    val patched = readText().replace(
+                        Regex("aol-fonts-release\\s*=\\s*.+.zip"),
+                        "aol-fonts-release=aol-fonts-${scrapeAolFonts.get().month}/${scrapeAolFonts.get().fontsArchiveFileName}"
+                    )
+                    writeText(patched)
+                }
+
+                logger.lifecycle("Scraped Aol Fonts are different, patched `gradle.properties`")
+            }
+        }
     }
 
     processResources {
         dependsOn(
             downloadAndUnzipFigletFonts,
-            scrapeAolFonts
+            downloadAndUnzipAolFonts,
         )
     }
 }
 
-fun TaskContainer.registeringDownload(src: String) = registering(de.undercouch.gradle.tasks.download.Download::class) {
-        src(
-            when {
-                src.endsWith("archive/master.zip") -> src
-                else -> "${src.removeSuffix("/")}/archive/master.zip"
+fun TaskContainer.registeringMasterDownload(
+    src: String,
+    typeTag: String? = null
+) = registering(Download::class) {
+    src(
+        when {
+            src.endsWith("archive/master.zip") -> src
+            else -> "${src.removeSuffix("/")}/archive/master.zip"
+        }
+    )
+    dest(
+        src.removePrefix("https://github.com/")
+            .removeSuffix("/archive/master.zip")
+            .replace("/", "-")
+            .let { repo ->
+                project.layout.buildDirectory.file("$repo${typeTag?.let { "-${it}" } ?: ""}${if (src.endsWith("archive/master.zip")) "-master" else ""}.zip")
             }
-        )
-        dest(src.let {
-            val repo = it.removePrefix("https://github.com/")
-                .removeSuffix("/archive/master.zip")
-                .replace("/", "-")
-            project.layout.buildDirectory.file("$repo-figlet-fonts-master.zip")
-        })
-        onlyIfModified(true)
-        useETag("all") // Use the ETag on GH
-    }
+    )
+    onlyIfModified(true)
+    useETag("all") // Use the ETag on GH
+}
 
 
 abstract class AolFontScrapper @Inject constructor(
     private val project: Project,
 ) : DefaultTask() {
     @get:OutputDirectory
-    abstract val dest: Property<String>
+    abstract val dest: DirectoryProperty
+
+    @get:Internal
+    val fontList: Provider<RegularFile>
+        get() = dest.map { it.file(fontListsFileName) }
+
+    @get:Internal
+    val fontsArchive: Provider<RegularFile>
+        get() = dest.map { it.file(fontsArchiveFileName) }
+
+    @Internal
+    val month = DateTimeFormatter.ofPattern("yyyy-MM").format(ZonedDateTime.now())
+    @Internal
+    val fontsArchiveFileName = "$month-aol-fonts.zip"
+    @Internal
+    val fontListsFileName = "$month-aol-fonts-list.txt"
 
     @TaskAction
     fun scrape() {
@@ -135,9 +213,10 @@ abstract class AolFontScrapper @Inject constructor(
             .filter { it.endsWith(".aol") }
             .toList()
 
+        val tempDownloadDir = project.layout.buildDirectory.dir("tmp/$name/downloaded")
         project.download.run {
             src(aolFontFileNames.map { "https://patorjk.com/software/taag/fonts/${it}".encodeFontName() })
-            dest(project.layout.buildDirectory.dir("aol-fonts"))
+            dest(tempDownloadDir)
             eachFile {
                 name = URLDecoder.decode(name, StandardCharsets.UTF_8)
             }
@@ -147,13 +226,26 @@ abstract class AolFontScrapper @Inject constructor(
             onlyIfModified(true)
         }
 
+        // gen archive
+
+        val aolFontsArchive = tempDownloadDir.map { it.file("../$fontsArchiveFileName") }
+        zipTo(
+            aolFontsArchive.get().asFile,
+            tempDownloadDir.get().asFile
+        )
+        val listFile = tempDownloadDir.map { it.file("../$fontListsFileName") }
+        project.file(listFile.get().asFile)
+            .writeText(project.fileTree(dest).files.sorted().joinToString("\n") { it.name })
+
+        dest.get().file("foo")
+
+        // https://github.com/gradle/gradle/issues/31627
         project.copy {
-            from(project.layout.buildDirectory.dir("aol-fonts")) {
-                include("*.aol")
-            }
+            from(listFile, aolFontsArchive)
             into(dest)
         }
     }
 
-    private fun String.encodeFontName() = this.replaceAfterLast('/', UrlEncoderUtil.encode(this.substringAfterLast('/')) )
+    private fun String.encodeFontName() =
+        this.replaceAfterLast('/', UrlEncoderUtil.encode(this.substringAfterLast('/')))
 }

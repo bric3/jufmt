@@ -1,0 +1,75 @@
+# jufmt
+#
+# Copyright (c) 2023, today - Brice DUTHEIL
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+name: Scrape AOL fonts
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "59 23 1 1,7 *"
+
+jobs:
+  build-java:
+    # Deduplicate pr events from push events
+    if: (github.event_name != 'pull_request' && ! github.event.pull_request.head.repo.fork) || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork)
+
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: write
+
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@v4
+
+      - name: Gradle Wrapper Validation
+        uses: gradle/actions/wrapper-validation@v4
+        with:
+          min-wrapper-count: 0
+
+      - uses: actions/checkout@v4
+      - name: Set up GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          # Gradle currently does not detect the Oracle GraalVM installation ('graalvm')
+          distribution: 'graalvm-community'
+          java-version: '23'
+          native-image-job-reports: 'true'
+          native-image-pr-reports: 'true'
+          cache: 'gradle'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Scrape AOL fonts
+        run: |
+          ./gradlew scrapeAolFonts
+          echo "::set-output name=list::$(basename jufmt-lib/build/tmp/scrapeAolFonts/*-aol-fonts-list.txt .txt)"
+          echo "::set-output name=zipFile::$(basename jufmt-lib/build/tmp/scrapeAolFonts/*-aol-fonts.zip .zip)"
+
+      - name: Check with previous fonts release
+        id: needRelease
+        run: ./gradlew patchPropertiesIfAolFontsChanged
+
+      # Get the release via
+      # gh release list --json tagName,name --jq 'map(select(.tagName | startswith("aol-fonts"))) | max_by(.tagName) | .tagName'
+      - name: Release
+        if: steps.needRelease.conclusion == 'success'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: aol-fonts-...
+          body_path: ${{ steps.vars.outputs.list }}
+          files: ${{ steps.vars.outputs.zipFile }}
+
+      - name: Commit gradle.properties patch
+        if: steps.needRelease.conclusion == 'success'
+        run: |
+          add --ignore-errors --all -- gradle.properties
+          git commit --message="chore: Bump aol fonts release"
+          git push
+          
