@@ -165,14 +165,11 @@ jobs:
   # In order to be able to make the most of it this job in particular has
   # augmented permissions.
   junit-report:
-    name: JUnit Report ${{ matrix.tag }}
+    name: JUnit Report
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        tag: [ 'linux-amd64', 'darwin-amd64', 'darwin-aarch64', 'windows-amd64' ]
     if: |
       success() || failure()
-    needs: [ build ]
+    needs: [ build-java ]
     permissions:
       checks: write # for mikepenz/action-junit-report
 
@@ -180,16 +177,16 @@ jobs:
       - name: Download Test Report
         uses: actions/download-artifact@v4
         with:
-          name: junit-test-results-${{ matrix.tag }}
+          name: junit-test-results
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v5
         with:
-          check_name: Test Report - ${{ matrix.tag }}
+          check_name: Test Report
           commit: ${{github.event.workflow_run.head_sha}}
           report_paths: '**/build/test-results/test/TEST-*.xml'
 
   release:
-    needs: [ build ]
+    needs: [ build-java, build-native ]
     runs-on: ubuntu-24.04
     environment: release
     if: startsWith(github.ref, 'refs/tags/')
