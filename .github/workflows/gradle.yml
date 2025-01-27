@@ -28,9 +28,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  gradleValidation:
-    name: Gradle Wrapper
-    runs-on: ubuntu-latest
+  build-java:
+    # Deduplicate pr events from push events
+    if: (github.event_name != 'pull_request' && ! github.event.pull_request.head.repo.fork) || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork)
+
+    runs-on: ubuntu-24.04-arm
+
     steps:
       - name: Fetch Sources
         uses: actions/checkout@v4
@@ -39,8 +42,52 @@ jobs:
         uses: gradle/actions/wrapper-validation@v4
         with:
           min-wrapper-count: 0
-        
-  build:
+
+      - uses: actions/checkout@v4
+      - name: Set up GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          # Gradle currently does not detect the Oracle GraalVM installation ('graalvm')
+          distribution: 'graalvm-community'
+          java-version: '23'
+          native-image-job-reports: 'true'
+          native-image-pr-reports: 'true'
+          cache: 'gradle'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Echo Versions and Paths
+        run: |
+          echo "GRAALVM_HOME: $GRAALVM_HOME"
+          echo "JAVA_HOME: $JAVA_HOME"
+          java --version
+          native-image --version
+          ./gradlew --version
+
+      - name: Show toolchains
+        run: ./gradlew -q javaToolchains
+
+      - name: Build with Gradle
+        run: ./gradlew build --stacktrace
+
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v4
+        if: always() # always run even if the previous step fails
+        with:
+          name: junit-test-results
+          path: '**/build/test-results/test/TEST-*.xml'
+          retention-days: 1
+
+      - name: Produce doc
+        run: ./gradlew asciidoctor
+
+  build-native:
+    # Deduplicate pr events from push events
+    if: (github.event_name != 'pull_request' && ! github.event.pull_request.head.repo.fork) || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork)
+
+    needs: build-java
     name: Build ${{ matrix.tag }}
     runs-on: ${{ matrix.runner }}
     continue-on-error: ${{ matrix.ignore-errors }}
@@ -74,83 +121,55 @@ jobs:
             ignore-errors: true
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up GraalVM
-      uses: graalvm/setup-graalvm@v1
-      with:
-        # Gradle currently does not detect the Oracle GraalVM installation ('graalvm')
-        distribution: 'graalvm-community'
-        java-version: '23'
-        native-image-job-reports: 'true'
-        native-image-pr-reports: 'true'
-        cache: 'gradle'
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v4
+      - name: Set up GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          # Gradle currently does not detect the Oracle GraalVM installation ('graalvm')
+          distribution: 'graalvm-community'
+          java-version: '23'
+          native-image-job-reports: 'true'
+          native-image-pr-reports: 'true'
+          cache: 'gradle'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
 
-    - name: Echo Versions and Paths
-      run: |
-        echo "GRAALVM_HOME: $GRAALVM_HOME"
-        echo "JAVA_HOME: $JAVA_HOME"
-        java --version
-        native-image --version
-        ./gradlew --version
+      - name: Build native image
+        run: ./gradlew nativeCompile --stacktrace
 
-    - name: Show toolchains
-      run: ./gradlew -q javaToolchains
+      - name: Run native image
+        run: ./jufmt-cli/build/native/nativeCompile/jufmt --help
 
-    - name: Build with Gradle
-      run: ./gradlew build --stacktrace
+      - name: Rename binary
+        if: contains(matrix.os, 'linux') || contains(matrix.os, 'macos')
+        run: mv ./jufmt ./jufmt-${{ matrix.tag }}
+        working-directory: ./jufmt-cli/build/native/nativeCompile
+      - name: Rename Windows binary
+        if: contains(matrix.os, 'windows')
+        run: mv ./jufmt.exe ./jufmt-windows-amd64.exe
+        working-directory: ./jufmt-cli/build/native/nativeCompile
 
-    - name: Upload Test Report
-      uses: actions/upload-artifact@v4
-      if: always() # always run even if the previous step fails
-      with:
-        name: junit-test-results-${{ matrix.tag }}
-        path: '**/build/test-results/test/TEST-*.xml'
-        retention-days: 1
-
-    - name: Build native image
-      run: ./gradlew nativeCompile --stacktrace
-
-    - name: Run native image
-      run: ./jufmt-cli/build/native/nativeCompile/jufmt --help
-
-    - name: Produce doc
-      run: ./gradlew asciidoctor
-
-    - name: Rename binary
-      if: contains(matrix.os, 'linux') || contains(matrix.os, 'macos')
-      run: mv ./jufmt ./jufmt-${{ matrix.tag }}
-      working-directory: ./jufmt-cli/build/native/nativeCompile
-    - name: Rename Windows binary
-      if: contains(matrix.os, 'windows')
-      run: mv ./jufmt.exe ./jufmt-windows-amd64.exe
-      working-directory: ./jufmt-cli/build/native/nativeCompile
-
-    - name: Upload binary
-      uses: actions/upload-artifact@v4
-      with:
-        name: jufmt-${{ matrix.tag }}
-        path: |
-          ./jufmt-cli/build/native/nativeCompile/jufmt*
-          !./jufmt-cli/build/native/nativeCompile/jufmt*.bgv
-        if-no-files-found: error
-        retention-days: 7
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: jufmt-${{ matrix.tag }}
+          path: |
+            ./jufmt-cli/build/native/nativeCompile/jufmt*
+            !./jufmt-cli/build/native/nativeCompile/jufmt*.bgv
+          if-no-files-found: error
+          retention-days: 7
 
   # This job will update the PR with the JUnit report
   # In order to be able to make the most of it this job in particular has
   # augmented permissions.
   junit-report:
-    name: JUnit Report ${{ matrix.tag }}
+    name: JUnit Report
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        tag: ['linux-amd64', 'darwin-amd64', 'darwin-aarch64', 'windows-amd64']
     if: |
       success() || failure()
-    needs: [ build ]
+    needs: [ build-java ]
     permissions:
       checks: write # for mikepenz/action-junit-report
 
@@ -158,16 +177,16 @@ jobs:
       - name: Download Test Report
         uses: actions/download-artifact@v4
         with:
-          name: junit-test-results-${{ matrix.tag }}
+          name: junit-test-results
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v5
         with:
-          check_name: Test Report - ${{ matrix.tag }}
+          check_name: Test Report
           commit: ${{github.event.workflow_run.head_sha}}
           report_paths: '**/build/test-results/test/TEST-*.xml'
 
   release:
-    needs: [ build ]
+    needs: [ build-java, build-native ]
     runs-on: ubuntu-24.04
     environment: release
     if: startsWith(github.ref, 'refs/tags/')

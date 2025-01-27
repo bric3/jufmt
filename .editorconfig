@@ -1214,6 +1214,8 @@ ij_visual_guides = none
 ij_toml_keep_indents_on_empty_lines = false
 
 [{*.yaml,*.yml}]
+tab_width = 2
+indent_size = 2
 ij_visual_guides = none
 ij_yaml_align_values_properties = do_not_align
 ij_yaml_autoinsert_sequence_marker = true
