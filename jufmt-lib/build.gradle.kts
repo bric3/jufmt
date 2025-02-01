@@ -11,15 +11,19 @@ import de.undercouch.gradle.tasks.download.Download
 import net.thauvin.erik.urlencoder.UrlEncoderUtil
 import org.gradle.kotlin.dsl.support.zipTo
 import org.jsoup.Jsoup
+import org.spdx.sbom.gradle.SpdxSbomTask
+import java.io.ByteArrayOutputStream
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 plugins {
     `java-library`
     alias(libs.plugins.download)
     alias(libs.plugins.testLogger)
+    alias(libs.plugins.spdx)
 }
 
 buildscript {
@@ -53,6 +57,71 @@ java {
         // Note this one doesn't enforce graalvm
     }
 }
+
+spdxSbom {
+    targets {
+        create("jufmtLibRelease") {
+            configurations.set(listOf("compileClasspath")) // compilationClasspath
+            scm {
+                tool.set("git")
+                uri.set("https://github.com/bric3/jufmt.git")
+                revision.set(
+                    providers.environmentVariable("GITHUB_SHA")
+                        .orElse(providers.of(GitHeadSource::class) {})
+                )
+            }
+            document {
+                name.set("jufmt-lib")
+                creator.set("Person: Brice Dutheil")
+                packageSupplier.set("Person: Brice Dutheil")
+                // NOTE: The URI does not have to be accessible. It is only intended to provide a unique ID.
+                // In many cases, the URI will point to a Web accessible document, but this should not be assumed to be the case.
+                // This property is the URI that should give this object a universally unique name. Although this property looks like a HTTP URL, it is in fact not. Technically speaking, a URL defined a Location, where as a URI defines an Identifier (i.e. the name by which something is known)
+                namespace.set("https://github.com/bric3/jufmt/${UUID.randomUUID()}")
+            }
+        }
+    }
+}
+
+val sbomCfg = configurations.maybeCreate("sbomForJufmtLibRelease").apply {
+    isCanBeResolved = false
+    isCanBeConsumed = true
+}
+val spdxSbomTaskTaskProvider = tasks.named<SpdxSbomTask>("spdxSbomForJufmtLibRelease")
+val sbomArtifact = artifacts.add(sbomCfg.name, spdxSbomTaskTaskProvider) {
+    type = "sbom"
+    extension = "spdx.json"
+    builtBy(spdxSbomTaskTaskProvider)
+}
+
+tasks.withType<AbstractPublishToMaven> {
+    dependsOn(tasks.spdxSbom)
+}
+tasks.withType<Sign>().configureEach {
+    mustRunAfter(tasks.spdxSbom)
+}
+tasks.withType<PublishToMavenLocal>().configureEach {
+    publication.artifact(sbomArtifact)
+}
+
+
+abstract class GitHeadSource : ValueSource<String, ValueSourceParameters.None> {
+    @get:Inject
+    abstract val execOps : ExecOperations
+    override fun obtain(): String {
+        return try {
+            val baos = ByteArrayOutputStream()
+            execOps.exec {
+                commandLine("git", "rev-parse", "HEAD")
+                standardOutput = baos
+            }
+            baos.toString().trim()
+        } catch (e: GradleException) {
+            ""
+        }
+    }
+}
+
 
 tasks {
     compileJava {
