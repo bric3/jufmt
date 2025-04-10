@@ -10,7 +10,8 @@
 asciidoctorj = "3.0.0"
 asciidoctorjDiagram = "2.3.2"
 assertj = "3.27.3"
-junit-jupiter = "5.11.4"
+junit-platform = "1.12.1"
+junit-jupiter = "5.12.1"
 mockito = "5.17.0"
 picocli = "4.7.6"
 
@@ -25,6 +26,8 @@ picocli = { module = "info.picocli:picocli", version.ref = "picocli" }
 picocli-codegen = { module = "info.picocli:picocli-codegen", version.ref = "picocli" }
 
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit-jupiter" }
 junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit-jupiter" }

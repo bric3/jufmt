@@ -33,7 +33,8 @@ dependencies {
 
     testImplementation(libs.assertj)
     testImplementation(libs.mockito.core)
-    testImplementation(libs.bundles.junit.jupiter)
+    testImplementation(libs.junit.jupiter)
+    testRuntimeOnly(libs.junit.platform.launcher)
 
     add(graal.compileOnlyConfigurationName, libs.graal.sdk)
 }

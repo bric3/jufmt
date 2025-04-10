@@ -44,7 +44,8 @@ dependencies {
     implementation(libs.jetbrains.annotations)
 
     testImplementation(libs.assertj)
-    testImplementation(libs.bundles.junit.jupiter)
+    testImplementation(libs.junit.jupiter)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 val shippedJavaVersion = 11
