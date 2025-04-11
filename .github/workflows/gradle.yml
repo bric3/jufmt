@@ -87,6 +87,7 @@ jobs:
     # Deduplicate pr events from push events
     if: (github.event_name != 'pull_request' && ! github.event.pull_request.head.repo.fork) || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork)
 
+    # Runners : https://docs.github.com/en/actions/using-github-hosted-runners/using-github-hosted-runners/about-github-hosted-runners
     needs: build-java
     name: Build ${{ matrix.tag }}
     runs-on: ${{ matrix.runner }}
@@ -105,7 +106,7 @@ jobs:
             tag: linux-aarch64
             ignore-errors: false
           - os: macos
-            runner: macos-latest
+            runner: macos-13
             arch: amd64
             tag: darwin-amd64
             ignore-errors: false
