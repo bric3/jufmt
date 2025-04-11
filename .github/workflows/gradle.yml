@@ -131,6 +131,7 @@ jobs:
           java-version: '24'
           native-image-job-reports: 'true'
           native-image-pr-reports: 'true'
+          components: 'native-image'
           cache: 'gradle'
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
