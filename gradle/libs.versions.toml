@@ -15,7 +15,7 @@ junit-jupiter = "5.12.1"
 mockito = "5.17.0"
 picocli = "4.7.7"
 
-graalSdk = "24.2.0"
+graalSdk = "24.2.1"
 
 [libraries]
 # Used to help bot retrieve and bump the version of asciidoctor
