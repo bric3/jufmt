@@ -10,8 +10,8 @@
 asciidoctorj = "3.0.0"
 asciidoctorjDiagram = "2.3.2"
 assertj = "3.27.3"
-junit-platform = "1.12.1"
-junit-jupiter = "5.12.1"
+junit-platform = "1.12.2"
+junit-jupiter = "5.12.2"
 mockito = "5.17.0"
 picocli = "4.7.7"
 
