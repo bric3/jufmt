@@ -9,7 +9,7 @@
 [versions]
 asciidoctorj = "3.0.0"
 asciidoctorjDiagram = "3.0.1"
-assertj = "3.27.3"
+assertj = "3.27.4"
 junit-platform = "1.13.3"
 junit-jupiter = "5.13.3"
 mockito = "5.18.0"
