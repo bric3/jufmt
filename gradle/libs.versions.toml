@@ -44,7 +44,7 @@ graal-sdk = { module = "org.graalvm.sdk:graal-sdk", version.ref = "graalSdk" }
 junit-jupiter = [ "junit-jupiter-api", "junit-jupiter-engine", "junit-jupiter-params"]
 
 [plugins]
-graalvmBuildtoolsNative = { id = "org.graalvm.buildtools.native", version = "0.10.6" }
+graalvmBuildtoolsNative = { id = "org.graalvm.buildtools.native", version = "0.11.0" }
 asciidoctor = { id = "org.asciidoctor.jvm.convert", version = "4.0.5" }
 shadow = { id = "com.gradleup.shadow", version = "9.1.0" }
 download = { id = "de.undercouch.download", version = "5.6.0" }
