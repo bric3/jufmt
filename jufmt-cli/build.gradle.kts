@@ -7,8 +7,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.graalvm.buildtools.gradle.tasks.BuildNativeImageTask
+import java.nio.file.Files
 
 plugins {
     application
@@ -24,7 +24,16 @@ repositories {
     mavenCentral()
 }
 
-val graal by sourceSets.creating
+// This can be used to include graal features
+val graal by sourceSets.registering {
+    dependencies.add(compileOnlyConfigurationName, libs.graal.sdk)
+
+    tasks.shadowJar {
+        if (output.dirs.any { Files.exists(it.toPath()) }) {
+            includedDependencies.from(output)
+        }
+    }
+}
 
 dependencies {
     annotationProcessor(libs.picocli.codegen)
@@ -35,15 +44,13 @@ dependencies {
     testImplementation(libs.mockito.core)
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly(libs.junit.platform.launcher)
-
-    add(graal.compileOnlyConfigurationName, libs.graal.sdk)
 }
 
 application {
     mainClass.set("io.github.bric3.jufmt.app.JufmtCommand")
 }
 
-val javaVersion = 24
+val javaVersion = 25
 
 java {
     toolchain {
@@ -114,6 +121,7 @@ graalvmNative {
             debug.set(false) // to play with native debugger in IJ
 
             runtimeArgs.addAll(
+                "--enable-native-access=ALL-UNNAMED",
                 "-XX:StartFlightRecording=filename=recording.jfr"
             )
         }
@@ -126,12 +134,12 @@ tasks {
     shadowDistZip { enabled = false }
     shadowDistTar { enabled = false }
 
-    withType<JavaCompile> {
+    withType<JavaCompile>().configureEach {
         options.encoding = "UTF-8"
         options.release.set(javaVersion)
     }
 
-    withType<JavaExec> {
+    withType<JavaExec>().configureEach {
         javaLauncher.set(javaToolchainLauncher)
     }
 
@@ -147,16 +155,8 @@ tasks {
         }
     }
 
-    // unused at this time because graalvm doesn't support ffm on aarch64, possibly for GraalVM 25
-    val shadowJarWithGraal by registering(ShadowJar::class) {
-        from(shadowJar)
-        from(graal.output)
-        destinationDirectory = temporaryDir
-    }
     named<BuildNativeImageTask>("nativeCompile") {
-        // Disabled as long as GraalVM doesn't support aarch64
-        // classpathJar = shadowJarWithGraal.get().archiveFile
-        classpathJar = shadowJar.get().archiveFile
+        classpathJar.fileProvider(shadowJar.map { it.archiveFile.get().asFile })
     }
 
     test {

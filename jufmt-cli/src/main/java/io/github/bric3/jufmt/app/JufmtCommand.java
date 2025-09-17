@@ -37,7 +37,7 @@ import java.util.Arrays;
         footer = {
                 """
                 To learn more about normalization: https://www.unicode.org/reports/tr15/
-                                
+
                 Fonts are provided by:                             ╱|、
                  - https://github.com/xero/figlet-fonts          (˚ˎ 。7
                  - https://github.com/thugcrowd/gangshit          |、˜〵

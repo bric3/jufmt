@@ -49,7 +49,7 @@ jobs:
         with:
           # Gradle currently does not detect the Oracle GraalVM installation ('graalvm')
           distribution: 'graalvm-community'
-          java-version: '24'
+          java-version: '25'
           native-image-job-reports: 'true'
           native-image-pr-reports: 'true'
           cache: 'gradle'
@@ -128,7 +128,7 @@ jobs:
         with:
           # Gradle currently does not detect the Oracle GraalVM installation ('graalvm')
           distribution: 'graalvm-community'
-          java-version: '24'
+          java-version: '25'
           native-image-job-reports: 'true'
           native-image-pr-reports: 'true'
           components: 'native-image'

@@ -29,7 +29,7 @@ public class StdinReader {
             // Unsupported on GraalVM because aarch64 is not supported yet
             linker = null;
         }
-        System.out.println("Linker is " + linker);
+        // System.out.println("Linker is " + linker);
     }
 
     public static boolean isAvailable = linker != null;
