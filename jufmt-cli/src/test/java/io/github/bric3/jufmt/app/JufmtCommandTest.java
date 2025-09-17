@@ -48,7 +48,7 @@ public class JufmtCommandTest {
     }
 
     @ParameterizedTest
-    @EnumSource(mode = Mode.EXCLUDE, names = {"none"})
+    @EnumSource(mode = Mode.EXCLUDE, names = {"none", "random"})
     public void check_converter(FancyConverter converter) {
         var result = jufmt("-c", converter.name(), "bric3");
 

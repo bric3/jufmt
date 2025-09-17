@@ -49,11 +49,13 @@ import java.util.Arrays;
 public class JufmtCommand implements Runnable {
     @Option(
             names = {"-c", "--converter"},
-            description = "Converter, valid converters: ${COMPLETION-CANDIDATES}",
-            paramLabel = "CONVERTER",
-            defaultValue = "none"
+            description = {
+                    "Converter, valid converters: ${COMPLETION-CANDIDATES}.",
+                    "Defaulting to ${DEFAULT-VALUE} if no other option."
+            },
+            paramLabel = "CONVERTER"
     )
-    FancyConverter converter;
+    FancyConverter converter = FancyConverter.random;
 
     @Option(
             names = {"-s", "--style"},
@@ -96,6 +98,14 @@ public class JufmtCommand implements Runnable {
     }
 
     public void run() {
+        if (!spec.commandLine().getParseResult().hasMatchedOption("-c")
+            && (spec.commandLine().getParseResult().hasMatchedOption("-r")
+                || style != null
+                || ornament != null)
+        ) {
+            converter = FancyConverter.none;
+        }
+
         var stringToProcess = getStringToProcess(stringToProcessParam);
 
         var result = converter.convert(stringToProcess);

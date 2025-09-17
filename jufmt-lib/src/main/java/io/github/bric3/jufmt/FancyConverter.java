@@ -10,9 +10,14 @@
 
 package io.github.bric3.jufmt;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -22,6 +27,17 @@ public enum FancyConverter {
         @Override
         public StringBuilder convert(String stringToProcess) {
             return new StringBuilder(stringToProcess);
+        }
+    },
+    random("", "") {
+        @Override
+        public StringBuilder convert(String stringToProcess) {
+            List<FancyConverter> values = new ArrayList<>(Arrays.asList(FancyConverter.values()));
+            values.remove(FancyConverter.none);
+            values.remove(FancyConverter.random);
+
+            Collections.shuffle(values);
+            return values.get(0).convert(stringToProcess);
         }
     },
 
