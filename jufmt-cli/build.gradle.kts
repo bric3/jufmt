@@ -155,7 +155,8 @@ tasks {
         }
     }
 
-    named<BuildNativeImageTask>("nativeCompile") {
+    nativeCompile {
+        classpathJar = shadowJar.flatMap { it.archiveFile }
         classpathJar.fileProvider(shadowJar.map { it.archiveFile.get().asFile })
     }
 
