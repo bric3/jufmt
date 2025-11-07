@@ -7,7 +7,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 [versions]
-asciidoctorj = "3.0.0"
+asciidoctorj = "3.0.1"
 asciidoctorjDiagram = "3.0.1"
 assertj = "3.27.6"
 junit-platform = "6.0.0"
