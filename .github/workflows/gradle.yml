@@ -73,7 +73,7 @@ jobs:
         run: ./gradlew build --stacktrace
 
       - name: Upload Test Report
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: always() # always run even if the previous step fails
         with:
           name: junit-test-results
@@ -159,7 +159,7 @@ jobs:
         working-directory: ./jufmt-cli/build/native/nativeCompile
 
       - name: Upload binary
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: jufmt-${{ matrix.tag }}
           path: |
@@ -182,7 +182,7 @@ jobs:
 
     steps:
       - name: Download Test Report
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: junit-test-results
       - name: Publish Test Report
@@ -200,7 +200,7 @@ jobs:
 
     steps:
       - name: Download binary artifacts
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: jufmt-${{ github.sha }}
       - name: Release binary artifacts
