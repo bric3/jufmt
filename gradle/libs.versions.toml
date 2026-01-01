@@ -35,7 +35,7 @@ mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 
 jetbrains-annotations = { module = "org.jetbrains:annotations", version = "26.0.2-1" }
 
-jsoup = { module = "org.jsoup:jsoup", version = "1.21.2" }
+jsoup = { module = "org.jsoup:jsoup", version = "1.22.1" }
 urlencoder = { module = "net.thauvin.erik.urlencoder:urlencoder-lib", version = "1.6.0" }
 
 graal-sdk = { module = "org.graalvm.sdk:graal-sdk", version.ref = "graalSdk" }
