@@ -10,12 +10,12 @@
 asciidoctorj = "3.0.1"
 asciidoctorjDiagram = "3.2.1"
 assertj = "3.27.7"
-junit-platform = "6.0.2"
-junit-jupiter = "6.0.2"
+junit-platform = "6.0.3"
+junit-jupiter = "6.0.3"
 mockito = "5.23.0"
 picocli = "4.7.7"
 
-graalSdk = "25.0.1"
+graalSdk = "25.0.3"
 
 [libraries]
 # Used to help bot retrieve and bump the version of asciidoctor
@@ -35,7 +35,7 @@ mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 
 jetbrains-annotations = { module = "org.jetbrains:annotations", version = "26.1.0" }
 
-jsoup = { module = "org.jsoup:jsoup", version = "1.22.1" }
+jsoup = { module = "org.jsoup:jsoup", version = "1.22.2" }
 urlencoder = { module = "net.thauvin.erik.urlencoder:urlencoder-lib", version = "1.6.0" }
 
 graal-sdk = { module = "org.graalvm.sdk:graal-sdk", version.ref = "graalSdk" }
@@ -44,10 +44,10 @@ graal-sdk = { module = "org.graalvm.sdk:graal-sdk", version.ref = "graalSdk" }
 junit-jupiter = [ "junit-jupiter-api", "junit-jupiter-engine", "junit-jupiter-params"]
 
 [plugins]
-graalvmBuildtoolsNative = { id = "org.graalvm.buildtools.native", version = "1.0.0" }
+graalvmBuildtoolsNative = { id = "org.graalvm.buildtools.native", version = "1.1.0" }
 asciidoctor = { id = "org.asciidoctor.jvm.convert", version = "4.0.5" }
 shadow = { id = "com.gradleup.shadow", version = "9.4.1" }
 download = { id = "de.undercouch.download", version = "5.7.0" }
 yumi-licenser = { id = "dev.yumi.gradle.licenser", version = "2.2.2" }
 testLogger = { id = "com.adarshr.test-logger", version = "4.0.0" }
-spdx = { id = "org.spdx.sbom", version = "0.10.0" }
+spdx = { id = "org.spdx.sbom", version = "0.11.0" }
