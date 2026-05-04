@@ -60,7 +60,7 @@ jobs:
       # gh release list --json tagName,name --jq 'map(select(.tagName | startswith("aol-fonts"))) | max_by(.tagName) | .tagName'
       - name: Release
         if: steps.needRelease.conclusion == 'success'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: aol-fonts-...
           body_path: ${{ steps.vars.outputs.list }}
